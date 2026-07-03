@@ -20,7 +20,6 @@ public class OrderItem : AuditableEntity
 
     public decimal TotalPrice { get; set; }
 
-    // Navigation
     public Order Order { get; set; } = null!;
 
     public Product.Product? Product { get; set; } 

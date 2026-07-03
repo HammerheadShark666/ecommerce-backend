@@ -2,7 +2,7 @@ using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ECommerce.Infrastructure.Configurations;
+namespace ECommerce.Infrastructure.Configurations.Domain;
 
 public class UserAddressConfiguration : IEntityTypeConfiguration<UserAddress>
 {

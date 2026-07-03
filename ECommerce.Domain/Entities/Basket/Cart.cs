@@ -6,7 +6,7 @@ public class Cart : AuditableEntity
 {
     public Guid UserId { get; set; }
 
-    private readonly List<CartItem> _items = new();
+    private readonly List<CartItem> _items = [];
 
     public IReadOnlyCollection<CartItem> Items => _items;
 
