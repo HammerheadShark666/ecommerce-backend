@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="QrCode.html" />
+  </Folder>
+  <Project Path="ECommerce.Domain/ECommerce.Domain.csproj" Id="9bd73480-c2da-47b1-a0aa-efb6dffc41a0" />
+  <Project Path="ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" Id="3fd06b5f-59b9-451d-9843-0c2352ce678d" />
+</Solution>
