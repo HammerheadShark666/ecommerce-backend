@@ -26,11 +26,11 @@ public class Order : AuditableEntity
 
     public decimal TotalAmount { get; set; }
 
-    private readonly List<OrderItem> _items = new();
+    private readonly List<OrderItem> _items = [];
 
     public IReadOnlyCollection<OrderItem> Items => _items;
 
-    private readonly List<OrderStatusHistory> _statusHistory = new();
+    private readonly List<OrderStatusHistory> _statusHistory = [];
 
     public IReadOnlyCollection<OrderStatusHistory> StatusHistory => _statusHistory;
 

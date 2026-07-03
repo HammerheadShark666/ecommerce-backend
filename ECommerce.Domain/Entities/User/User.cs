@@ -19,9 +19,9 @@ public class User : AuditableEntity
 
     public required string Status { get; set; } // Active / Blocked 
 	
-	public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+	public ICollection<UserRole> UserRoles { get; set; } = [];
 
-    private readonly List<UserAddress> _addresses = new();
+    private readonly List<UserAddress> _addresses = [];
 
     public IReadOnlyCollection<UserAddress> Addresses => _addresses;
 
