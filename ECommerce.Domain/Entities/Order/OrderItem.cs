@@ -1,14 +1,13 @@
 using ECommerce.Domain.Common;
+using ECommerce.Domain.ValueObjects;
 
 namespace ECommerce.Domain.Entities.Order;
 
-public class OrderItem : AuditableEntity
+public class OrderItem : AuditableEntity<Guid>
 {
     public Guid OrderId { get; set; }
 
     public Guid? ProductId { get; set; }
-
-    public Guid? ProductVariantId { get; set; }
 
     public string? ProductName { get; set; }
 
@@ -16,11 +15,11 @@ public class OrderItem : AuditableEntity
 
     public int Quantity { get; set; }
 
-    public decimal UnitPrice { get; set; }
+    public Money UnitPrice { get; set; } = default!;
 
-    public decimal TotalPrice { get; set; }
+    public Money TotalPrice { get; set; } = default!;
 
     public Order Order { get; set; } = null!;
 
-    public Product.Product? Product { get; set; } 
+    public Product.Product? Product { get; set; }     
 }

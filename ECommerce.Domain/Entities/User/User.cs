@@ -3,7 +3,7 @@ using ECommerce.Domain.ValueObjects;
 
 namespace ECommerce.Domain.Entities.User;
 
-public class User : AuditableEntity
+public class User : AuditableEntity<Guid>
 {
     public required string FirstName { get; set; }
 
@@ -18,8 +18,11 @@ public class User : AuditableEntity
     public bool IsEmailVerified { get; set; }
 
     public required string Status { get; set; } // Active / Blocked 
-	
-	public ICollection<UserRole> UserRoles { get; set; } = [];
+         
+    public string? OneTimePasswordSecret { get; set; }
+    public bool IsTwoFactorEnabled { get; set; }
+
+    public ICollection<UserRole> UserRoles { get; set; } = [];
 
     private readonly List<UserAddress> _addresses = [];
 

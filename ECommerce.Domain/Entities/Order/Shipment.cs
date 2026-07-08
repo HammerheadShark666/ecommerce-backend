@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Order;
 
-public class Shipment : AuditableEntity
+public class Shipment : AuditableEntity<Guid>
 {
     public Guid OrderId { get; set; }
 

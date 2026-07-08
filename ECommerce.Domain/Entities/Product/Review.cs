@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Product;
 
-public class Review : AuditableEntity
+public class Review : AuditableEntity<Guid>
 {
     public Guid UserId { get; set; }
 

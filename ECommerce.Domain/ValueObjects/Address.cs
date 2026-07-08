@@ -22,6 +22,26 @@ public sealed record Address
         string postCode,
         string country)
     {
+        if (string.IsNullOrWhiteSpace(line1))
+        {
+            throw new ArgumentException("Street is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(city))
+        {
+            throw new ArgumentException("City is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(postCode))
+        {
+            throw new ArgumentException("Postcode is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(country))
+        {
+            throw new ArgumentException("Country is required.");
+        }
+
         Line1 = line1;
         Line2 = line2;
         City = city;
@@ -33,6 +53,11 @@ public sealed record Address
     // Required by EF Core
     private Address()
     {
+        Line1 = default!;
+        City = default!;
+        County = default!;
+        PostCode = default!;
+        Country = default!;
     }
 
     public override string ToString()
