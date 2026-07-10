@@ -10,6 +10,7 @@
     <Project Path="ECommerce.ArchitectureTests/ECommerce.ArchitectureTests.csproj">
       <Build Solution="Debug|*" Project="false" />
     </Project>
+    <Project Path="ECommerce.IntegrationTests/ECommerce.IntegrationTests.csproj" />
     <Project Path="ECommerce.UnitTests/ECommerce.UnitTests.csproj" />
   </Folder>
   <Project Path="ECommerce.Api/ECommerce.Api.csproj">
