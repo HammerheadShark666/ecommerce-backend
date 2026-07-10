@@ -1,4 +1,4 @@
-﻿using ECommerce.Core.Abstractions;
+﻿using ECommerce.Application.Abstractions;
 
 namespace ECommerce.Infrastructure.Library;
 

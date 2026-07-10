@@ -1,4 +1,4 @@
-using ECommerce.Core.Abstractions;
+using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;

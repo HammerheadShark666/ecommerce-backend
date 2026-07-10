@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ECommerce.Application.Extensions;
-using ECommerce.Core.MediatR;
+using ECommerce.Application.MediatR;
 
 namespace ECommerce.Application;
 

@@ -1,6 +1,6 @@
-﻿using OtpNet;
-using ECommerce.Core.Abstractions;
-using ECommerce.Core.Constants;
+﻿using ECommerce.Application.Abstractions;
+using ECommerce.Infrastructure.Library.Constants;
+using OtpNet;
 
 namespace ECommerce.Infrastructure.Library;
 
@@ -8,7 +8,7 @@ public class OneTimePasswordGenerator : IOneTimePasswordGenerator
 { 
     public string GenerateSecret()
     {
-        byte[] key = KeyGeneration.GenerateRandomKey(OneTimePasswordConstants.SecretSizeBytes);
+        byte[] key = KeyGeneration.GenerateRandomKey(Constants.OneTimePasswordConstants.SecretSizeBytes);
         return Base32Encoding.ToString(key);
     }
 

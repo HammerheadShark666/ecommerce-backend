@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ECommerce.Application.Extensions;
-using ECommerce.Core.Abstractions.Configuration;
-using ECommerce.Core.Exceptions;
+using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Exceptions;
 
 namespace ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
 

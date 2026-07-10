@@ -1,6 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
  
   <ItemGroup>
+    <Compile Remove="Abstractions\**" />
+    <Compile Remove="Exceptions\**" />
+    <Compile Remove="MediatR\**" />
+    <EmbeddedResource Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <EmbeddedResource Remove="MediatR\**" />
+    <None Remove="Abstractions\**" />
+    <None Remove="Exceptions\**" />
+    <None Remove="MediatR\**" />
+  </ItemGroup>
+ 
+  <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="MediatR" />
