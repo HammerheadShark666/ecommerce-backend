@@ -1,5 +1,6 @@
 namespace ECommerce.Domain.Common;
-public abstract class BaseEntity
+
+public abstract class BaseEntity<TKey>
 {
-    public Guid Id { get;set; }
+    public TKey Id { get; set; } = default!;
 }

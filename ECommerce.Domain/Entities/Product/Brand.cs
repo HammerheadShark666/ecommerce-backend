@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Product;
 
-public class Brand : AuditableEntity
+public class Brand : AuditableEntity<Guid>
 {
     public string Name { get; set; } = null!;
 

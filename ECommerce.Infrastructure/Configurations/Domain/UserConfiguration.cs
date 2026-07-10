@@ -18,6 +18,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Phone).HasMaxLength(50);
         builder.Property(x => x.IsEmailVerified).HasDefaultValue(false);
         builder.Property(x => x.Status).HasMaxLength(50);
+        builder.Property(x => x.OneTimePasswordSecret).HasMaxLength(250);
+
+        builder.Property(x => x.IsTwoFactorEnabled)
+            .IsRequired()
+            .HasDefaultValue(false);
 
         builder.HasMany(u => u.UserRoles)
                .WithOne(ur => ur.User)

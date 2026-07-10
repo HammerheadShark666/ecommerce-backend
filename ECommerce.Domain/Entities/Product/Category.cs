@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Product;
 
-public class Category : AuditableEntity
+public class Category : AuditableEntity<Guid> 
 {
     public Guid? ParentId { get; set; }
 

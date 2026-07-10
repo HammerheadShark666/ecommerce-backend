@@ -12,9 +12,29 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.ProductName).HasMaxLength(500);
-        builder.Property(x => x.Sku).HasMaxLength(100);
-        builder.Property(x => x.UnitPrice).HasPrecision(18, 2);
-        builder.Property(x => x.TotalPrice).HasPrecision(18, 2);
+        builder.Property(x => x.Sku).HasMaxLength(100); 
+
+        builder.OwnsOne(x => x.UnitPrice, money =>
+        {
+            money.Property(x => x.Amount)
+                .HasColumnName("UnitPrice")
+                .HasPrecision(18, 2);
+
+            money.Property(x => x.Currency)
+                .HasColumnName("UnitPriceCurrency")
+                .HasMaxLength(3);
+        });
+
+        builder.OwnsOne(x => x.TotalPrice, money =>
+        {
+            money.Property(x => x.Amount)
+                .HasColumnName("TotalPrice")
+                .HasPrecision(18, 2);
+
+            money.Property(x => x.Currency)
+                .HasColumnName("TotalPriceCurrency")
+                .HasMaxLength(3);
+        });
 
         builder.HasOne(x => x.Order)
                .WithMany(x => x.Items)

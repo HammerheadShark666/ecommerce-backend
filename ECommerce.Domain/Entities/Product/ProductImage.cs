@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Product;
 
-public class ProductImage : AuditableEntity
+public class ProductImage : AuditableEntity<Guid>
 {
     public Guid ProductId { get; set; }
 

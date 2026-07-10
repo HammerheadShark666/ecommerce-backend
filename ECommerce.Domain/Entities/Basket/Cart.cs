@@ -2,7 +2,7 @@ using ECommerce.Domain.Common;
 
 namespace ECommerce.Domain.Entities.Basket;
 
-public class Cart : AuditableEntity
+public class Cart : AuditableEntity<Guid>
 {
     public Guid UserId { get; set; }
 
