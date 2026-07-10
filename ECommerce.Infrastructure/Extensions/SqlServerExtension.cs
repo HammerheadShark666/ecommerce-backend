@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ECommerce.Core.Abstractions;
+using ECommerce.Application.Abstractions;
 using ECommerce.Infrastructure.Persistence;
 
 namespace ECommerce.Infrastructure.Extensions;

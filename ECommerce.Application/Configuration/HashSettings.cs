@@ -1,4 +1,4 @@
-﻿using ECommerce.Core.Abstractions.Configuration;
+﻿using ECommerce.Application.Abstractions.Configuration;
 
 namespace ECommerce.Application.Configuration;
 

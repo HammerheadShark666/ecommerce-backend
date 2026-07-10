@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
-using ECommerce.Core.Abstractions;
-using ECommerce.Core.Abstractions.Configuration;
-using ECommerce.Core.Abstractions.Messaging;
-using ECommerce.Core.Constants;
+using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Constants;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;

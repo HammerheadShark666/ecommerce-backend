@@ -1,4 +1,4 @@
-﻿using ECommerce.Core.Abstractions;
+﻿using ECommerce.Application.Abstractions;
 using ECommerce.Infrastructure.Services.Intefaces;
 using Microsoft.EntityFrameworkCore;
 

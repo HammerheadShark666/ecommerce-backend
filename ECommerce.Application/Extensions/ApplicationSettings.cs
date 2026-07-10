@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ECommerce.Application.Configuration;
-using ECommerce.Core.Abstractions.Configuration;
+using ECommerce.Application.Abstractions.Configuration;
 
 
 namespace ECommerce.Application.Extensions;

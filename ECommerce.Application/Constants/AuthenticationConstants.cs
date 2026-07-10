@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Core.Constants;
+﻿namespace ECommerce.Application.Constants;
 
 public static class AuthenticationConstants
 { 

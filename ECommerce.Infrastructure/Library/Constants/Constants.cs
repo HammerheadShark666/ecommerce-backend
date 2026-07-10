@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Core.Constants;
+﻿namespace ECommerce.Infrastructure.Library.Constants;
 
 public static class Constants
 {

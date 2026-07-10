@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ECommerce.Core.Abstractions;
+using ECommerce.Application.Abstractions;
 using ECommerce.Infrastructure.Background_Jobs;
 using ECommerce.Infrastructure.Library;
 using ECommerce.Infrastructure.Services;

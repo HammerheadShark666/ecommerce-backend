@@ -1,11 +1,11 @@
 ﻿using System.Text;
+using ECommerce.Infrastructure.Configurations;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using ECommerce.Core.Constants;
-using ECommerce.Infrastructure.Configurations;
 
 namespace ECommerce.Infrastructure.Extensions;
 

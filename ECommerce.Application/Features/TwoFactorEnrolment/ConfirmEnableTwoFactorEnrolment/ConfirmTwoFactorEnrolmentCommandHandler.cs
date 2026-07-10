@@ -1,7 +1,7 @@
-using ECommerce.Core.Abstractions;
-using ECommerce.Core.Abstractions.Configuration;
-using ECommerce.Core.Abstractions.Messaging;
-using ECommerce.Core.Exceptions;
+using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 

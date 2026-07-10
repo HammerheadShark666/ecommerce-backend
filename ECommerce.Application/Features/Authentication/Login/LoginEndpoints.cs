@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ECommerce.Application.Extensions;
-using ECommerce.Core.Abstractions.Configuration;
+using ECommerce.Application.Abstractions.Configuration;
 
 namespace ECommerce.Application.Features.Authentication.Login;
 

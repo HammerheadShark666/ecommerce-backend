@@ -1,6 +1,7 @@
 ﻿using QRCoder;
-using ECommerce.Core.Abstractions;
-using ECommerce.Core.Constants;
+using ECommerce.Application.Abstractions;
+using ECommerce.Application.Constants;
+using ECommerce.Infrastructure.Library.Constants;
 
 namespace ECommerce.Infrastructure.Library;
 
