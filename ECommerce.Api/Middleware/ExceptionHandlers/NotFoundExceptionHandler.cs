@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using ECommerce.Application.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ECommerce.Core.Exceptions;
 
 namespace ECommerce.Api.Middleware.ExceptionHandlers;
 
