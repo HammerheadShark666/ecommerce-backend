@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddAuthenticationExtension();
         services.AddJwtExtension(jwtOptions);
         services.AddCors();
+        services.AddMessaging(configuration);
 
         return services;
     }
