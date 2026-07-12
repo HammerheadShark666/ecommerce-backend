@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPublishable>true</IsPublishable>
+    <UserSecretsId>ec83828b-3975-426b-9481-48d8426ea580</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

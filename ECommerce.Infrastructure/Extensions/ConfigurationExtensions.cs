@@ -26,6 +26,7 @@ public static class ConfigurationExtensions
         services.AddTypedOptions<EncryptionOptions>(configuration, EncryptionOptions.Section);
         services.AddTypedOptions<HashOptions>(configuration, HashOptions.Section);
         services.AddTypedOptions<JwtOptions>(configuration, JwtOptions.Section);
+        services.AddTypedOptions<EmailOptions>(configuration, EmailOptions.Section);
 
         return services;
     }
