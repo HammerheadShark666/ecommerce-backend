@@ -22,4 +22,9 @@
     <PackageReference Include="QRCoder" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Email\Templates\" />
+    <EmbeddedResource Include="Email\Templates\*.html" />
+  </ItemGroup> 
+  
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Communication.Email;
-using Azure.Identity;
+using Azure.Core;
 using ECommerce.Application.Abstractions.Email;
 using ECommerce.Infrastructure.Configurations;
 using Microsoft.Extensions.Logging;
@@ -9,14 +9,13 @@ using Microsoft.Extensions.Options;
 namespace ECommerce.Infrastructure.Email;
 
 public sealed class AzureCommunicationEmailSender(
+    TokenCredential tokenCredential,
     IOptions<EmailOptions> options,
     ILogger<AzureCommunicationEmailSender> logger)
     : IEmailSender
-{
-    private readonly EmailClient _client =
-        new(
-            new Uri(options.Value.Endpoint),
-            new DefaultAzureCredential());
+{ 
+    private readonly EmailClient _client = new(new Uri(options.Value.Endpoint),
+                                                tokenCredential);     
 
     private readonly EmailOptions _options = options.Value;
 
