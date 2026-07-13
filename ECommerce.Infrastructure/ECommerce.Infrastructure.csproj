@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="Email\Templates\" />
     <EmbeddedResource Include="Email\Templates\*.html" />
+    <Folder Include="Migrations\" />
   </ItemGroup> 
   
 </Project>

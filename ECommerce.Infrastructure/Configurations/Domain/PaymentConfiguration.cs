@@ -8,7 +8,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.ToTable("Payments");
+        builder.ToTable("ECOMMERCE_Payments");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.PaymentMethod).HasMaxLength(50);

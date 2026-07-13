@@ -8,7 +8,7 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
 {
     public void Configure(EntityTypeBuilder<Brand> builder)
     {
-        builder.ToTable("Brands");
+        builder.ToTable("ECOMMERCE_Brands");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(150);

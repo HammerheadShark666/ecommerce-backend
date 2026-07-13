@@ -8,7 +8,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users");
+        builder.ToTable("ECOMMERCE_Users");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.FirstName).IsRequired().HasMaxLength(100);

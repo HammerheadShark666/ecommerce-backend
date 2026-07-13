@@ -8,7 +8,7 @@ public class OrderStatusHistoryConfiguration : IEntityTypeConfiguration<OrderSta
 {
     public void Configure(EntityTypeBuilder<OrderStatusHistory> builder)
     {
-        builder.ToTable("OrderStatusHistory");
+        builder.ToTable("ECOMMERCE_OrderStatusHistory");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Status).HasMaxLength(50);

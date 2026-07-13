@@ -8,7 +8,7 @@ public class CartConfiguration : IEntityTypeConfiguration<Cart>
 {
     public void Configure(EntityTypeBuilder<Cart> builder)
     {
-        builder.ToTable("Carts");
+        builder.ToTable("ECOMMERCE_Carts");
         builder.HasKey(x => x.Id);
 
         builder.HasIndex(x => x.UserId).IsUnique();
