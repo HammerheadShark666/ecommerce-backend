@@ -6,8 +6,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Communication.Email" />
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" />
     <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,4 +22,9 @@
     <PackageReference Include="QRCoder" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Email\Templates\" />
+    <EmbeddedResource Include="Email\Templates\*.html" />
+  </ItemGroup> 
+  
 </Project>

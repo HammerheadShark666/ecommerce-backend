@@ -4,7 +4,7 @@ using ECommerce.Infrastructure.Configurations;
 
 namespace ECommerce.Infrastructure.Extensions;
 
-public static class ConfigurationExtensions
+public static class ConfigurationExtension
 { 
     public static IServiceCollection AddTypedOptions<TOptions>(
         this IServiceCollection services,
@@ -26,6 +26,8 @@ public static class ConfigurationExtensions
         services.AddTypedOptions<EncryptionOptions>(configuration, EncryptionOptions.Section);
         services.AddTypedOptions<HashOptions>(configuration, HashOptions.Section);
         services.AddTypedOptions<JwtOptions>(configuration, JwtOptions.Section);
+        services.AddTypedOptions<EmailOptions>(configuration, EmailOptions.Section);
+        services.AddTypedOptions<UrlOptions>(configuration, UrlOptions.Section);
 
         return services;
     }

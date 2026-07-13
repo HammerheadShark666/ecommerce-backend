@@ -2,6 +2,7 @@
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Exceptions;
+using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ public record VerifyRegistrationResponse(bool Success, string Message);
 internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                 IAesEncryptionHelper aesEncryptionHelper,                                              
                                                 IEncryptionSettings encryptionSettings,
+                                                IMessagePublisher _publisher,
                                                 IOneTimePasswordGenerator oneTimePasswordGenerator) : ICommandHandler<VerifyRegistrationCommand, VerifyRegistrationResponse>
 {
     public async Task<VerifyRegistrationResponse> Handle(VerifyRegistrationCommand request, CancellationToken cancellationToken)
@@ -23,9 +25,15 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
         bool codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
         await UpdateTwoFactorEnabledState(user, cancellationToken);
 
-        return codeIsValid
-            ? new VerifyRegistrationResponse(true, "Registration verified")
-            : new VerifyRegistrationResponse(false, "Invalid or expired code. Please try again.");
+        if (codeIsValid)
+        {
+            await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);
+            return new VerifyRegistrationResponse(true, "Registration verified");
+        }
+        else
+        {
+            return new VerifyRegistrationResponse(false, "Invalid or expired code. Please try again.");
+        }
     }
 
     private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
