@@ -8,7 +8,7 @@ public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
 {
     public void Configure(EntityTypeBuilder<ProductImage> builder)
     {
-        builder.ToTable("ProductImages");
+        builder.ToTable("ECOMMERCE_ProductImages");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.ImageUrl).IsRequired().HasMaxLength(1000);

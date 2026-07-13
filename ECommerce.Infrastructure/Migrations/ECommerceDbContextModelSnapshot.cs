@@ -49,7 +49,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PendingTwoFactorLogins", (string)null);
+                    b.ToTable("ECOMMERCE_PendingTwoFactorLogins", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Authentication.RefreshToken", b =>
@@ -89,7 +89,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("ECOMMERCE_RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Authentication.Role", b =>
@@ -117,7 +117,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("ECOMMERCE_Roles", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Basket.Cart", b =>
@@ -140,7 +140,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("ECOMMERCE_Carts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Basket.CartItem", b =>
@@ -174,7 +174,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("ECOMMERCE_CartItems", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Order.Order", b =>
@@ -233,7 +233,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("OrderNumber");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("ECOMMERCE_Orders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Order.OrderItem", b =>
@@ -271,7 +271,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("ECOMMERCE_OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Order.OrderStatusHistory", b =>
@@ -307,7 +307,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderStatusHistory", (string)null);
+                    b.ToTable("ECOMMERCE_OrderStatusHistory", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Order.Payment", b =>
@@ -357,7 +357,7 @@ namespace Ecommerce.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[TransactionId] IS NOT NULL");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("ECOMMERCE_Payments", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Order.Shipment", b =>
@@ -398,7 +398,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Shipments", (string)null);
+                    b.ToTable("ECOMMERCE_Shipments", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.Brand", b =>
@@ -433,7 +433,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("ECOMMERCE_Brands", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.Category", b =>
@@ -475,7 +475,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("ECOMMERCE_Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.Product", b =>
@@ -528,7 +528,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("ECOMMERCE_Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.ProductImage", b =>
@@ -565,7 +565,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ECOMMERCE_ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.Review", b =>
@@ -608,7 +608,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("ECOMMERCE_Reviews", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.User.User", b =>
@@ -669,7 +669,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("ECOMMERCE_Users", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.User.UserAddress", b =>
@@ -699,7 +699,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("UserAddresss", (string)null);
+                    b.ToTable("ECOMMERCE_UserAddresss", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.User.UserRole", b =>
@@ -720,7 +720,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("ECOMMERCE_UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Authentication.PendingTwoFactorLogin", b =>
@@ -794,7 +794,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("OrderItems");
+                            b1.ToTable("ECOMMERCE_OrderItems");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -818,7 +818,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("OrderItems");
+                            b1.ToTable("ECOMMERCE_OrderItems");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
@@ -973,7 +973,7 @@ namespace Ecommerce.Infrastructure.Migrations
 
                             b1.HasKey("UserAddressId");
 
-                            b1.ToTable("UserAddresss");
+                            b1.ToTable("ECOMMERCE_UserAddresss");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserAddressId");

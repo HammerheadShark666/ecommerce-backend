@@ -8,7 +8,7 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
 {
     public void Configure(EntityTypeBuilder<Shipment> builder)
     {
-        builder.ToTable("Shipments");
+        builder.ToTable("ECOMMERCE_Shipments");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.TrackingNumber).HasMaxLength(200);

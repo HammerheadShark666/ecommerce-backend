@@ -8,7 +8,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("Orders");
+        builder.ToTable("ECOMMERCE_Orders");
         builder.HasKey(x => x.Id);
 
         builder.HasIndex(x => x.OrderNumber).IsUnique(false);

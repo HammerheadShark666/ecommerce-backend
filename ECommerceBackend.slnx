@@ -4,6 +4,7 @@
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="migration.sql" />
     <File Path="QrCode.html" />
   </Folder>
   <Folder Name="/Testing/">

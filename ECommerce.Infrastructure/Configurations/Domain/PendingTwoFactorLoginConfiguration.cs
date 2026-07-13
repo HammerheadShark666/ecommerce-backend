@@ -8,7 +8,7 @@ public class PendingTwoFactorLoginConfiguration : IEntityTypeConfiguration<Pendi
 {
     public void Configure(EntityTypeBuilder<PendingTwoFactorLogin> builder)
     {
-        builder.ToTable("PendingTwoFactorLogins");
+        builder.ToTable("ECOMMERCE_PendingTwoFactorLogins");
 
         builder.HasKey(x => x.Id);
 

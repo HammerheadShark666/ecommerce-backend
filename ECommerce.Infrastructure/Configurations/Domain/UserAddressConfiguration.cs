@@ -8,7 +8,7 @@ public class UserAddressConfiguration : IEntityTypeConfiguration<UserAddress>
 {
     public void Configure(EntityTypeBuilder<UserAddress> builder)
     {
-        builder.ToTable("UserAddresss");       
+        builder.ToTable("ECOMMERCE_UserAddresss");       
         builder.HasKey(x => x.Id);
   
         builder.OwnsOne(x => x.Address, address =>
