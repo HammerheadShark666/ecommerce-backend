@@ -3,7 +3,7 @@ using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ECommerce.BackgroundFunctions.Extensions;
+namespace ECommerce.Infrastructure.Extensions;
 
 public static class AzureCredentialsExtension
 {

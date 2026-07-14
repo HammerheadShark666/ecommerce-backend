@@ -27,11 +27,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.UserRoles)
                .WithOne(ur => ur.User)
                .HasForeignKey(ur => ur.UserId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Cascade);  
 
-        builder.HasMany<UserAddress>()
-               .WithOne()
-               .HasForeignKey(ua => ua.UserId)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(u => u.Addresses)
+           .WithOne(ua => ua.User)
+           .HasForeignKey(ua => ua.UserId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(u => u.Addresses)
+               .UsePropertyAccessMode(PropertyAccessMode.Field); 
     }
 }

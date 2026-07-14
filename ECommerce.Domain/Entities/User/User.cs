@@ -22,11 +22,11 @@ public class User : AuditableEntity<Guid>
     public string? OneTimePasswordSecret { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
 
-    public ICollection<UserRole> UserRoles { get; set; } = [];
+    public ICollection<UserRole> UserRoles { get; set; } = []; 
 
     private readonly List<UserAddress> _addresses = [];
 
-    public IReadOnlyCollection<UserAddress> Addresses => _addresses;
+    public IReadOnlyCollection<UserAddress> Addresses => _addresses.AsReadOnly();
 
     public void AddAddress(Address address, bool isPrimary = false)
     {
