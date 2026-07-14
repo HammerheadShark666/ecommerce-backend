@@ -690,14 +690,9 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("ECOMMERCE_UserAddresss", (string)null);
                 });
@@ -921,15 +916,11 @@ namespace Ecommerce.Infrastructure.Migrations
 
             modelBuilder.Entity("ECommerce.Domain.Entities.User.UserAddress", b =>
                 {
-                    b.HasOne("ECommerce.Domain.Entities.User.User", null)
-                        .WithMany()
+                    b.HasOne("ECommerce.Domain.Entities.User.User", "User")
+                        .WithMany("Addresses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ECommerce.Domain.Entities.User.User", null)
-                        .WithMany("Addresses")
-                        .HasForeignKey("UserId1");
 
                     b.OwnsOne("ECommerce.Domain.ValueObjects.Address", "Address", b1 =>
                         {
@@ -981,6 +972,8 @@ namespace Ecommerce.Infrastructure.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ECommerce.Domain.Entities.User.UserRole", b =>

@@ -296,7 +296,6 @@ namespace Ecommerce.Infrastructure.Migrations
                     PostCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
-                    UserId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -309,11 +308,6 @@ namespace Ecommerce.Infrastructure.Migrations
                         principalTable: "ECOMMERCE_Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ECOMMERCE_UserAddresss_ECOMMERCE_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "ECOMMERCE_Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -568,11 +562,6 @@ namespace Ecommerce.Infrastructure.Migrations
                 name: "IX_ECOMMERCE_UserAddresss_UserId",
                 table: "ECOMMERCE_UserAddresss",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ECOMMERCE_UserAddresss_UserId1",
-                table: "ECOMMERCE_UserAddresss",
-                column: "UserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ECOMMERCE_UserRoles_RoleId",

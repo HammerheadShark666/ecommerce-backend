@@ -8,18 +8,12 @@
     <File Path="QrCode.html" />
   </Folder>
   <Folder Name="/Testing/">
-    <Project Path="ECommerce.ArchitectureTests/ECommerce.ArchitectureTests.csproj">
-      <Build Solution="Debug|*" Project="false" />
-    </Project>
+    <Project Path="ECommerce.ArchitectureTests/ECommerce.ArchitectureTests.csproj" />
     <Project Path="ECommerce.IntegrationTests/ECommerce.IntegrationTests.csproj" />
     <Project Path="ECommerce.UnitTests/ECommerce.UnitTests.csproj" />
   </Folder>
-  <Project Path="ECommerce.Api/ECommerce.Api.csproj">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
-  <Project Path="ECommerce.Application/ECommerce.Application.csproj">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
+  <Project Path="ECommerce.Api/ECommerce.Api.csproj" />
+  <Project Path="ECommerce.Application/ECommerce.Application.csproj" />
   <Project Path="ECommerce.BackgroundFunctions/ECommerce.BackgroundFunctions.csproj" Id="decfdc13-919c-45b6-8c03-cd555f636b2b" />
   <Project Path="ECommerce.Domain/ECommerce.Domain.csproj" Id="9bd73480-c2da-47b1-a0aa-efb6dffc41a0" />
   <Project Path="ECommerce.Infrastructure/ECommerce.Infrastructure.csproj" Id="3fd06b5f-59b9-451d-9843-0c2352ce678d" />

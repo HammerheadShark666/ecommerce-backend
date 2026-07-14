@@ -7,6 +7,8 @@ public class UserAddress : AuditableEntity<Guid>
 {
     public Guid UserId { get; private set; }
 
+    public User User { get; private set; } = default!;
+
     public Address Address { get; private set; } = default!;
 
     public bool IsPrimary { get; private set; }

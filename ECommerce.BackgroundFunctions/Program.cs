@@ -2,6 +2,7 @@ using ECommerce.BackgroundFunctions.Extensions;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ECommerce.Infrastructure.Extensions;
 
 FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 
