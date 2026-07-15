@@ -13,7 +13,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './ECommerce.BackgroundFunctions'  
   DOTNET_VERSION: '10.0.x'  
 
- jobs:
+jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
