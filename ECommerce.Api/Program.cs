@@ -64,8 +64,8 @@ try
 
     Log.Information("RUN EXITED");
 
-}
-catch (Exception ex)
+} 
+catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "Application terminated unexpectedly");
 }
