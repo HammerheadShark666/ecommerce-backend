@@ -43,3 +43,4 @@ env:
           slot-name: Production
           package: ${{ github.workspace }}/publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1EA3CF30F232446288435AA46E4C90DF }}
+          sku: flexconsumption
