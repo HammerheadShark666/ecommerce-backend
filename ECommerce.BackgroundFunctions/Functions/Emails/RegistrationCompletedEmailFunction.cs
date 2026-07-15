@@ -19,6 +19,8 @@ public class RegistrationCompletedEmailFunction(IEmailSender emailSender,
     {
         try
         {
+            logger.LogInformation("Processing message: {MessageId}", message.MessageId);
+
             UserRegisteredMessage? envelope = message.Body.ToObjectFromJson<UserRegisteredMessage>() 
             ?? throw new InvalidOperationException("Unable to deserialize UserRegisteredMessage from Service Bus message.");
 
@@ -36,7 +38,9 @@ public class RegistrationCompletedEmailFunction(IEmailSender emailSender,
                 "Successful registration with ECommerce",
                 htmlBody,
                 cancellationToken);
-         
+
+            logger.LogInformation("Email sent successfully to {Email}", payload.Email);
+
             await messageActions.CompleteMessageAsync(message, cancellationToken);
         }
         catch (Exception ex)
