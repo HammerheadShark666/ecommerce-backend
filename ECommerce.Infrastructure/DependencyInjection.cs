@@ -20,7 +20,7 @@ public static class DependencyInjection
         services.AddJwtExtension(jwtOptions);
         services.AddCors();
         services.AddMessaging(configuration); 
-        services.AddAzureCredentials();
+        services.AddAzureCredentials(); 
 
         return services;
     }
