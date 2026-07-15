@@ -23,18 +23,24 @@ jobs:
         with:
           dotnet-version: '10.x'
 
-      - name: Build with dotnet
+      - name: Restore NuGet packages
+        run: dotnet restore ECommerce.Api/ECommerce.Api.csproj
+        
+      - name: Build main project
+        run: dotnet build ECommerce.Api/ECommerce.Api.csproj -c Release
+        
+      - name: Clean publish folder
+        run: rm -rf ${{env.DOTNET_ROOT}}/myapp
+        
+      - name: Publish main project only
         run: dotnet publish ECommerce.Api/ECommerce.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-dependencies
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
+ 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
+            name: .net-app
+            path: ${{env.DOTNET_ROOT}}/myapp 
+            
   deploy:
     runs-on: ubuntu-latest
     needs: build
