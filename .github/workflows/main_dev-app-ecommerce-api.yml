@@ -22,6 +22,7 @@ jobs:
       Jwt__Issuer: ${{ secrets.JWT_ISSUER }}
       Jwt__Audience: ${{ secrets.JWT_AUDIENCE }}
       Jwt__ExpiryMinutes: ${{ secrets.JWT_EXPIRYMINUTES }}
+      Jwt__KeyId: ${{ secrets.JWT_KEYID }}
       Hash__Secret: ${{ secrets.HASH_SECRET }}
       Encryption__OneTimePasswordKey: ${{ secrets.ENCRYPTION_ONETIMEPASSWORDKEY }}
       ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
