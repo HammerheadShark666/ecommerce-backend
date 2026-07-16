@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
+using Azure.Core;
 using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
@@ -345,12 +346,28 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private async Task<HttpResponseMessage> CallProtectedEndpointAsync(string jwt)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/protected/me");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+        //using var request = new HttpRequestMessage(HttpMethod.Get, "/protected/me");
+        //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-        HttpResponseMessage resp = await _client.SendAsync(request);
+        //HttpResponseMessage resp = await _client.SendAsync(request);
 
-        return resp;
+        //return resp;
+
+
+       _client.DefaultRequestHeaders.Authorization =
+       new AuthenticationHeaderValue("Bearer", jwt);
+
+        HttpResponseMessage response = await _client.GetAsync("/protected/me");
+
+        Console.Error.WriteLine(
+            $"Status: {response.StatusCode}");
+
+        Console.Error.WriteLine(
+            await response.Content.ReadAsStringAsync());
+
+        response.EnsureSuccessStatusCode();
+
+        return response;
     }
 
     private static string PadBase64(string base64)
