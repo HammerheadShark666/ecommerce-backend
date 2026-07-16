@@ -24,7 +24,7 @@ public class LoginIntegrationTest : IAsyncLifetime
     private readonly SqlServerFixture _fixture;
     private readonly TestApplicationFactory _appFactory;
     private readonly HttpClient _client; 
-    
+
     public LoginIntegrationTest(SqlServerFixture fixture)
     {       
         _fixture = fixture;
@@ -39,7 +39,7 @@ public class LoginIntegrationTest : IAsyncLifetime
     {
         //Arrange
         const string email = "e2e2fa@example.com";
-        const string password = "E2ePass!23";
+        const string password = "E2ePass!23";       
         string oneTimePasswordCode = "";
 
         using (IServiceScope scope = _appFactory.Services.CreateScope())
@@ -58,7 +58,12 @@ public class LoginIntegrationTest : IAsyncLifetime
 
             User user = await SeedTwoFactorUserAsync(scope, email, password, encryptedOneTimePasswordSecret);
             oneTimePasswordCode = ResolveOneTimePasswordCode(scope, encryptedOneTimePasswordSecret);
-        }
+
+
+
+            ECommerceDbContext db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+            Console.WriteLine(await db.Users.CountAsync());
+        } 
 
         //Act
         LoginResponseDto loginDto = await LoginAsync(email, password);
