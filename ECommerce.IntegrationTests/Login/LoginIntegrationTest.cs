@@ -12,6 +12,7 @@ using ECommerce.IntegrationTests.Library;
 using ECommerce.IntegrationTests.Library.Intefaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -67,6 +68,18 @@ public class LoginIntegrationTest : IAsyncLifetime
             int count = await db.Users.CountAsync();
 
             Console.Error.WriteLine($"After CountAsync: {count}");
+
+            IConfiguration config = scope.ServiceProvider
+                    .GetRequiredService<IConfiguration>();
+
+            Console.Error.WriteLine(
+                $"JWT Secret length: {config["Jwt:Secret"]?.Length}");
+
+            Console.Error.WriteLine(
+                $"Issuer: {config["Jwt:Issuer"]}");
+
+            Console.Error.WriteLine(
+                $"Audience: {config["Jwt:Audience"]}");
         }
 
         //Act
