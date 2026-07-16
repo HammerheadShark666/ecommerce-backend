@@ -76,6 +76,8 @@ public class BeginRegistrationIntegrationTest : IAsyncLifetime
         user.Should().NotBeNull();
         user!.IsTwoFactorEnabled.Should().BeTrue();
         user.OneTimePasswordSecret.Should().NotBeNullOrWhiteSpace();
+
+        Assert.Single(_appFactory.Publisher.PublishedMessages);
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public class BeginRegistrationIntegrationTest : IAsyncLifetime
         HttpResponseMessage verifyResp = await PostConfirmRegisterRawAsync(email, "000000");
 
         // Assert
-        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized); 
     }
 
     [Theory]
