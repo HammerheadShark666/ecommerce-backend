@@ -67,13 +67,23 @@ public class LoginIntegrationTest : IAsyncLifetime
             int count = await db.Users.CountAsync();
 
             Console.Error.WriteLine($"After CountAsync: {count}");
-        } 
+        }
 
         //Act
+        Console.Error.WriteLine("PRE LoginAsync");
+
         LoginResponseDto loginDto = await LoginAsync(email, password);
+
+        Console.Error.WriteLine("POST LoginAsync");
+
         VerifyResponseDto verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId);
+
+        Console.Error.WriteLine("POST Verify2FaAsync");
+
         HttpResponseMessage protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
-          
+
+        Console.Error.WriteLine("POST CallProtectedEndpointAsync");
+
         //Assert
         protectedResp.EnsureSuccessStatusCode();
     }
