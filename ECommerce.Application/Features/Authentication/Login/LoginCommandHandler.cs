@@ -116,37 +116,10 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
     private string GetHashedRefreshToken(string refreshToken) =>
         hmacsha256Hasher.HashToken(refreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken)
-    {
-        try
-        {
-            User? user = await dbContext.Users
-                            .AsNoTracking()
-                            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-
-            Console.Error.WriteLine($"User Email: {user?.Email}");
-
-            if(user == null)
-            {
-                Console.Error.WriteLine($"User not found for email: {email}");
-                throw new UnauthorizedAccessException();
-            }
-
-            Console.Error.WriteLine($"User found for email: {email}");
-
-            return user;
-
-            //return await dbContext.Users
-            //       .AsNoTracking()
-            //       .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-            //        ?? throw new UnauthorizedAccessException();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            Console.WriteLine(ex.InnerException);
-            throw;
-        }
-    }
+    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
+          await dbContext.Users
+                   .AsNoTracking()
+                   .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
+          ?? throw new UnauthorizedAccessException();
 }
           

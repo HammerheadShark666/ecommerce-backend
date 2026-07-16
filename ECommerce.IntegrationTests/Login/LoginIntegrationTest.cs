@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
-using Azure.Core;
 using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
@@ -13,7 +12,6 @@ using ECommerce.IntegrationTests.Library;
 using ECommerce.IntegrationTests.Library.Intefaces;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -60,45 +58,12 @@ public class LoginIntegrationTest : IAsyncLifetime
 
             User user = await SeedTwoFactorUserAsync(scope, email, password, encryptedOneTimePasswordSecret);
             oneTimePasswordCode = ResolveOneTimePasswordCode(scope, encryptedOneTimePasswordSecret);
-
-
-
-            ECommerceDbContext db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
-            Console.Error.WriteLine("Before CountAsync");
-
-            int count = await db.Users.CountAsync();
-
-            Console.Error.WriteLine($"After CountAsync: {count}");
-
-            IConfiguration config = scope.ServiceProvider
-                    .GetRequiredService<IConfiguration>();
-
-            Console.Error.WriteLine(
-                $"JWT Secret length: {config["Jwt:Secret"]?.Length}");
-
-            Console.Error.WriteLine(
-                $"Issuer: {config["Jwt:Issuer"]}");
-
-            Console.Error.WriteLine(
-                $"Audience: {config["Jwt:Audience"]}");
         }
 
         //Act
-        Console.Error.WriteLine("PRE LoginAsync");
-
         LoginResponseDto loginDto = await LoginAsync(email, password);
-
-        Console.Error.WriteLine("POST LoginAsync");
-
-        VerifyResponseDto verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId);
-
-        Console.Error.WriteLine("POST Verify2FaAsync");
-
-        Console.Error.WriteLine($"AccessToken: {verifyDto.Token}");
-
+        VerifyResponseDto verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId); 
         HttpResponseMessage protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
-
-        Console.Error.WriteLine("POST CallProtectedEndpointAsync");
 
         //Assert
         protectedResp.EnsureSuccessStatusCode();
@@ -346,26 +311,10 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private async Task<HttpResponseMessage> CallProtectedEndpointAsync(string jwt)
     {
-        //using var request = new HttpRequestMessage(HttpMethod.Get, "/protected/me");
-        //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/protected/me");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-        //HttpResponseMessage resp = await _client.SendAsync(request);
-
-        //return resp;
-
-
-       _client.DefaultRequestHeaders.Authorization =
-       new AuthenticationHeaderValue("Bearer", jwt);
-
-        HttpResponseMessage response = await _client.GetAsync("/protected/me");
-
-        Console.Error.WriteLine(
-            $"Status: {response.StatusCode}");
-
-        Console.Error.WriteLine(
-            await response.Content.ReadAsStringAsync());
-
-        response.EnsureSuccessStatusCode();
+        HttpResponseMessage response = await _client.SendAsync(request);
 
         return response;
     }
