@@ -80,6 +80,8 @@ public class LoginIntegrationTest : IAsyncLifetime
 
         Console.Error.WriteLine("POST Verify2FaAsync");
 
+        Console.Error.WriteLine($"AccessToken: {verifyDto.Token}");
+
         HttpResponseMessage protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
 
         Console.Error.WriteLine("POST CallProtectedEndpointAsync");
