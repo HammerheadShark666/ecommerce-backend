@@ -21,7 +21,7 @@ public record LoginResponse(
 );
 
 internal class LoginCommandHandler(IECommerceDbContext dbContext,
-                                   IPasswordHasher passwordHasher, 
+                                   IPasswordHasher passwordHasher,
                                    IHmacsha256Hasher hmacsha256Hasher,
                                    TimeProvider timeProvider,
                                    IRefreshTokenGenerator refreshTokenGenerator,
@@ -34,11 +34,11 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         LoginResponse loginResponse;
-        string normaliseEmail = request.Email.Trim().ToUpperInvariant(); 
+        string normaliseEmail = request.Email.Trim().ToUpperInvariant();
 
         User user = await GetUserAsync(normaliseEmail, cancellationToken);
 
-        ValidatePassword(user, request.Password); 
+        ValidatePassword(user, request.Password);
 
         if (user.IsTwoFactorEnabled)
         {
@@ -72,14 +72,14 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
     }
 
     private async Task<(Guid, string)> GenerateTwoFactorPendingTokenAsync(Guid userId)
-    { 
-        string pendingToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));  
+    {
+        string pendingToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         string hashedPendingToken = hmacsha256Hasher.HashToken(pendingToken, AuthenticationConstants.HashTypeTokenPending, hashSettings.Secret);
 
         var id = Guid.NewGuid();
 
         dbContext.PendingTwoFactorLogins.Add(new PendingTwoFactorLogin
-        { 
+        {
             Id = id,
             UserId = userId,
             PendingTwoFactorToken = hashedPendingToken,
@@ -97,7 +97,7 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
                 true),
                 cancellationToken);
 
-    private async Task<string> GenerateRefreshTokenAsync(User user, CancellationToken cancellationToken) 
+    private async Task<string> GenerateRefreshTokenAsync(User user, CancellationToken cancellationToken)
     {
         string refreshToken = refreshTokenGenerator.GenerateRefreshToken();
         string hashedRefreshToken = GetHashedRefreshToken(refreshToken);
@@ -116,9 +116,21 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
     private string GetHashedRefreshToken(string refreshToken) =>
         hmacsha256Hasher.HashToken(refreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
-          await dbContext.Users
+    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await dbContext.Users
                    .AsNoTracking()
                    .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-          ?? throw new UnauthorizedAccessException();
+                    ?? throw new UnauthorizedAccessException();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            Console.WriteLine(ex.InnerException);
+            throw;
+        }
+    }
 }
+          
