@@ -62,7 +62,11 @@ public class LoginIntegrationTest : IAsyncLifetime
 
 
             ECommerceDbContext db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
-            Console.WriteLine(await db.Users.CountAsync());
+            Console.Error.WriteLine("Before CountAsync");
+
+            int count = await db.Users.CountAsync();
+
+            Console.Error.WriteLine($"After CountAsync: {count}");
         } 
 
         //Act
