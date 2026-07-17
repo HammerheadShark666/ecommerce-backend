@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading.RateLimiting;
 using ECommerce.Application.Constants;
+using ECommerce.Domain.Entities.User;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace ECommerce.Api.Extensions;
@@ -14,7 +15,9 @@ public static class RateLimitingExtensions
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
             context =>
             {
-                string key = context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                string? userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                string key = userId
                             ?? context.Connection.RemoteIpAddress?.ToString()
                             ?? "anonymous";
 
@@ -22,7 +25,7 @@ public static class RateLimitingExtensions
                     partitionKey: key,
                     factory: _ => new FixedWindowRateLimiterOptions
                     {
-                        PermitLimit = 100,
+                        PermitLimit = userId != null ? 100 : 50,
                         Window = TimeSpan.FromMinutes(1),
                         QueueLimit = 0,
                         AutoReplenishment = true
