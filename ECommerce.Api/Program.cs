@@ -43,10 +43,10 @@ try
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseAuthentication();
+    app.UseRateLimiter();
     app.UseAuthorization();
     app.UseSerilogRequestLogging(options => options.EnrichDiagnosticContext = (diag, httpContext) => diag.Set("CorrelationId", httpContext.TraceIdentifier));
-    app.UseRateLimiter();
-
+    
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
