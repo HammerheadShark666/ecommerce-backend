@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.RateLimiting;
 using ECommerce.Application.Constants;
-using ECommerce.Domain.Entities.User;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace ECommerce.Api.Extensions;

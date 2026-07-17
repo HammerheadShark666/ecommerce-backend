@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ECommerce.BackgroundFunctions.Functions.Emails;
 
-public class RegistrationCompletedEmailFunction(IEmailSender emailSender,
-                                                IEmailTemplateService emailTemplateService,
-                                                ILogger<RegistrationCompletedEmailFunction> logger)
+public class RegistrationCompletedFunction(IEmailSender emailSender,
+                                           IEmailTemplateService emailTemplateService,
+                                           ILogger<RegistrationCompletedFunction> logger)
 { 
-    [Function(nameof(RegistrationCompletedEmailFunction))]
+    [Function(nameof(RegistrationCompletedFunction))]
     public async Task Run(
         [ServiceBusTrigger("%UserRegisteredQueueName%", Connection = "AzureServiceBusConnection")]
         ServiceBusReceivedMessage message,
