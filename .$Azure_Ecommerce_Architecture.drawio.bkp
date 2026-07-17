@@ -1,0 +1,121 @@
+<mxfile host="Electron" modified="2026-07-17T09:37:34.404Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.2.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" version="24.2.5" etag="ND9GN7Sou8skRB59lhLV" type="device">
+  <diagram name="Architecture" id="0">
+    <mxGraphModel dx="1674" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2339" pageHeight="3300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rg" value="Resource Group DEV-RG-ECOMMERCE-API UK West" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="20" y="20" width="760" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="kv" value="Key Vault" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="50" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="sb" value="Service Bus" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="140" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="st" value="Storage Account" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="230" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="funcplan" value="Function Plan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="60" y="320" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="func" value="Function App" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="240" y="320" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="funcai" value="Func App Insights" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="240" y="400" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mi" value="Managed Identity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="320" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="email" value="Email Comm Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="410" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="domain" value="Azure Managed Domain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="470" y="490" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dbrg" value="Resource Group RG-DB-FREE UK South" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="810" y="40" width="220" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="sqlsrv" value="SQL Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="850" y="90" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="sqldb" value="SQL Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="850" y="170" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eappplanapp" parent="1" source="4Dl_EM1mPBo1hcgMew-k-1" target="4Dl_EM1mPBo1hcgMew-k-4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="115" as="sourcePoint" />
+            <mxPoint x="230" y="145.04999999999995" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eappappi" style="entryX=0.5;entryY=0.014;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="4Dl_EM1mPBo1hcgMew-k-4" target="4Dl_EM1mPBo1hcgMew-k-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="190" as="sourcePoint" />
+            <mxPoint x="298.2905982905984" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eappkv" parent="1" source="4Dl_EM1mPBo1hcgMew-k-4" target="kv" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eappsb" style="exitX=0.969;exitY=0.516;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="4Dl_EM1mPBo1hcgMew-k-4" target="sb" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="75" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eappsqldb" style="exitX=0.969;exitY=0.547;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="4Dl_EM1mPBo1hcgMew-k-4" target="sqldb" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="75" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="efuncplanfunc" parent="1" source="funcplan" target="func" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="efuncfuncai" parent="1" source="func" target="funcai" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="efuncsb" parent="1" source="func" target="sb" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="efuncemail" parent="1" source="func" target="email" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="emifunc" parent="1" source="mi" target="func" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eemaildomain" parent="1" source="email" target="domain" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="estsb" parent="1" source="st" target="sb" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="esqlsrvsqldb" parent="1" source="sqlsrv" target="sqldb" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-1" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Service_Plans.svg;" vertex="1" parent="1">
+          <mxGeometry x="68" y="76" width="64" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" target="st">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="360" y="255" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-3" value="dev-asp-ecommerce" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="68" y="150" width="122" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-4" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/app_services/App_Services.svg;" vertex="1" parent="1">
+          <mxGeometry x="260" y="76" width="64" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-5" value="dev-app-ecommerce-api" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="150" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-8" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/devops/Application_Insights.svg;" vertex="1" parent="1">
+          <mxGeometry x="267" y="200" width="50" height="71.59" as="geometry" />
+        </mxCell>
+        <mxCell id="4Dl_EM1mPBo1hcgMew-k-10" value="dev-app-ecommerce-api" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="110" y="242" width="150" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

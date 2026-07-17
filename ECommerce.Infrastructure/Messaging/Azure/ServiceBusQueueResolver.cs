@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Features.Registration.Events;
+﻿using ECommerce.Application.Features.ForgottenPassword.Events;
+using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Infrastructure.Messaging.Azure.Interface;
 using Microsoft.Extensions.Options;
 
@@ -12,6 +13,10 @@ public sealed class ServiceBusQueueResolver(IOptions<AzureServiceBusOptions> opt
         if (messageType == typeof(UserRegistered))
         { 
             return options.Value.UserRegisteredQueueName;
+        }
+        else if (messageType == typeof(ResetPasswordRequested))
+        {
+            return options.Value.ResetPasswordRequestedQueueName;
         }
 
         throw new InvalidOperationException(

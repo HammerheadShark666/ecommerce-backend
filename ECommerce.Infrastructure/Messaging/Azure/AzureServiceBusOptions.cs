@@ -7,4 +7,6 @@ public sealed class AzureServiceBusOptions
     public required string ConnectionString { get; init; }
 
     public required string UserRegisteredQueueName { get; init; }
+
+    public required string ResetPasswordRequestedQueueName { get; init; }
 }
