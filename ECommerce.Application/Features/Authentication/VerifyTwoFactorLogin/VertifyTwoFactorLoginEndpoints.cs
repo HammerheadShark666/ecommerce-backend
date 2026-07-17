@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Constants;
+using ECommerce.Application.Exceptions;
+using ECommerce.Application.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ECommerce.Application.Extensions;
-using ECommerce.Application.Abstractions.Configuration;
-using ECommerce.Application.Exceptions;
 
 namespace ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
 
@@ -26,7 +27,7 @@ public static class VerifyTwoFactorLoginEndpoints
             response.SetRefreshToken(refreshToken, jwtSettings.RefreshTokenExpiryDays); 
             
             return Results.Ok(new LoginResponse(result.Token));
-        });
+        }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
 
         return endpoints;
     }
