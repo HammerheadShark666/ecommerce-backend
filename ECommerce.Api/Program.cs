@@ -36,6 +36,7 @@ try
     builder.AddKeyVaultExtension();
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication(builder.Configuration);
+    builder.Services.AddApiRateLimiting();
 
     WebApplication app = builder.Build();
 
@@ -44,6 +45,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseSerilogRequestLogging(options => options.EnrichDiagnosticContext = (diag, httpContext) => diag.Set("CorrelationId", httpContext.TraceIdentifier));
+    app.UseRateLimiter();
 
     if (app.Environment.IsDevelopment())
     {
