@@ -46,8 +46,8 @@ jobs:
 
       - name: Run Tests
         run: |
-          # dotnet test ./ECommerce.ArchitectureTests/ECommerce.ArchitectureTests.csproj -c Release --logger "console;verbosity=detailed"
-          # dotnet test ./ECommerce.UnitTests/ECommerce.UnitTests.csproj -c Release --logger "console;verbosity=detailed"
+          dotnet test ./ECommerce.ArchitectureTests/ECommerce.ArchitectureTests.csproj -c Release --logger "console;verbosity=detailed"
+          dotnet test ./ECommerce.UnitTests/ECommerce.UnitTests.csproj -c Release --logger "console;verbosity=detailed"
           dotnet test ./ECommerce.IntegrationTests/ECommerce.IntegrationTests.csproj -c Release --logger "console;verbosity=detailed"
         
       - name: Clean publish folder
