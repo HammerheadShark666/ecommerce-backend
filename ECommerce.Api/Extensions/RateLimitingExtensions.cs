@@ -44,6 +44,12 @@ public static class RateLimitingExtensions
                 policy.Window = TimeSpan.FromMinutes(1);
             });
 
+            options.AddFixedWindowLimiter(RateLimiterPolicyConstants.ForgottonPassword, policy =>
+            {
+                policy.PermitLimit = 3;
+                policy.Window = TimeSpan.FromMinutes(1);
+            });
+
             options.AddFixedWindowLimiter(RateLimiterPolicyConstants.RefreshToken, policy =>
             {
                 policy.PermitLimit = 10;

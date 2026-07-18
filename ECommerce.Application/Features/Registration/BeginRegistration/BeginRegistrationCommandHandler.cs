@@ -28,7 +28,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
 
         (string oneTimePasswordSecret, string encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
          
-        await CreateUser(request.Email, request.Password, encryptedOneTimePasswordSecret, 
+        await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret, 
                             request.LastName, request.FirstName, request.PhoneNumber, cancellationToken); 
          
         (string qrBase64, string uri) = GenerateQrCode(request.Email, oneTimePasswordSecret);
@@ -54,7 +54,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
         return (secret, encryptedSecrect);
     }
 
-    private async Task CreateUser(string email, string password, string encryptedOneTimePasswordSecret, string lastName, string firstName, string phoneNumber, CancellationToken cancellationToken)
+    private async Task CreateUserAsync(string email, string password, string encryptedOneTimePasswordSecret, string lastName, string firstName, string phoneNumber, CancellationToken cancellationToken)
     {
         var user = new User
         {

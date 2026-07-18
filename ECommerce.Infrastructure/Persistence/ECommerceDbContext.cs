@@ -1,5 +1,6 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Domain.Entities.Authentication;
+using ECommerce.Domain.Entities.PasswordReset;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,8 +11,9 @@ public class ECommerceDbContext(DbContextOptions<ECommerceDbContext> options) : 
 	public DbSet<User> Users => Set<User>();
     public DbSet<PendingTwoFactorLogin> PendingTwoFactorLogins => Set<PendingTwoFactorLogin>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
-    
-	protected override void OnModelCreating(ModelBuilder modelBuilder){
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder){
 		
 		base.OnModelCreating(modelBuilder);
 		
