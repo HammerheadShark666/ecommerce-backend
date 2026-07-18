@@ -37,15 +37,17 @@ try
     builder.AddKeyVaultExtension();
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication(builder.Configuration);
+    builder.Services.AddApiRateLimiting();
 
     WebApplication app = builder.Build();
 
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseAuthentication();
+    app.UseRateLimiter();
     app.UseAuthorization();
     app.UseSerilogRequestLogging(options => options.EnrichDiagnosticContext = (diag, httpContext) => diag.Set("CorrelationId", httpContext.TraceIdentifier));
-
+    
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();

@@ -11,7 +11,7 @@ public static class TwoFactorStatusEndpoints
         this IEndpointRouteBuilder endpoints)
     {
         RouteGroupBuilder group = endpoints.MapGroup("/2fa")
-                             .WithTags("Two-Factor Authentication");
+                             .WithTags("ECommerce");
 
         group.MapGet("/status", async (string email, IMediator mediator) =>
         {
