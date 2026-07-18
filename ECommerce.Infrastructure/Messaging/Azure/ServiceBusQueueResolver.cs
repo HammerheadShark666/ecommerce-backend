@@ -16,7 +16,7 @@ public sealed class ServiceBusQueueResolver(IOptions<AzureServiceBusOptions> opt
         }
         else if (messageType == typeof(ResetPasswordRequested))
         {
-            return options.Value.ResetPasswordRequestedQueueName;
+            return options.Value.PasswordResetRequestedQueueName;
         }
 
         throw new InvalidOperationException(

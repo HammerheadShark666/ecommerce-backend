@@ -1,6 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using ECommerce.Application.Abstractions.Email;
 using ECommerce.BackgroundFunctions.Messaging;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +20,7 @@ public class RegistrationCompletedFunction(IEmailSender emailSender,
     {
         try
         {
-            logger.LogInformation("Processing message: {MessageId}", message.MessageId);
+            logger.LogInformation("Processing message (Registration Successful): {MessageId}", message.MessageId);
 
             UserRegisteredMessage? envelope = message.Body.ToObjectFromJson<UserRegisteredMessage>() 
             ?? throw new InvalidOperationException("Unable to deserialize UserRegisteredMessage from Service Bus message.");
@@ -27,10 +28,10 @@ public class RegistrationCompletedFunction(IEmailSender emailSender,
             UserRegisteredPayload payload = envelope.Payload;
 
             string htmlBody = await emailTemplateService.RenderAsync(
-                "RegistrationSuccessful", 
+                EmailConstants.EmailTemplateRegistrationSuccessful, 
                 new() {
                     ["Name"] = payload.FirstName,
-                    ["LoginUrl"] = "/login"
+                    ["LoginUrl"] = UrlConstants.UrlLogin
                 });
 
             await emailSender.SendAsync(
@@ -39,13 +40,13 @@ public class RegistrationCompletedFunction(IEmailSender emailSender,
                 htmlBody,
                 cancellationToken);
 
-            logger.LogInformation("Email sent successfully to {Email}", payload.Email);
+            logger.LogInformation("Registration successful email sent successfully to {Email}", payload.Email);
 
             await messageActions.CompleteMessageAsync(message, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed processing email message");
+            logger.LogError(ex, "Failed processing registration successful email message");
             throw;
         }
     }

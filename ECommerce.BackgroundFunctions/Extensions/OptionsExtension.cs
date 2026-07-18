@@ -10,5 +10,6 @@ public static  class OptionsExtension
     {
         services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.Section));
         services.Configure<UrlOptions>(configuration.GetSection(UrlOptions.Section));
+        services.Configure<HashOptions>(configuration.GetSection(HashOptions.Section));
     }
 }

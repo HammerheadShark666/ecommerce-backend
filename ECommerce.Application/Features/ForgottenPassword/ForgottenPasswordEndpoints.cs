@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿using ECommerce.Application.Constants;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ECommerce.Application.Abstractions.Configuration;
 
 namespace ECommerce.Application.Features.ForgottenPassword;
 
@@ -14,8 +14,12 @@ public static class ForgottenPasswordEndpoints
         RouteGroupBuilder group = endpoints.MapGroup("forgotten-password")
                              .WithTags("forgotten-password");
 
-        group.MapPost("", async ([FromBody] ForgottenPasswordRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) => 
-                                                                                            await mediator.Send(new ForgottenPasswordCommand(request.Email)));
+        group.MapPost("", async ([FromBody] ForgottenPasswordRequest request, IMediator mediator) => 
+                                            await mediator.Send(new ForgottenPasswordCommand(request.Email)))
+                     .RequireRateLimiting(RateLimiterPolicyConstants.ForgottonPassword);
+        
+
+         
 
         //group.MapGet("/reset/validate", async (string email, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         //{
