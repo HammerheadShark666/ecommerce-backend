@@ -6,12 +6,10 @@ using ECommerce.Application.Abstractions.Email;
 using ECommerce.Application.Constants;
 using ECommerce.BackgroundFunctions.Messaging;
 using ECommerce.Domain.Entities.PasswordReset;
-using ECommerce.Infrastructure.Configurations;
 using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace ECommerce.BackgroundFunctions.Functions.Emails;
 
@@ -53,7 +51,7 @@ public class PasswordResetRequestedEmail(IECommerceDbContext dbContext,
                 {
                     ["Name"] = payload.FirstName, 
                     ["PasswordResetUrl"] = UrlConstants.UrlPasswordReset,
-                    ["ResetToken"] = hashedPasswordResetToken,                    
+                    ["ResetToken"] = token,                    
                     ["ExpiryTime"] = "30 minutes"
                 });
 

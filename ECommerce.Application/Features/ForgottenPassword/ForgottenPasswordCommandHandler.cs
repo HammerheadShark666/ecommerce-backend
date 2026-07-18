@@ -23,7 +23,7 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
 
         if(user is not null)
         {
-            await _publisher.PublishAsync(new ResetPasswordRequested(user.Id, user.FirstName, user.Email), cancellationToken); 
+            await _publisher.PublishAsync(new PasswordResetRequested(user.Id, user.FirstName, user.Email), cancellationToken); 
         }
  
 

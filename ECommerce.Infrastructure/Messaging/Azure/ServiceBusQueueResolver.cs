@@ -14,10 +14,14 @@ public sealed class ServiceBusQueueResolver(IOptions<AzureServiceBusOptions> opt
         { 
             return options.Value.UserRegisteredQueueName;
         }
-        else if (messageType == typeof(ResetPasswordRequested))
+        else if (messageType == typeof(PasswordResetRequested))
         {
             return options.Value.PasswordResetRequestedQueueName;
         }
+        else if (messageType == typeof(PasswordResetCompleted))
+        {
+            return options.Value.PasswordResetCompletedQueueName;
+        } 
 
         throw new InvalidOperationException(
             $"No queue configured for {messageType.Name}");

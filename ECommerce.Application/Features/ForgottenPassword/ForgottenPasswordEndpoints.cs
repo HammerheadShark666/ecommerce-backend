@@ -17,19 +17,13 @@ public static class ForgottenPasswordEndpoints
         group.MapPost("", async ([FromBody] ForgottenPasswordRequest request, IMediator mediator) => 
                                             await mediator.Send(new ForgottenPasswordCommand(request.Email)))
                      .RequireRateLimiting(RateLimiterPolicyConstants.ForgottonPassword);
-        
 
-         
-
-        //group.MapGet("/reset/validate", async (string email, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
-        //{
-        //    ResetPasswordValidateResponse result = await mediator.Send(new ResetPasswordValidateCommand(email));
-        //});
-
-        //group.MapPost("/reset", async ([FromBody] ResetPasswordRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
-        //{
-        //    ResetPasswordResponse result = await mediator.Send(new ResetPasswordCommand(request.Token, request.NewPassword, request.TotpCode));
-        //});
+        group.MapPost("/reset/validate", async ([FromBody] PasswordResetValidateRequest request, IMediator mediator, HttpContext httpContext) =>
+        {
+            string? ipAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            await mediator.Send(new PasswordResetValidateCommand(request.Token, request.Email, request.NewPassword, request.Code, ipAddress));
+        })                                            
+        .RequireRateLimiting(RateLimiterPolicyConstants.ForgottonPassword); 
 
         return endpoints;
     }
