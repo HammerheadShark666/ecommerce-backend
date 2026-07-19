@@ -3,12 +3,13 @@ using ECommerce.BackgroundFunctions.Extensions;
 using ECommerce.Infrastructure.Extensions;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting; 
 
 FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
+builder.Configuration.AddKeyVaultExtension(builder.Environment);
 builder.Services.AddAzureCredentials();
 builder.Services.AddApplicationSettings(builder.Configuration);
 builder.Services.AddOptions(builder.Configuration);

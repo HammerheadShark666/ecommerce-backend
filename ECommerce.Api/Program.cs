@@ -34,7 +34,7 @@ try
     builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-    builder.AddKeyVaultExtension();
+    builder.Configuration.AddKeyVaultExtension(builder.Environment);
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddApiRateLimiting();
