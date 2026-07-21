@@ -15,5 +15,6 @@ public static class DependencyInjectionExtension
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IECommerceDbContext, ECommerceDbContext>();
         services.AddScoped<IHmacsha256Hasher, Hmacsha256Hasher>();
+        services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
     }
 }

@@ -40,12 +40,12 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
     private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
             ?? throw new NotFoundException(nameof(User), email);
 
-    private async Task<(string secret, string encryptedSecrete)> GenerateAndEncryptOneTimePasswordSecretAsync()
+    private async Task<(string secret, string encryptedSecret)> GenerateAndEncryptOneTimePasswordSecretAsync()
     {
         string secret = oneTimePasswordGenerator.GenerateSecret();
-        string encryptedSecrect = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
+        string encryptedSecret = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
 
-        return (secret, encryptedSecrect);
+        return (secret, encryptedSecret);
     }
 
     private async Task UpdateUser(User user, string encryptedOneTimePasswordSecret, CancellationToken cancellationToken)

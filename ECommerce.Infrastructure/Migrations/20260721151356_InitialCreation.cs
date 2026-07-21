@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ecommerce.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     LogoUrl = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,7 +35,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,7 +54,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     ImageUrl = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     ShippingAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,7 +100,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -122,7 +122,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     OneTimePasswordSecret = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     IsTwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -144,7 +144,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -174,7 +174,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     ChangedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -200,7 +200,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PaidAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -225,7 +225,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     DeliveredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -234,6 +234,31 @@ namespace Ecommerce.Infrastructure.Migrations
                         name: "FK_ECOMMERCE_Shipments_ECOMMERCE_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "ECOMMERCE_Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ECOMMERCE_PasswordResetToken",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(44)", maxLength: 44, nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Used = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByIp = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ECOMMERCE_PasswordResetToken", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ECOMMERCE_PasswordResetToken_ECOMMERCE_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "ECOMMERCE_Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -297,7 +322,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -346,7 +371,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -380,7 +405,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotalPriceCurrency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -409,7 +434,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     DisplayOrder = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -434,7 +459,7 @@ namespace Ecommerce.Infrastructure.Migrations
                     Comment = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -493,6 +518,17 @@ namespace Ecommerce.Infrastructure.Migrations
                 name: "IX_ECOMMERCE_OrderStatusHistory_OrderId",
                 table: "ECOMMERCE_OrderStatusHistory",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ECOMMERCE_PasswordResetToken_TokenHash",
+                table: "ECOMMERCE_PasswordResetToken",
+                column: "TokenHash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ECOMMERCE_PasswordResetToken_UserId",
+                table: "ECOMMERCE_PasswordResetToken",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ECOMMERCE_Payments_OrderId",
@@ -580,6 +616,9 @@ namespace Ecommerce.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ECOMMERCE_OrderStatusHistory");
+
+            migrationBuilder.DropTable(
+                name: "ECOMMERCE_PasswordResetToken");
 
             migrationBuilder.DropTable(
                 name: "ECOMMERCE_Payments");

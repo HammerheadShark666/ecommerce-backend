@@ -50,13 +50,8 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
         if (user.IsTwoFactorEnabled)
         {
             throw new InvalidTwoFactorStateException("2FA is already confirmed and enabled.");
-        }
-
-        if (user.OneTimePasswordSecret is null)
-        {
-            throw new TwoFactorEnrolmentNotStartedException();
-        }
-
+        } 
+       
         return (user, user.OneTimePasswordSecret);
     }
 

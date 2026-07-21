@@ -2,6 +2,7 @@
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Exceptions;
+using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,16 +11,14 @@ namespace ECommerce.Application.Features.Registration.BeginRegistration;
 public record BeginRegistrationCommand(string Email, string Password, string ConfirmPassword, string LastName, string FirstName, string PhoneNumber) : ICommand<BeginRegistrationResponse>;
 
 public record BeginRegistrationResponse(
-    string QrCodeBase64,   // embed: <img src="data:image/png;base64,{value}" />
-    string OtpAuthUri      // otpauth:// URI (useful for deep-linking on mobile)
+    string Message = "Registration initiated successfully.  Email sent to verify email."
 );
 
 internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                IOneTimePasswordGenerator oneTimePasswordGenerator,
-                                               IQrCodeGenerator qrCodeGenerator,
+                                               IMessagePublisher _publisher,
                                                IPasswordHasher passwordHasher,                                        
                                                IAesEncryptionHelper aesEncryptionHelper,
-                                               IJwtSettings jwtSettings,
                                                IEncryptionSettings encryptionSettings) : ICommandHandler<BeginRegistrationCommand, BeginRegistrationResponse>                                        
 {    
     public async Task<BeginRegistrationResponse> Handle(BeginRegistrationCommand request, CancellationToken cancellationToken)
@@ -28,12 +27,12 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
 
         (string oneTimePasswordSecret, string encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
          
-        await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret, 
-                            request.LastName, request.FirstName, request.PhoneNumber, cancellationToken); 
-         
-        (string qrBase64, string uri) = GenerateQrCode(request.Email, oneTimePasswordSecret);
+        User user = await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret, 
+                            request.LastName, request.FirstName, request.PhoneNumber, cancellationToken);
 
-        return new BeginRegistrationResponse(qrBase64, uri);
+        await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
+
+        return new BeginRegistrationResponse();
     }
 
     private async Task ValidateRegistrationDetails(string email, CancellationToken cancellationToken)
@@ -54,7 +53,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
         return (secret, encryptedSecrect);
     }
 
-    private async Task CreateUserAsync(string email, string password, string encryptedOneTimePasswordSecret, string lastName, string firstName, string phoneNumber, CancellationToken cancellationToken)
+    private async Task<User> CreateUserAsync(string email, string password, string encryptedOneTimePasswordSecret, string lastName, string firstName, string phoneNumber, CancellationToken cancellationToken)
     {
         var user = new User
         {
@@ -70,13 +69,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
 
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
-    }
 
-    private (string qrBase64, string uri) GenerateQrCode(string email, string secret)
-    {
-        string uri = qrCodeGenerator.BuildOneTimePasswordAuthUri(jwtSettings.Issuer, email, secret);
-        string qrBase64 = qrCodeGenerator.GenerateQrCodeBase64(uri);
-
-        return (qrBase64, uri);
+        return user;
     }
 }

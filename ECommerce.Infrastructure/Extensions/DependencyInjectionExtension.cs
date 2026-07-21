@@ -22,6 +22,7 @@ public static class DependencyInjectionExtension
         services.AddScoped<IHmacsha256Hasher, Hmacsha256Hasher>();
         services.AddScoped<ITokenCleanupService, TokenCleanupService>();     
         services.AddScoped<IEmailSender, AzureCommunicationEmailSender>();
+        services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
 
         services.AddHostedService<TokenCleanupJob>();
     }

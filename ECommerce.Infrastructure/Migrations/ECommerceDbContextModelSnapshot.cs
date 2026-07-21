@@ -670,6 +670,10 @@ namespace Ecommerce.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("EmailVerificationCode")
+                        .HasMaxLength(44)
+                        .HasColumnType("nvarchar(44)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Infrastructure.Migrations
 {
     [DbContext(typeof(ECommerceDbContext))]
-    [Migration("20260718102826_PasswordResetToken")]
-    partial class PasswordResetToken
+    [Migration("20260721152859_EmailVerificationCodeNullable")]
+    partial class EmailVerificationCodeNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -672,6 +672,10 @@ namespace Ecommerce.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("EmailVerificationCode")
+                        .HasMaxLength(44)
+                        .HasColumnType("nvarchar(44)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
