@@ -1,6 +1,7 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Constants;
 using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
@@ -64,7 +65,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
             PasswordHash = passwordHasher.Hash(password),
             OneTimePasswordSecret = encryptedOneTimePasswordSecret,
             IsTwoFactorEnabled = false,
-            Status = "Active"            
+            Status = RegistrationConstants.RegistrationInActive
         }; 
 
         dbContext.Users.Add(user);

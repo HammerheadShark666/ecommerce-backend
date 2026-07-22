@@ -66,8 +66,8 @@ public class RegistrationVerifyEmail(IECommerceDbContext dbContext,
         User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Email == email, cancellationToken)
                 ?? throw new NotFoundException(nameof(User), id);
 
-
-        user.EmailVerificationCode = hashedCode;
+        user.EmailVerificationCode = hashedCode;        
+        user.EmailVerificationCodeExpiresAt = DateTime.UtcNow.AddMinutes(RegistrationConstants.VerifyRegistrationEmailExpiryMinutes);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

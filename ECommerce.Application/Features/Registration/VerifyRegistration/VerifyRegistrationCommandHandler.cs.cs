@@ -1,6 +1,7 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Constants;
 using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
@@ -13,64 +14,33 @@ public record VerifyRegistrationCommand(string Email, string Code) : ICommand<Ve
 public record VerifyRegistrationResponse(bool Success, string Message);
 
 internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
-                                                IAesEncryptionHelper aesEncryptionHelper,                                              
-                                                IEncryptionSettings encryptionSettings,
-                                                IMessagePublisher _publisher,
-                                                IOneTimePasswordGenerator oneTimePasswordGenerator) : ICommandHandler<VerifyRegistrationCommand, VerifyRegistrationResponse>
+                                                IHmacsha256Hasher hmacsha256Hasher,
+                                                IHashSettings hashSettings,
+                                                IMessagePublisher _publisher) : ICommandHandler<VerifyRegistrationCommand, VerifyRegistrationResponse>
 {
     public async Task<VerifyRegistrationResponse> Handle(VerifyRegistrationCommand request, CancellationToken cancellationToken)
     {
-        (User? user, string? otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
-               
-        bool codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
-        await UpdateTwoFactorEnabledState(user, cancellationToken);
+        string hashedCode = hmacsha256Hasher.HashToken(request.Code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
 
-        if (codeIsValid)
-        {
-            await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);
-            return new VerifyRegistrationResponse(true, "Registration verified");
-        }
-        else
-        {
-            return new VerifyRegistrationResponse(false, "Invalid or expired code. Please try again.");
-        }
+        User user = await GetUser(request.Email, hashedCode, cancellationToken);         
+        await UpdateUser(user, cancellationToken); 
+
+        await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);
+
+        return new VerifyRegistrationResponse(true, "Registration verified"); 
     }
 
-    private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
+    private async Task<User> GetUser(string email, string hashedCode, CancellationToken cancellationToken) => 
+                                await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email 
+                                                                          && u.EmailVerificationCode == hashedCode
+                                                                          && u.EmailVerificationCodeExpiresAt >= DateTime.UtcNow, cancellationToken)
+                                     ?? throw new VerificationCodeExpiredException();
+
+
+    private async Task UpdateUser(User user, CancellationToken cancellationToken)
     {
-        User? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken) 
-            ?? throw new NotFoundException(nameof(User), email);
-        ;
-
-        if (user.OneTimePasswordSecret is null)
-        {
-            throw new TwoFactorEnrolmentNotStartedException();
-        }
-
-        if (user.IsTwoFactorEnabled)
-        {
-            throw new InvalidTwoFactorStateException("2FA is already confirmed and enabled.");
-        } 
-       
-        return (user, user.OneTimePasswordSecret);
-    }
-
-    private async Task<bool> ValidateCodeAsync(string otpSecret, string code)
-    {       
-        string decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
-
-        bool valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
-        if (!valid)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        return true;
-    }
-
-    private async Task UpdateTwoFactorEnabledState(User user, CancellationToken cancellationToken)
-    {
-        user.IsTwoFactorEnabled = true;
+        user.IsEmailVerified = true;
+        user.Status = RegistrationConstants.RegistrationActive;
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

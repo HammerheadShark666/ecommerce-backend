@@ -24,7 +24,7 @@ public static class RegistrationEndpoints
             return Results.Ok(result);
         }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
 
-        group.MapPost("/verify", async ([FromBody] VerifyRegistrationRequest request, IMediator mediator) =>
+        group.MapPost("/verify-email", async ([FromBody] VerifyRegistrationRequest request, IMediator mediator) =>
         {
             VerifyRegistrationResponse result = await mediator.Send(new VerifyRegistrationCommand(request.Email, request.Code));
             return Results.Ok(result);

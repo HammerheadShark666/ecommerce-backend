@@ -17,6 +17,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.PasswordHash).IsRequired().HasMaxLength(255);
         builder.Property(x => x.Phone).HasMaxLength(50);
         builder.Property(x => x.EmailVerificationCode).HasMaxLength(44);
+        builder.Property(x => x.EmailVerificationCodeExpiresAt);
         builder.Property(x => x.IsEmailVerified).HasDefaultValue(false);
         builder.Property(x => x.Status).HasMaxLength(50);
         builder.Property(x => x.OneTimePasswordSecret).HasMaxLength(250);
