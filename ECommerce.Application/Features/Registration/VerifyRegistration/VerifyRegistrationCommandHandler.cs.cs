@@ -1,10 +1,4 @@
-﻿using ECommerce.Application.Abstractions;
-using ECommerce.Application.Abstractions.Configuration;
-using ECommerce.Application.Abstractions.Messaging;
-using ECommerce.Application.Exceptions;
-using ECommerce.Application.Features.Registration.Events;
-using ECommerce.Domain.Entities.User;
-using Microsoft.EntityFrameworkCore;
+﻿using ECommerce.Application.Abstractions.Messaging;
 
 namespace ECommerce.Application.Features.Registration.VerifyRegistration;
 
