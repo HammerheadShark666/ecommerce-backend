@@ -29,6 +29,7 @@ try
     builder.Services.AddAllOptions(builder.Configuration);
     builder.Services.AddOpenApi();
     builder.Services.AddAuthorization();
+    builder.Services.AddExceptionHandler<VerificationCodeExpiredExceptionHandler>();
     builder.Services.AddExceptionHandler<UnauthorizedExceptionHandler>();
     builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
     builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
