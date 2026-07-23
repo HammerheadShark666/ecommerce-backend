@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.Constants;
 using ECommerce.Application.Features.Registration.BeginRegistration;
+using ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
 using ECommerce.Application.Features.Registration.VerifyRegistration;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,13 @@ public static class RegistrationEndpoints
             VerifyRegistrationResponse result = await mediator.Send(new VerifyRegistrationCommand(request.Email, request.Code));
             return Results.Ok(result);
         }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
+
+        group.MapPost("/request-verify-email", async ([FromBody] RequestVerifyRegistrationEmailRequest request, IMediator mediator) =>
+        {
+            RequestVerifyRegistrationEmailResponse result = await mediator.Send(new RequestVerifyRegistrationEmailCommand(request.Email));
+            return Results.Ok(result);
+        }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
+
 
         return endpoints;
     }

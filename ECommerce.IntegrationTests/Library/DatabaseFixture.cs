@@ -41,6 +41,35 @@ public sealed class SqlServerFixture : IAsyncLifetime
         // Creates database and applies migrations
         await db.Database.MigrateAsync();
 
+        // Debug: verify expected tables exist in the test database and print listing if they do not.
+        // This helps diagnose "Cannot find the object \"ECOMMERCE_Users\"" errors when running tests.
+        await using (var verifyConn = new SqlConnection(ConnectionString))
+        {
+            await verifyConn.OpenAsync();
+
+            using SqlCommand verifyCmd = verifyConn.CreateCommand();
+            verifyCmd.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'ECOMMERCE_Users'";
+            object? result = await verifyCmd.ExecuteScalarAsync();
+            int count = Convert.ToInt32(result ?? 0);
+
+            if (count == 0)
+            {
+                // dump existing tables for debugging
+                using SqlCommand listCmd = verifyConn.CreateCommand();
+                listCmd.CommandText = "SELECT TABLE_SCHEMA + '.' + TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_SCHEMA, TABLE_NAME";
+                using SqlDataReader reader = await listCmd.ExecuteReaderAsync();
+
+                Console.WriteLine("---- Database tables in test DB ----");
+                while (await reader.ReadAsync())
+                {
+                    Console.WriteLine(reader.GetString(0));
+                }
+                Console.WriteLine("------------------------------------");
+
+                throw new InvalidOperationException("ECOMMERCE_Users table not found after migrations. Ensure migrations applied to the same database used by the test host.");
+            }
+        }
+
         // Insert seeded users only if missing (handles re-runs / existing DB)
         if (!await db.Users.AnyAsync(u => u.Id == _seededUserIds[0] || u.Id == _seededUserIds[1]))
         {

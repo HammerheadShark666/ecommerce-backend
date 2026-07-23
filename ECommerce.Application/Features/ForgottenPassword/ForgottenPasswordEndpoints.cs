@@ -11,7 +11,7 @@ public static class ForgottenPasswordEndpoints
 { 
     public static IEndpointRouteBuilder MapForgottenPasswordEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("forgotten-password")
+        RouteGroupBuilder group = endpoints.MapGroup("/forgotten-password")
                              .WithTags("forgotten-password");
 
         group.MapPost("", async ([FromBody] ForgottenPasswordRequest request, IMediator mediator) => 
