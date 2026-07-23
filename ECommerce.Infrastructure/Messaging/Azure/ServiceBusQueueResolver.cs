@@ -8,22 +8,25 @@ namespace ECommerce.Infrastructure.Messaging.Azure;
 public sealed class ServiceBusQueueResolver(IOptions<AzureServiceBusOptions> options)
     : IServiceBusQueueResolver
 {
+    private static readonly IReadOnlyDictionary<Type, Func<AzureServiceBusOptions, string>> QueueMappings =
+        new Dictionary<Type, Func<AzureServiceBusOptions, string>>
+        {
+            { typeof(UserRegistered), o => o.UserRegisteredQueueName },
+            { typeof(PasswordResetRequested), o => o.PasswordResetRequestedQueueName },
+            { typeof(PasswordResetCompleted), o => o.PasswordResetCompletedQueueName },
+            { typeof(VerifyRegistrationEmail), o => o.VerifyRegistrationEmailQueueName }
+        };
+
     public string GetQueueName(Type messageType)
     {
-        if (messageType == typeof(UserRegistered))
-        { 
-            return options.Value.UserRegisteredQueueName;
-        }
-        else if (messageType == typeof(PasswordResetRequested))
+        if (QueueMappings.TryGetValue(messageType, out Func<AzureServiceBusOptions, string>? selector))
         {
-            return options.Value.PasswordResetRequestedQueueName;
+            return selector(options.Value);
         }
-        else if (messageType == typeof(PasswordResetCompleted))
-        {
-            return options.Value.PasswordResetCompletedQueueName;
-        } 
 
-        throw new InvalidOperationException(
-            $"No queue configured for {messageType.Name}");
+        throw new ArgumentOutOfRangeException(
+            nameof(messageType),
+            messageType,
+            $"No queue mapping exists for message type '{messageType.Name}'.");
     }
 }
