@@ -1,0 +1,125 @@
+﻿
+<!DOCTYPE html>
+<html>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial,sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:30px 0;">
+        <tr>
+            <td align="center">
+
+                <table width="600" cellpadding="0" cellspacing="0"
+                       style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+
+                    <!-- Banner -->
+                    <tr>
+                        <td style="background-color:#2563eb; padding:30px; text-align:center;">
+                            <h1 style="color:#ffffff; margin:0; font-size:32px;">
+                                ECommerce
+                            </h1>
+                            <p style="color:#dbeafe; margin:10px 0 0; font-size:16px;">
+                                Verify your email to complete your registration
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding:40px 35px; color:#333333;">
+
+                            <h2 style="color:#111827; margin-top:0;">
+                                Hi {{FirstName}},
+                            </h2>
+
+                            <p style="font-size:16px; line-height:1.6;">
+                                Thank you for registering with <strong>ECommerce</strong>.
+                                To complete your registration, please verify your email address.
+                            </p>
+
+                            <!-- Verification Code -->
+                            <table cellpadding="0" cellspacing="0" width="100%" style="margin:30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <div style="
+                                            display:inline-block;
+                                            padding:18px 40px;
+                                            background-color:#eff6ff;
+                                            border:2px dashed #2563eb;
+                                            border-radius:8px;
+                                            font-size:36px;
+                                            font-weight:bold;
+                                            letter-spacing:8px;
+                                            color:#2563eb;">
+                                            {{VerificationCode}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="font-size:16px; line-height:1.6; text-align:center;">
+                                Enter this <strong>6-digit verification code</strong> on the verification page,
+                                or simply click the button below.
+                            </p>
+
+                            <!-- Verify Button -->
+                            <table cellpadding="0" cellspacing="0" style="margin:30px auto;">
+                                <tr>
+                                    <td align="center"
+                                        style="border-radius:6px; background-color:#2563eb;">
+                                        <a href="{{BaseUrl}}{{VerifyUrl}}"
+                                           style="
+                                           display:inline-block;
+                                           padding:14px 30px;
+                                           color:#ffffff;
+                                           text-decoration:none;
+                                           font-size:16px;
+                                           font-weight:bold;
+                                           border-radius:6px;">
+                                            Verify Email
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="font-size:14px; color:#6b7280; line-height:1.6;">
+                                If the button above doesn't work, copy and paste the following link into your browser:
+                            </p>
+
+                            <p style="font-size:14px; word-break:break-all;">
+                                <a href="{{BaseUrl}}{{VerifyUrl}}" style="color:#2563eb;">
+                                    {{BaseUrl}}{{VerifyUrl}}
+                                </a>
+                            </p>
+
+                            <p style="font-size:14px; color:#6b7280; line-height:1.6;">
+                                This verification code will expire in
+                                <strong>{{ExpiryMinutes}} minutes</strong>.
+                            </p>
+
+                            <p style="font-size:14px; color:#6b7280;">
+                                If you didn't create an account with ECommerce, you can safely ignore this email.
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="
+                            background-color:#f9fafb;
+                            padding:20px;
+                            text-align:center;
+                            color:#6b7280;
+                            font-size:12px;">
+
+                            © {{Year}} ECommerce. All rights reserved.
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

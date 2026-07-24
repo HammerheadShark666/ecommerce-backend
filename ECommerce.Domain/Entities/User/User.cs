@@ -17,8 +17,12 @@ public class User : AuditableEntity<Guid>
 
     public bool IsEmailVerified { get; set; }
 
-    public required string Status { get; set; } // Active / Blocked 
-         
+    public string? EmailVerificationCode { get; set; }
+
+    public DateTime? EmailVerificationCodeExpiresAt { get; set; }
+
+    public required string Status { get; set; }
+
     public string? OneTimePasswordSecret { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
 

@@ -11,4 +11,6 @@ public sealed class AzureServiceBusOptions
     public required string PasswordResetRequestedQueueName { get; init; }
 
     public required string PasswordResetCompletedQueueName { get; init; }
+
+    public required string VerifyRegistrationEmailQueueName { get; init; }
 }
