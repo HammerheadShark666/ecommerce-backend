@@ -57,7 +57,7 @@ jobs:
         run: dotnet publish ECommerce.Api/ECommerce.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-dependencies
  
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4.6.3
+        uses: actions/upload-artifact@v4.6.2
         with:
             name: .net-app
             path: ${{env.DOTNET_ROOT}}/myapp 
