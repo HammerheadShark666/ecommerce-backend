@@ -24,5 +24,13 @@ public class BeginRegistrationCommandValidator : AbstractValidator<BeginRegistra
         RuleFor(x => x.ConfirmPassword)
             .Must((model, confirmPassword) => confirmPassword == model.Password)
             .WithMessage("Passwords do not match.");
+
+        RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage("First name is required.")
+            .MaximumLength(100).WithMessage("First name must be at most 100 characters.");
+
+        RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage("Last name is required.")
+            .MaximumLength(100).WithMessage("Last name must be at most 100 characters.");
     }
 }

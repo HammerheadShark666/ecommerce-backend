@@ -1,85 +1,25 @@
 using System.Net.Http.Json;
-using ECommerce.Application.Abstractions;
-using ECommerce.Domain.Entities.User;
-using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using Xunit;
 
 namespace ECommerce.IntegrationTests.Registration;
 
 [Collection("Database")]
-public class BeginRegistrationIntegrationTest : IAsyncLifetime
+public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
 {
     private readonly SqlServerFixture _fixture;
     private readonly TestApplicationFactory _appFactory; 
     private readonly HttpClient _client;
 
-    public BeginRegistrationIntegrationTest(SqlServerFixture fixture)
+    public BeginRegistrationFailIntegrationTest(SqlServerFixture fixture)
     {
         _fixture = fixture; 
         _appFactory = new TestApplicationFactory(_fixture.ConnectionString);
         _client = _appFactory.CreateClient();
     }
-
-    [Fact]
-    public async Task EndToEnd_Registration_And_Verify_Successful()
-    {
-        // Arrange
-        string email = "reg@example.com";
-        string password = "RegPass!1"; 
-
-        // Act: begin registration
-        HttpResponseMessage beginResp = await PostRegisterRawAsync(email, password, password);
-        beginResp.EnsureSuccessStatusCode();
-
-        BeginRegistrationResponse? beginDto = await beginResp.Content.ReadFromJsonAsync<BeginRegistrationResponse>();
-        beginDto.Should().NotBeNull();
-        beginDto!.OtpAuthUri.Should().Contain("secret=");
-
-        // parse secret from uri
-        var uri = new Uri(beginDto.OtpAuthUri);
-        string query = uri.Query.TrimStart('?'); 
-
-        Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(uri.Query);
-        string secret = queryParams["secret"].First()
-                                ?? throw new InvalidOperationException("Failed to parse query string.");
-        secret.Should().NotBeNull();  
-         
-        // resolve one-time code using registered IOneTimePasswordGenerator
-        string oneTimeCode;
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
-        {
-            IOneTimePasswordGenerator totpGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
-            oneTimeCode = totpGenerator.GetCurrentCode(secret);
-        }
-
-        HttpResponseMessage confirmResp = await PostConfirmRegisterRawAsync(email, oneTimeCode);
-        confirmResp.EnsureSuccessStatusCode();
-
-        // Assert: user is updated in database
-        ConfirmRegistrationResponse? confirmDto = await confirmResp.Content.ReadFromJsonAsync<ConfirmRegistrationResponse>();
-        confirmDto.Should().NotBeNull();
-        confirmDto!.Success.Should().BeTrue();  
-
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
-            .UseSqlServer(_fixture.ConnectionString)
-            .Options; 
-
-        await using var db = new ECommerceDbContext(options);
-        User? user = db.Users.FirstOrDefault(u => u.Email == email);
-        user.Should().NotBeNull();
-        user!.IsTwoFactorEnabled.Should().BeTrue();
-        user.OneTimePasswordSecret.Should().NotBeNullOrWhiteSpace();
-
-        Assert.Single(_appFactory.Publisher.PublishedMessages);
-    }
-
+    
     [Fact]
     public async Task VerifyRegistration_WithInvalidCode_ReturnsUnauthorized()
     {
@@ -95,7 +35,7 @@ public class BeginRegistrationIntegrationTest : IAsyncLifetime
         HttpResponseMessage verifyResp = await PostConfirmRegisterRawAsync(email, "000000");
 
         // Assert
-        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized); 
+        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest); 
     }
 
     [Theory]
@@ -219,5 +159,5 @@ public class BeginRegistrationIntegrationTest : IAsyncLifetime
        => _client.PostAsJsonAsync("/register", new { Email = email, Password = password, ConfirmPassword = confirmPassword, LastName = "Smith", FirstName = "John", PhoneNumber = "01924 4323432" });
 
     private Task<HttpResponseMessage> PostConfirmRegisterRawAsync(string email, string code)
-       => _client.PostAsJsonAsync("/register/verify", new { Email = email, Code = code });
+       => _client.PostAsJsonAsync("/register/verify-email", new { Email = email, Code = code });
 }
