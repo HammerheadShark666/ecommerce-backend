@@ -42,6 +42,9 @@ public class TestApplicationFactory(string connectionString) : WebApplicationFac
             services.AddScoped<IDatabaseHelper, DatabaseHelper>();           
             services.RemoveAll<IOneTimePasswordGenerator>();
             services.AddSingleton<IOneTimePasswordGenerator, FakeOneTimePasswordGenerator>();
+            // Use deterministic refresh token generator for tests so we can assert DB values
+            services.RemoveAll<IRefreshTokenGenerator>();
+            services.AddSingleton<IRefreshTokenGenerator, ECommerce.IntegrationTests.Fakes.FakeRefreshTokenGenerator>();
             services.AddSingleton<IMessagePublisher>(Publisher);
         });
     }

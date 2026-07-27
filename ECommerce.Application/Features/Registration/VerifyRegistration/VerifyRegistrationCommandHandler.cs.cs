@@ -11,7 +11,7 @@ namespace ECommerce.Application.Features.Registration.VerifyRegistration;
 
 public record VerifyRegistrationCommand(string Email, string Code) : ICommand<VerifyRegistrationResponse>;
 
-public record VerifyRegistrationResponse(bool Success, string Message);
+public record VerifyRegistrationResponse(string Message = "Registration email verified");
 
 internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                 IHmacsha256Hasher hmacsha256Hasher,
@@ -27,7 +27,7 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
 
         await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);
 
-        return new VerifyRegistrationResponse(true, "Registration verified");
+        return new VerifyRegistrationResponse();
     }
 
     private async Task<User> GetUser(string email, string hashedCode, CancellationToken cancellationToken) =>

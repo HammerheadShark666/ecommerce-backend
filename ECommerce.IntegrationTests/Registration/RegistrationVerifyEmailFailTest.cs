@@ -116,5 +116,5 @@ public class ConfirmRegistrationIntegrationTest : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask; 
    
     private Task<HttpResponseMessage> PostConfirmRegisterRawAsync(string email, string code)
-       => _client.PostAsJsonAsync("/register/verify", new { Email = email, Code = code });
+       => _client.PostAsJsonAsync("/register/verify-email", new { Email = email, Code = code });
 }
