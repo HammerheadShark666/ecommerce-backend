@@ -4,9 +4,9 @@ namespace ECommerce.Domain.Entities.Product;
 
 public class Product : AuditableEntity<Guid>
 {
-    public Guid CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
 
-    public Guid BrandId { get; set; }
+    public Guid? BrandId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -21,4 +21,6 @@ public class Product : AuditableEntity<Guid>
     public bool IsActive { get; set; }
 
     public bool IsFeatured { get; set; }
+
+    public Category? Category { get; set; }
 }
