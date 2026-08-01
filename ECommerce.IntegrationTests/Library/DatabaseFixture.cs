@@ -76,9 +76,6 @@ public sealed class SqlServerFixture : IAsyncLifetime
         }
     }
 
-    /// <summary>
-    /// Clear non-seeded data so tests can run without recreating the database.
-    /// </summary>
     public async Task ResetDatabaseAsync()
     {
         DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
@@ -87,16 +84,20 @@ public sealed class SqlServerFixture : IAsyncLifetime
 
         await using var db = new ECommerceDbContext(options);
 
+        // Delete children before parents to respect FK constraints
+        await db.Products.ExecuteDeleteAsync();
+        await db.Categories.ExecuteDeleteAsync();
+        await db.Brands.ExecuteDeleteAsync();
+
         IQueryable<User> usersToRemove = db.Users.Where(u => !_seededUserIds.Contains(u.Id));
         db.Users.RemoveRange(usersToRemove);
         await db.SaveChangesAsync();
+
         // Ensure seeded users still exist (in case upstream cleanup removed them)
         foreach (Guid id in _seededUserIds)
         {
             if (!await db.Users.AnyAsync(u => u.Id == id))
             {
-                // re-add minimal seeded user data for missing seeded id
-                string username = id == _seededUserIds[0] ? "alice" : "john";
                 string email = id == _seededUserIds[0] ? "alice@example.com" : "john@example.com";
 
                 await db.Users.AddAsync(new User

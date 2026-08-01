@@ -3,8 +3,8 @@
 // Request — bound from query string via [AsParameters]
 public sealed class GetProductsRequest
 {
-    public int Page { get; init; } = 1;
-    public int PageSize { get; init; } = 20;
+    public int? Page { get; init; }
+    public int? PageSize { get; init; }
     public string? Category { get; init; }
     public decimal? MinPrice { get; init; }
     public decimal? MaxPrice { get; init; }

@@ -16,8 +16,13 @@ public static class ProductEndpoints
 
         group.MapGet("", async ([AsParameters] GetProductsRequest request, IMediator mediator) =>
         {
-            GetProductsResponse result = await mediator.Send(new GetProductsQuery(request.Page, request.PageSize, request.Category,
-                                                                                    request.MinPrice, request.MaxPrice, request.Search, request.SortBy));
+            GetProductsResponse result = await mediator.Send(new GetProductsQuery(request.Page ?? 1, 
+                                                                                  request.PageSize ?? 20, 
+                                                                                  request.Category,
+                                                                                  request.MinPrice, 
+                                                                                  request.MaxPrice, 
+                                                                                  request.Search, 
+                                                                                  request.SortBy));
             return Results.Ok(result);
         });
 
