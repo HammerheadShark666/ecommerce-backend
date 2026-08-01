@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Abstractions;
-using ECommerce.Application.Features.Product.GetProduct;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
