@@ -1,13 +1,14 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Features.Product.GetProduct;
+using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Product.GetProducts;
 
-public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext)
-    : IRequestHandler<GetProductsQuery, GetProductsResponse>
+public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext) : IRequestHandler<GetProductsQuery, Result<GetProductsResponse>>
 { 
-    public async Task<GetProductsResponse> Handle(
+    public async Task<Result<GetProductsResponse>> Handle(
         GetProductsQuery request,
         CancellationToken cancellationToken)
     { 
@@ -52,7 +53,9 @@ public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext)
                 p.IsActive))
             .ToListAsync(cancellationToken);
 
-        return new GetProductsResponse(items, totalCount, request.Page, request.PageSize);
+        //return new GetProductsResponse(items, totalCount, request.Page, request.PageSize);
+
+        return Result.Ok(new GetProductsResponse(items, totalCount, request.Page, request.PageSize));
     }
 
     private static IQueryable<Domain.Entities.Product.Product> ApplySort(IQueryable<Domain.Entities.Product.Product> query, ProductSortField? sortBy) => sortBy switch

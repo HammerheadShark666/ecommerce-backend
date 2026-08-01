@@ -10,7 +10,7 @@ public class Product : AuditableEntity<Guid>
 
     public string Name { get; set; } = null!;
 
-    public string? Slug { get; set; }
+    public required string Slug { get; set; }
 
     public string? Description { get; set; }
 
