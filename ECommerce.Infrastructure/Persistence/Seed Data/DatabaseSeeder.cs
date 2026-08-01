@@ -7,139 +7,133 @@ public static class DatabaseSeeder
 {
     private const string SeedUser = "seed-script";
 
-    private sealed record CategorySeed(string Name, string[] Brands, (string Name, decimal Price)[] Products);
+    private static readonly string[] ColorVariants = { "Black", "White", "Blue", "Red", "Grey" };
+    private static readonly string[] BookFormats = { "Hardcover", "Paperback", "eBook", "Audiobook", "Large Print" };
+
+    private sealed record ProductType(string BaseName, decimal Price);
+    private sealed record CategorySeed(string Name, string[] Brands, string[] Variants, ProductType[] Types);
 
     private static readonly CategorySeed[] Catalogue =
     {
-        new("Electronics",
-            new[] { "Acme", "Nimbus", "Vertex" },
-            new (string, decimal)[]
-            {
-                ("Wireless Noise-Cancelling Headphones", 199.99m),
-                ("Bluetooth Portable Speaker", 59.99m),
-                ("27-inch 4K Monitor", 329.99m),
-                ("Mechanical Gaming Keyboard", 89.99m),
-                ("Wireless Ergonomic Mouse", 34.99m),
-                ("USB-C Docking Station", 129.99m),
-                ("Smart Fitness Watch", 149.99m),
-                ("Portable SSD 1TB", 109.99m),
-                ("Webcam 1080p", 44.99m),
-                ("Wireless Charging Pad", 24.99m),
-                ("Action Camera 4K", 249.99m),
-                ("Home Theatre Soundbar", 179.99m),
-                ("Smart Home Hub", 79.99m),
-                ("Robot Vacuum Cleaner", 299.99m),
-                ("Wireless Earbuds", 69.99m),
-                ("Streaming Media Player", 39.99m),
-                ("Power Bank 20000mAh", 29.99m),
-                ("Smart Plug (4-Pack)", 19.99m),
-                ("Laptop Stand Adjustable", 27.99m),
-                ("Wireless Router Wi-Fi 6", 149.99m)
-            }),
+        new("Electronics", new[] { "Acme", "Nimbus", "Vertex" }, ColorVariants, new[]
+        {
+            new ProductType("Wireless Headphones", 199.99m), new ProductType("Bluetooth Speaker", 59.99m),
+            new ProductType("Smart Watch", 149.99m), new ProductType("Fitness Band", 49.99m),
+            new ProductType("Laptop", 899.99m), new ProductType("Ultrabook", 1099.99m),
+            new ProductType("27-inch Monitor", 329.99m), new ProductType("24-inch Monitor", 219.99m),
+            new ProductType("Mechanical Keyboard", 89.99m), new ProductType("Wireless Mouse", 34.99m),
+            new ProductType("Gaming Mouse", 54.99m), new ProductType("USB-C Hub", 44.99m),
+            new ProductType("Portable SSD", 109.99m), new ProductType("External HDD", 79.99m),
+            new ProductType("Power Bank", 29.99m), new ProductType("Wireless Charger", 24.99m),
+            new ProductType("Webcam", 44.99m), new ProductType("Ring Light", 34.99m),
+            new ProductType("Action Camera", 249.99m), new ProductType("DSLR Camera", 649.99m),
+            new ProductType("Camera Tripod", 39.99m), new ProductType("Home Theatre Soundbar", 179.99m),
+            new ProductType("Wireless Earbuds", 69.99m), new ProductType("Noise Cancelling Earbuds", 159.99m),
+            new ProductType("Streaming Stick", 39.99m), new ProductType("Smart Plug", 14.99m),
+            new ProductType("Smart Bulb", 12.99m), new ProductType("Smart Thermostat", 129.99m),
+            new ProductType("Robot Vacuum", 299.99m), new ProductType("Cordless Vacuum", 199.99m),
+            new ProductType("Air Purifier", 149.99m), new ProductType("Electric Toothbrush", 49.99m),
+            new ProductType("Hair Dryer", 39.99m), new ProductType("Hair Straightener", 44.99m),
+            new ProductType("Electric Shaver", 59.99m), new ProductType("Wireless Router", 89.99m),
+            new ProductType("Mesh Wi-Fi System", 179.99m), new ProductType("Network Switch", 34.99m),
+            new ProductType("HDMI Cable", 9.99m), new ProductType("Graphics Tablet", 79.99m)
+        }),
 
-        new("Home & Kitchen",
-            new[] { "Cascade", "Aurora" },
-            new (string, decimal)[]
-            {
-                ("Stainless Steel Cookware Set", 189.99m),
-                ("Non-Stick Frying Pan 28cm", 24.99m),
-                ("Stand Mixer 5.5L", 249.99m),
-                ("Electric Kettle 1.7L", 34.99m),
-                ("Espresso Coffee Machine", 179.99m),
-                ("Air Fryer 5.5L", 89.99m),
-                ("Knife Block Set", 79.99m),
-                ("Ceramic Dinnerware Set (16pc)", 69.99m),
-                ("Memory Foam Pillow", 29.99m),
-                ("Cotton Bath Towel Set", 39.99m),
-                ("Blackout Curtains (Pair)", 44.99m),
-                ("Scented Candle Gift Set", 19.99m),
-                ("Vacuum Cleaner Cordless", 199.99m),
-                ("Food Storage Container Set", 24.99m),
-                ("Bamboo Cutting Board", 17.99m),
-                ("Electric Toothbrush", 49.99m),
-                ("Digital Kitchen Scale", 14.99m),
-                ("Bedding Duvet Set Queen", 59.99m),
-                ("Table Lamp Modern", 34.99m),
-                ("Throw Blanket Knitted", 27.99m)
-            }),
+        new("Home & Kitchen", new[] { "Cascade", "Aurora" }, ColorVariants, new[]
+        {
+            new ProductType("Table Lamp", 34.99m), new ProductType("Floor Lamp", 59.99m),
+            new ProductType("Desk Lamp", 24.99m), new ProductType("Pendant Light", 44.99m),
+            new ProductType("Ceiling Fan", 89.99m), new ProductType("Stainless Steel Cookware Set", 189.99m),
+            new ProductType("Non-Stick Frying Pan", 24.99m), new ProductType("Cast Iron Skillet", 39.99m),
+            new ProductType("Stand Mixer", 249.99m), new ProductType("Hand Mixer", 29.99m),
+            new ProductType("Blender", 59.99m), new ProductType("Food Processor", 89.99m),
+            new ProductType("Electric Kettle", 34.99m), new ProductType("Espresso Machine", 179.99m),
+            new ProductType("Drip Coffee Maker", 49.99m), new ProductType("Air Fryer", 89.99m),
+            new ProductType("Toaster", 24.99m), new ProductType("Toaster Oven", 69.99m),
+            new ProductType("Slow Cooker", 44.99m), new ProductType("Pressure Cooker", 79.99m),
+            new ProductType("Knife Set", 79.99m), new ProductType("Cutting Board", 17.99m),
+            new ProductType("Dinnerware Set", 69.99m), new ProductType("Glassware Set", 34.99m),
+            new ProductType("Cutlery Set", 29.99m), new ProductType("Storage Container Set", 24.99m),
+            new ProductType("Bath Towel Set", 39.99m), new ProductType("Bedding Duvet Set", 59.99m),
+            new ProductType("Pillow", 19.99m), new ProductType("Mattress Topper", 89.99m),
+            new ProductType("Blackout Curtains", 44.99m), new ProductType("Area Rug", 79.99m),
+            new ProductType("Throw Blanket", 27.99m), new ProductType("Wall Clock", 22.99m),
+            new ProductType("Picture Frame", 12.99m), new ProductType("Scented Candle", 16.99m),
+            new ProductType("Diffuser", 29.99m), new ProductType("Vacuum Cleaner", 199.99m),
+            new ProductType("Steam Mop", 69.99m), new ProductType("Laundry Hamper", 24.99m)
+        }),
 
-        new("Clothing",
-            new[] { "Vertex", "Aurora" },
-            new (string, decimal)[]
-            {
-                ("Men's Slim Fit Chinos", 44.99m),
-                ("Women's High-Waist Jeans", 54.99m),
-                ("Unisex Cotton T-Shirt (3-Pack)", 29.99m),
-                ("Men's Merino Wool Jumper", 69.99m),
-                ("Women's Puffer Jacket", 89.99m),
-                ("Men's Oxford Shirt", 39.99m),
-                ("Women's Midi Dress", 59.99m),
-                ("Men's Running Shorts", 24.99m),
-                ("Women's Yoga Leggings", 34.99m),
-                ("Unisex Hoodie", 44.99m),
-                ("Men's Leather Belt", 22.99m),
-                ("Women's Cashmere Scarf", 32.99m),
-                ("Men's Chino Shorts", 29.99m),
-                ("Women's Blazer Fitted", 74.99m),
-                ("Unisex Beanie Hat", 14.99m),
-                ("Men's Denim Jacket", 64.99m),
-                ("Women's Wrap Cardigan", 49.99m),
-                ("Men's Polo Shirt", 27.99m),
-                ("Women's Ankle Boots", 79.99m),
-                ("Unisex Wool Socks (5-Pack)", 19.99m)
-            }),
+        new("Clothing", new[] { "Vertex", "Aurora" }, ColorVariants, new[]
+        {
+            new ProductType("Men's T-Shirt", 19.99m), new ProductType("Women's T-Shirt", 19.99m),
+            new ProductType("Men's Jeans", 54.99m), new ProductType("Women's Jeans", 54.99m),
+            new ProductType("Men's Chinos", 44.99m), new ProductType("Women's Leggings", 34.99m),
+            new ProductType("Men's Shorts", 24.99m), new ProductType("Women's Shorts", 24.99m),
+            new ProductType("Men's Hoodie", 44.99m), new ProductType("Women's Hoodie", 44.99m),
+            new ProductType("Men's Jacket", 89.99m), new ProductType("Women's Jacket", 89.99m),
+            new ProductType("Men's Jumper", 49.99m), new ProductType("Women's Cardigan", 49.99m),
+            new ProductType("Men's Polo Shirt", 27.99m), new ProductType("Women's Blouse", 34.99m),
+            new ProductType("Men's Dress Shirt", 39.99m), new ProductType("Women's Dress", 59.99m),
+            new ProductType("Men's Suit", 199.99m), new ProductType("Women's Skirt", 34.99m),
+            new ProductType("Men's Running Shoes", 99.99m), new ProductType("Women's Running Shoes", 99.99m),
+            new ProductType("Men's Casual Sneakers", 69.99m), new ProductType("Women's Casual Sneakers", 69.99m),
+            new ProductType("Men's Formal Shoes", 89.99m), new ProductType("Women's Ankle Boots", 79.99m),
+            new ProductType("Men's Sandals", 29.99m), new ProductType("Women's Sandals", 29.99m),
+            new ProductType("Men's Belt", 22.99m), new ProductType("Women's Handbag", 64.99m),
+            new ProductType("Men's Wallet", 24.99m), new ProductType("Women's Sunglasses", 39.99m),
+            new ProductType("Men's Cap", 17.99m), new ProductType("Women's Scarf", 32.99m),
+            new ProductType("Unisex Beanie", 14.99m), new ProductType("Unisex Gloves", 16.99m),
+            new ProductType("Men's Socks (5-Pack)", 12.99m), new ProductType("Women's Socks (5-Pack)", 12.99m),
+            new ProductType("Men's Swim Shorts", 24.99m), new ProductType("Women's Swimsuit", 39.99m)
+        }),
 
-        new("Sports & Outdoors",
-            new[] { "Nimbus", "Cascade" },
-            new (string, decimal)[]
-            {
-                ("Yoga Mat Non-Slip", 24.99m),
-                ("Adjustable Dumbbell Set", 149.99m),
-                ("Camping Tent 2-Person", 89.99m),
-                ("Insulated Water Bottle 1L", 19.99m),
-                ("Resistance Bands Set", 17.99m),
-                ("Hiking Backpack 40L", 74.99m),
-                ("Foam Roller", 22.99m),
-                ("Running Shoes Trail", 99.99m),
-                ("Sleeping Bag 3-Season", 64.99m),
-                ("Cycling Helmet", 44.99m),
-                ("Jump Rope Speed", 12.99m),
-                ("Camping Chair Folding", 34.99m),
-                ("Football Size 5", 19.99m),
-                ("Basketball Indoor/Outdoor", 24.99m),
-                ("Fitness Tracker Band", 39.99m),
-                ("Trekking Poles (Pair)", 29.99m),
-                ("Gym Duffel Bag", 27.99m),
-                ("Swimming Goggles", 14.99m),
-                ("Portable Camping Stove", 49.99m),
-                ("Exercise Ball 65cm", 19.99m)
-            }),
+        new("Sports & Outdoors", new[] { "Nimbus", "Cascade" }, ColorVariants, new[]
+        {
+            new ProductType("Yoga Mat", 24.99m), new ProductType("Foam Roller", 22.99m),
+            new ProductType("Resistance Bands Set", 17.99m), new ProductType("Dumbbell Set", 149.99m),
+            new ProductType("Kettlebell", 34.99m), new ProductType("Barbell", 89.99m),
+            new ProductType("Weight Bench", 119.99m), new ProductType("Pull-Up Bar", 39.99m),
+            new ProductType("Jump Rope", 12.99m), new ProductType("Exercise Ball", 19.99m),
+            new ProductType("Camping Tent", 89.99m), new ProductType("Sleeping Bag", 64.99m),
+            new ProductType("Camping Chair", 34.99m), new ProductType("Camping Stove", 49.99m),
+            new ProductType("Cooler Box", 44.99m), new ProductType("Hiking Backpack", 74.99m),
+            new ProductType("Trekking Poles", 29.99m), new ProductType("Water Bottle", 19.99m),
+            new ProductType("Hydration Pack", 39.99m), new ProductType("Headlamp", 22.99m),
+            new ProductType("Cycling Helmet", 44.99m), new ProductType("Road Bike", 599.99m),
+            new ProductType("Mountain Bike", 699.99m), new ProductType("Bike Lock", 24.99m),
+            new ProductType("Bike Pump", 17.99m), new ProductType("Football", 19.99m),
+            new ProductType("Basketball", 24.99m), new ProductType("Tennis Racket", 59.99m),
+            new ProductType("Golf Club Set", 349.99m), new ProductType("Fishing Rod", 44.99m),
+            new ProductType("Swimming Goggles", 14.99m), new ProductType("Wetsuit", 129.99m),
+            new ProductType("Surfboard", 349.99m), new ProductType("Skateboard", 69.99m),
+            new ProductType("Snowboard", 299.99m), new ProductType("Ski Goggles", 49.99m),
+            new ProductType("Fitness Tracker Watch", 79.99m), new ProductType("Smart Scale", 34.99m),
+            new ProductType("Gym Bag", 27.99m), new ProductType("First Aid Kit", 19.99m)
+        }),
 
-        new("Books",
-            new[] { "Acme" },
-            new (string, decimal)[]
-            {
-                ("The Pragmatic Programmer", 34.99m),
-                ("Clean Code", 32.99m),
-                ("Atomic Habits", 14.99m),
-                ("The Midnight Library", 9.99m),
-                ("Sapiens: A Brief History of Humankind", 12.99m),
-                ("Project Hail Mary", 10.99m),
-                ("The Silent Patient", 8.99m),
-                ("Educated: A Memoir", 11.99m),
-                ("Deep Work", 13.99m),
-                ("The Design of Everyday Things", 22.99m),
-                ("Thinking, Fast and Slow", 13.99m),
-                ("Where the Crawdads Sing", 9.99m),
-                ("The Alchemist", 8.99m),
-                ("Dune", 11.99m),
-                ("Becoming", 12.99m),
-                ("The Psychology of Money", 13.99m),
-                ("A Brief History of Time", 10.99m),
-                ("The Hobbit", 9.99m),
-                ("1984", 8.99m),
-                ("Man's Search for Meaning", 9.99m)
-            })
+        new("Books", new[] { "Acme" }, BookFormats, new[]
+        {
+            new ProductType("The Pragmatic Programmer", 34.99m), new ProductType("Clean Code", 32.99m),
+            new ProductType("Atomic Habits", 14.99m), new ProductType("The Midnight Library", 9.99m),
+            new ProductType("Sapiens", 12.99m), new ProductType("Project Hail Mary", 10.99m),
+            new ProductType("The Silent Patient", 8.99m), new ProductType("Educated", 11.99m),
+            new ProductType("Deep Work", 13.99m), new ProductType("The Design of Everyday Things", 22.99m),
+            new ProductType("Thinking, Fast and Slow", 13.99m), new ProductType("Where the Crawdads Sing", 9.99m),
+            new ProductType("The Alchemist", 8.99m), new ProductType("Dune", 11.99m),
+            new ProductType("Becoming", 12.99m), new ProductType("The Psychology of Money", 13.99m),
+            new ProductType("A Brief History of Time", 10.99m), new ProductType("The Hobbit", 9.99m),
+            new ProductType("1984", 8.99m), new ProductType("Man's Search for Meaning", 9.99m),
+            new ProductType("To Kill a Mockingbird", 8.99m), new ProductType("Pride and Prejudice", 7.99m),
+            new ProductType("The Great Gatsby", 7.99m), new ProductType("Brave New World", 8.99m),
+            new ProductType("Fahrenheit 451", 8.99m), new ProductType("The Catcher in the Rye", 8.99m),
+            new ProductType("Animal Farm", 6.99m), new ProductType("Lord of the Flies", 7.99m),
+            new ProductType("The Lord of the Rings", 16.99m), new ProductType("Harry Potter and the Philosopher's Stone", 9.99m),
+            new ProductType("The Da Vinci Code", 9.99m), new ProductType("Gone Girl", 9.99m),
+            new ProductType("The Girl with the Dragon Tattoo", 9.99m), new ProductType("Normal People", 8.99m),
+            new ProductType("Circe", 9.99m), new ProductType("The Song of Achilles", 9.99m),
+            new ProductType("Klara and the Sun", 10.99m), new ProductType("The Seven Husbands of Evelyn Hugo", 9.99m),
+            new ProductType("It Ends with Us", 9.99m), new ProductType("Verity", 9.99m)
+        })
     };
 
     public static async Task SeedAsync(ECommerceDbContext dbContext, CancellationToken cancellationToken = default)
@@ -150,10 +144,9 @@ public static class DatabaseSeeder
         }
 
         DateTime now = DateTime.UtcNow;
+        var random = new Random(12345); // fixed seed => reproducible demo data across environments
 
-        // Distinct brand names across the whole catalogue
         string[] brandNames = Catalogue.SelectMany(c => c.Brands).Distinct().ToArray();
-
         Dictionary<string, Brand> brandsByName = brandNames.ToDictionary(
             name => name,
             name => new Brand
@@ -166,48 +159,53 @@ public static class DatabaseSeeder
                 CreatedAt = now
             });
 
-        var categories = Catalogue.Select(c => new Category
-        {
-            Id = Guid.NewGuid(),
-            ParentId = null,
-            Name = c.Name,
-            Slug = Slugify(c.Name),
-            Description = $"{c.Name} category",
-            ImageUrl = null,
-            IsActive = true,
-            CreatedAt = now
-        }).ToList();
-
         await dbContext.Brands.AddRangeAsync(brandsByName.Values, cancellationToken);
-        await dbContext.Categories.AddRangeAsync(categories, cancellationToken);
 
-        var random = new Random(12345); // fixed seed => reproducible demo data across environments
-        var products = new List<Product>();
+        var products = new List<Product>(1000);
 
-        for (int i = 0; i < Catalogue.Length; i++)
+        foreach (CategorySeed categorySeed in Catalogue)
         {
-            CategorySeed categorySeed = Catalogue[i];
-            Category category = categories[i];
+            var category = new Category
+            {
+                Id = Guid.NewGuid(),
+                ParentId = null,
+                Name = categorySeed.Name,
+                Slug = Slugify(categorySeed.Name),
+                Description = $"{categorySeed.Name} category",
+                ImageUrl = null,
+                IsActive = true,
+                CreatedAt = now
+            };
+            await dbContext.Categories.AddAsync(category, cancellationToken);
+
             Brand[] categoryBrands = categorySeed.Brands.Select(b => brandsByName[b]).ToArray();
 
-            foreach ((string name, decimal price) in categorySeed.Products)
+            foreach (ProductType type in categorySeed.Types)
             {
-                Brand brand = categoryBrands[random.Next(categoryBrands.Length)];
-
-                products.Add(new Product
+                foreach (string variant in categorySeed.Variants)
                 {
-                    Id = Guid.NewGuid(),
-                    CategoryId = category.Id,
-                    BrandId = brand.Id,
-                    Name = name,
-                    Slug = Slugify(name),
-                    Description = $"{name} — high quality {categorySeed.Name.ToLowerInvariant()} product from {brand.Name}.",
-                    ShortDescription = name,
-                    BasePrice = price,
-                    IsActive = true,
-                    IsFeatured = random.Next(0, 10) == 0, // ~10% featured
-                    CreatedAt = now
-                });
+                    Brand brand = categoryBrands[random.Next(categoryBrands.Length)];
+                    string name = $"{type.BaseName} - {variant}";
+
+                    // +/-5% price jitter per variant so identical variants aren't all exactly the same price
+                    decimal jitter = 1 + ((decimal)(random.NextDouble() * 0.1) - 0.05m);
+                    decimal price = Math.Round(type.Price * jitter, 2);
+
+                    products.Add(new Product
+                    {
+                        Id = Guid.NewGuid(),
+                        CategoryId = category.Id,
+                        BrandId = brand.Id,
+                        Name = name,
+                        Slug = Slugify(name),
+                        Description = $"{type.BaseName} in {variant} from {brand.Name}.",
+                        ShortDescription = name,
+                        BasePrice = price,
+                        IsActive = true,
+                        IsFeatured = random.Next(0, 20) == 0, // ~5% featured
+                        CreatedAt = now
+                    });
+                }
             }
         }
 
