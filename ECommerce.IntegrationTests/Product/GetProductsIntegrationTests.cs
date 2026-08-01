@@ -226,6 +226,7 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         // Assert
         GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
+        result!.Page.Should().Be(2);
         result!.Items.Should().HaveCount(5);
         result.TotalCount.Should().Be(15);
     }
