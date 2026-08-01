@@ -23,4 +23,6 @@ public class Product : AuditableEntity<Guid>
     public bool IsFeatured { get; set; }
 
     public Category? Category { get; set; }
+
+    public Brand? Brand { get; set; }
 }

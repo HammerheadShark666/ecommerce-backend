@@ -13,6 +13,7 @@ using ECommerce.Application.Features.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
 using ECommerce.Application.Features.ForgottenPassword;
+using ECommerce.Application.Features.Product;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -64,6 +65,7 @@ try
     app.MapRegistrationEndpoints();
     app.MapRefreshTokenEndPoints();
     app.MapForgottenPasswordEndpoints();
+    app.MapProductEndpoints();
     app.MapProtectedEndpoints();
 
     Log.Information(">>> BEFORE RUN");

@@ -13,7 +13,7 @@ public class ECommerceDbContext(DbContextOptions<ECommerceDbContext> options) : 
     public DbSet<PendingTwoFactorLogin> PendingTwoFactorLogins => Set<PendingTwoFactorLogin>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
-    public DbSet<Product> Products => Set<Domain.Entities.Product.Product>();
+    public DbSet<Product> Products => Set<Product>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Brand> Brands => Set<Brand>();
 
