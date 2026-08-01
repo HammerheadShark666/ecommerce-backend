@@ -50,6 +50,8 @@ try
     app.UseAuthorization();
     app.UseSerilogRequestLogging(options => options.EnrichDiagnosticContext = (diag, httpContext) => diag.Set("CorrelationId", httpContext.TraceIdentifier));
     
+    await builder.AddSeedDataExtensionAsync(app);
+
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
