@@ -539,9 +539,6 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CategoryId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -575,8 +572,6 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CategoryId1");
 
                     b.ToTable("ECOMMERCE_Products", (string)null);
                 });
@@ -941,19 +936,17 @@ namespace Ecommerce.Infrastructure.Migrations
 
             modelBuilder.Entity("ECommerce.Domain.Entities.Product.Product", b =>
                 {
-                    b.HasOne("ECommerce.Domain.Entities.Product.Brand", null)
+                    b.HasOne("ECommerce.Domain.Entities.Product.Brand", "Brand")
                         .WithMany()
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ECommerce.Domain.Entities.Product.Category", null)
+                    b.HasOne("ECommerce.Domain.Entities.Product.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ECommerce.Domain.Entities.Product.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId1");
+                    b.Navigation("Brand");
 
                     b.Navigation("Category");
                 });
