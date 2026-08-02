@@ -1,4 +1,6 @@
-﻿using ECommerce.Domain.Entities.Product;
+﻿using ECommerce.Application.Constants;
+using ECommerce.Domain.Entities.Product;
+using ECommerce.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Infrastructure.Persistence.Seed_Data;
@@ -189,9 +191,11 @@ public static class DatabaseSeeder
 
                     // +/-5% price jitter per variant so identical variants aren't all exactly the same price
                     decimal jitter = 1 + ((decimal)(random.NextDouble() * 0.1) - 0.05m);
-                    decimal price = Math.Round(type.Price * jitter, 2);
 
-                    products.Add(new Product
+                    var price = new Money(Math.Round(type.Price * jitter, 2), CurrencyConstants.CurrencyGBPound);
+                    int stockQuantity = random.Next(0, 500); // Random stock quantity between 0 and 99
+
+                    var product = new Product
                     {
                         Id = Guid.NewGuid(),
                         CategoryId = category.Id,
@@ -204,7 +208,10 @@ public static class DatabaseSeeder
                         IsActive = true,
                         IsFeatured = random.Next(0, 20) == 0, // ~5% featured
                         CreatedAt = now
-                    });
+                    };
+
+                    product.IncreaseStock(stockQuantity);
+                    products.Add(product);
                 }
             }
         }

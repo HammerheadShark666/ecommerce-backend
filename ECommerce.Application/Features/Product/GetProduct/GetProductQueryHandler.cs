@@ -28,9 +28,8 @@ public sealed class GetProductQueryHandler(IECommerceDbContext dbContext)
             product.Name,
             product.Slug,
             product.Description,
-            product.BasePrice);
-
-        //product.StockQuantity);
+            product.BasePrice,
+            product.StockQuantity); 
 
         bool slugMatches = string.Equals(product.Slug, request.Slug, StringComparison.Ordinal);
 

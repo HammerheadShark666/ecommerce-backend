@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using ECommerce.Application.Constants;
 using ECommerce.Application.Features.Product.GetProducts;
 using ECommerce.Domain.Entities.Product;
 using ECommerce.Infrastructure.Persistence;
@@ -197,7 +198,7 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         // Assert
         GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
-        result!.Items.Should().BeInAscendingOrder(p => p.Price);
+        result!.Items.Should().BeInAscendingOrder(p => p.Price.Amount);
     }
 
     [Fact]
@@ -309,13 +310,14 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         Guid brandId,
         string name = "Test Product",
         decimal price = 29.99m,
+        string currency = CurrencyConstants.CurrencyGBPound,
         bool isActive = true) => new()
         {
             CategoryId = categoryId,
             BrandId = brandId,
             Name = name,
             Slug = name.ToLowerInvariant().Replace(" ", "-"),
-            BasePrice = price,
+            BasePrice = new Domain.ValueObjects.Money(price, currency),
             IsActive = isActive,
             IsFeatured = false
         };

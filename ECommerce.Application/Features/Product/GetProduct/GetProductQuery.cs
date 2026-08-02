@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using ECommerce.Domain.ValueObjects;
+using FluentResults;
 using MediatR;
 
 namespace ECommerce.Application.Features.Product.GetProduct;
@@ -10,7 +11,7 @@ public sealed record ProductResponse(
     string Name,
     string Slug,
     string? Description,
-    decimal Price);
-    //int StockQuantity);
+    Money Price,
+    int StockQuantity);
 
 public sealed record GetProductResult(ProductResponse Product, bool SlugMatches);

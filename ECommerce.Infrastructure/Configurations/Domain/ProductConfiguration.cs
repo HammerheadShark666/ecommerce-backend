@@ -14,7 +14,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.Name).IsRequired().HasMaxLength(255);
         builder.Property(x => x.Slug).IsRequired().HasMaxLength(255);
         builder.Property(x => x.ShortDescription).HasMaxLength(500);
-        builder.Property(x => x.BasePrice).HasPrecision(18, 2);
          
         builder.HasIndex(p => p.Slug)
             .IsUnique();
@@ -27,6 +26,17 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne(x => x.Brand)
                 .WithMany()
                 .HasForeignKey(x => x.BrandId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);         
+
+        builder.OwnsOne(x => x.BasePrice, money =>
+        {
+            money.Property(x => x.Amount)
+                .HasColumnName("Price")
+                .HasPrecision(18, 2);
+
+            money.Property(x => x.Currency)
+                .HasColumnName("Currency")
+                .HasMaxLength(3);
+        });
     }
 }

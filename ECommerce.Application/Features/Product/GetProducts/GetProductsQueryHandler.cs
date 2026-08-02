@@ -15,20 +15,23 @@ public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext) : IRe
             .AsNoTracking()
             .Where(p => p.IsActive);
 
-        if (!string.IsNullOrWhiteSpace(request.Category))
+        if (request.Category is not null)
         {
-            query = query.Where(p => p.Category != null
-                                         && p.Category.Name == request.Category);
+            query = query.Where(p => p.Category != null && p.Category.Name == request.Category);
         }
 
-        if (request.MinPrice.HasValue)
+        if (request.MinPrice is not null)
         {
-            query = query.Where(p => p.BasePrice >= request.MinPrice.Value);
+            query = query.Where(p =>
+                p.BasePrice.Currency == request.MinPrice.Currency &&
+                p.BasePrice.Amount >= request.MinPrice.Amount);
         }
 
-        if (request.MaxPrice.HasValue)
+        if (request.MaxPrice is not null)
         {
-            query = query.Where(p => p.BasePrice <= request.MaxPrice.Value);
+            query = query.Where(p =>
+                p.BasePrice.Currency == request.MaxPrice.Currency &&
+                p.BasePrice.Amount <= request.MaxPrice.Amount);
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -47,21 +50,20 @@ public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext) : IRe
                 p.Id,
                 p.Name, 
                 p.BasePrice,
-                //p.Stock,
+                p.StockQuantity,
                 p.Category != null ? p.Category.Name : null,
                 p.IsActive))
-            .ToListAsync(cancellationToken);
-
-        //return new GetProductsResponse(items, totalCount, request.Page, request.PageSize);
-
+            .ToListAsync(cancellationToken); 
+       
         return Result.Ok(new GetProductsResponse(items, totalCount, request.Page, request.PageSize));
     }
 
-    private static IQueryable<Domain.Entities.Product.Product> ApplySort(IQueryable<Domain.Entities.Product.Product> query, ProductSortField? sortBy) => sortBy switch
+    private static IQueryable<Domain.Entities.Product.Product> ApplySort(
+    IQueryable<Domain.Entities.Product.Product> query, ProductSortField? sortBy) => sortBy switch
     {
         ProductSortField.Name => query.OrderBy(p => p.Name),
-        ProductSortField.Price => query.OrderBy(p => p.BasePrice),
-        //ProductSortField.Stock => query.OrderBy(p => p.Stock),
+        ProductSortField.Price => query.OrderBy(p => p.BasePrice.Amount),
+        ProductSortField.Stock => query.OrderBy(p => p.StockQuantity),
         ProductSortField.CreatedAt => query.OrderByDescending(p => p.CreatedAt),
         _ => query.OrderBy(p => p.Name)
     };
