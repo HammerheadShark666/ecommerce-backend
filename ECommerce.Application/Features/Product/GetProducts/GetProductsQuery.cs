@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using ECommerce.Domain.ValueObjects;
+using FluentResults;
 using MediatR;
 
 namespace ECommerce.Application.Features.Product.GetProducts;
@@ -7,8 +8,8 @@ public sealed record GetProductsQuery(
     int Page,
     int PageSize,
     string? Category,
-    decimal? MinPrice,
-    decimal? MaxPrice,
+    Money? MinPrice,
+    Money? MaxPrice,
     string? Search,
     ProductSortField? SortBy) : IRequest<Result<GetProductsResponse>>;
 
@@ -31,10 +32,9 @@ public sealed record GetProductsResponse(
 
 public sealed record ProductDto(
     Guid Id,
-    string Name,
-    // string Sku,
-    decimal Price,
-    // int Stock,
+    string Name, 
+    Money Price,
+    int StockQuantity,
     string? CategoryName,
     bool IsActive);
 

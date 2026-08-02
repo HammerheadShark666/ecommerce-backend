@@ -1,11 +1,13 @@
-﻿using ECommerce.Application.Features.Product.GetProduct;
+﻿using ECommerce.Application.Common;
+using ECommerce.Application.Constants;
+using ECommerce.Application.Features.Product.GetProduct;
 using ECommerce.Application.Features.Product.GetProducts;
+using ECommerce.Domain.ValueObjects;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using ECommerce.Application.Common; 
 
 namespace ECommerce.Application.Features.Product;
 
@@ -19,12 +21,12 @@ public static class ProductEndpoints
 
         group.MapGet("", async ([AsParameters] GetProductsRequest request, IMediator mediator) =>
         {
-            Result<GetProductsResponse> result = await mediator.Send(new GetProductsQuery(request.Page ?? 1, 
-                                                                                          request.PageSize ?? 20, 
+            Result<GetProductsResponse> result = await mediator.Send(new GetProductsQuery(request.Page ?? 1,
+                                                                                          request.PageSize ?? 20,
                                                                                           request.Category,
-                                                                                          request.MinPrice, 
-                                                                                          request.MaxPrice, 
-                                                                                          request.Search, 
+                                                                                          request.MinPrice.HasValue ? new Money(request.MinPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
+                                                                                          request.MaxPrice.HasValue ? new Money(request.MaxPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
+                                                                                          request.Search,
                                                                                           request.SortBy));
             if (result.IsFailed)
             {
