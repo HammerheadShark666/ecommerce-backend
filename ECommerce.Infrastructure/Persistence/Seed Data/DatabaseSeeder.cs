@@ -191,7 +191,6 @@ public static class DatabaseSeeder
 
                     // +/-5% price jitter per variant so identical variants aren't all exactly the same price
                     decimal jitter = 1 + ((decimal)(random.NextDouble() * 0.1) - 0.05m);
-                   // decimal price = Math.Round(type.Price * jitter, 2);
 
                     var price = new Money(Math.Round(type.Price * jitter, 2), CurrencyConstants.CurrencyGBPound);
                     int stockQuantity = random.Next(0, 500); // Random stock quantity between 0 and 99
