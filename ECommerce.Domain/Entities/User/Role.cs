@@ -1,7 +1,6 @@
 using ECommerce.Domain.Common;
-using ECommerce.Domain.Entities.User;
 
-namespace ECommerce.Domain.Entities.Authentication;
+namespace ECommerce.Domain.Entities.User;
 
 public class Role : AuditableEntity<int>
 { 
