@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <RunSettingsFilePath>D:\.NET 10 SD\ECommerceBackend\ECommerce.ArchitectureTests\bin\Debug\net10.0\fine-code-coverage\coverage-tool-output\ECommerce.ArchitectureTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RunSettingsFilePath>D:\.NET 10 SD\ECommerceBackend\ECommerce.IntegrationTests\bin\Debug\net10.0\fine-code-coverage\coverage-tool-output\ECommerce.IntegrationTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
-  </PropertyGroup>
+  <PropertyGroup />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" />
