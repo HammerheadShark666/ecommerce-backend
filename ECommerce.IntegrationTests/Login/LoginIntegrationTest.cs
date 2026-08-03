@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Infrastructure.Configurations;
@@ -113,10 +114,10 @@ public class LoginIntegrationTest : IAsyncLifetime
         //Arrange
         using (IServiceScope scope = _appFactory.Services.CreateScope())
         {
-            jwtGen = scope.ServiceProvider.GetRequiredService<ECommerce.Application.Abstractions.IJwtGenerator>();
+            jwtGen = scope.ServiceProvider.GetRequiredService<IJwtGenerator>();
             IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
             User user = await databaseHelper.SeedUserAsync(_fixture, "jwt@example.com", "JwtPass1!", isTwoFactor: false);
-            token = await jwtGen.GenerateTokenAsync(user);
+            token = await jwtGen.GenerateTokenAsync(user, CancellationToken.None);
         }
 
         string tamperedJwtToken = CreateTamperedJwtToken(token);
@@ -279,7 +280,7 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private static string ResolveOneTimePasswordCode(IServiceScope scope, string oneTimePasswordSecret)
     {
-        IOneTimePasswordGenerator oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<ECommerce.Application.Abstractions.IOneTimePasswordGenerator>();
+        IOneTimePasswordGenerator oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
         return oneTimePasswordGenerator.GetCurrentCode(oneTimePasswordSecret);
     }
 

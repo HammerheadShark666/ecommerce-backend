@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
-using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 
-namespace ECommerce.Infrastructure.Library;
+namespace ECommerce.Infrastructure.Library.Authentication;
 
 public class RefreshTokenGenerator : IRefreshTokenGenerator
 {

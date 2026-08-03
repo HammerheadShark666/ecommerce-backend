@@ -1,8 +1,8 @@
-﻿using ECommerce.Application.Abstractions;
+﻿using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Infrastructure.Library.Constants;
 using QRCoder;
 
-namespace ECommerce.Infrastructure.Library;
+namespace ECommerce.Infrastructure.Library.Authentication;
 
 public class QrCodeGenerator : IQrCodeGenerator
 {

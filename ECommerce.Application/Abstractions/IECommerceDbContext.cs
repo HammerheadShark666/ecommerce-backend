@@ -8,7 +8,9 @@ namespace ECommerce.Application.Abstractions;
 
 public interface IECommerceDbContext
 {
+    DbSet<Role> Roles { get; }
     DbSet<User> Users { get; }
+    DbSet<UserRole> UserRoles { get; }
     DbSet<PendingTwoFactorLogin> PendingTwoFactorLogins { get; }
     DbSet<RefreshToken> RefreshTokens { get; }
     DbSet<PasswordResetToken> PasswordResetTokens { get; }

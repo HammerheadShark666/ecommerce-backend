@@ -9,7 +9,9 @@ namespace ECommerce.Infrastructure.Persistence;
 
 public class ECommerceDbContext(DbContextOptions<ECommerceDbContext> options) : DbContext(options), IECommerceDbContext
 {
+    public DbSet<Role> Roles => Set<Role>();
 	public DbSet<User> Users => Set<User>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<PendingTwoFactorLogin> PendingTwoFactorLogins => Set<PendingTwoFactorLogin>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();

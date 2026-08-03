@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Constants;
 using ECommerce.Domain.Entities.PasswordReset;

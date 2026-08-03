@@ -1,7 +1,9 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Email;
 using ECommerce.Infrastructure.Email;
 using ECommerce.Infrastructure.Library;
+using ECommerce.Infrastructure.Library.Authentication;
 using ECommerce.Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 

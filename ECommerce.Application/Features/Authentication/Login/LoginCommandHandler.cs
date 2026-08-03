@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Constants;
@@ -49,7 +50,7 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
         else
         {
             string refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
-            string jwtToken = await jwtGenerator.GenerateTokenAsync(user);
+            string jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
             loginResponse = new LoginResponse(false, null, jwtToken, refreshToken, null);
         }
 

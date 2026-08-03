@@ -1,4 +1,4 @@
-using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 
 namespace ECommerce.IntegrationTests.Library;
 

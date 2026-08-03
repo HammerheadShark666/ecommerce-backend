@@ -26,7 +26,8 @@ public class User : AuditableEntity<Guid>
     public string? OneTimePasswordSecret { get; set; }
     public bool IsTwoFactorEnabled { get; set; }
 
-    public ICollection<UserRole> UserRoles { get; set; } = []; 
+    private readonly List<UserRole> _userRoles = [];
+    public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
 
     private readonly List<UserAddress> _addresses = [];
 
