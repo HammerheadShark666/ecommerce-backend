@@ -1,4 +1,4 @@
-using ECommerce.Domain.Entities.Authentication;
+using ECommerce.Domain.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
