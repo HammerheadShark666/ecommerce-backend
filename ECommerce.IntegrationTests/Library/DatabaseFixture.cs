@@ -32,7 +32,7 @@ public sealed class SqlServerFixture : IAsyncLifetime
 
         ConnectionString = builder.ConnectionString;
 
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(ConnectionString)
             .Options;
 
@@ -78,7 +78,7 @@ public sealed class SqlServerFixture : IAsyncLifetime
 
     public async Task ResetDatabaseAsync()
     {
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(ConnectionString)
             .Options;
 
@@ -89,7 +89,7 @@ public sealed class SqlServerFixture : IAsyncLifetime
         await db.Categories.ExecuteDeleteAsync();
         await db.Brands.ExecuteDeleteAsync();
 
-        IQueryable<User> usersToRemove = db.Users.Where(u => !_seededUserIds.Contains(u.Id));
+        var usersToRemove = db.Users.Where(u => !_seededUserIds.Contains(u.Id));
         db.Users.RemoveRange(usersToRemove);
         await db.SaveChangesAsync();
 
@@ -98,7 +98,7 @@ public sealed class SqlServerFixture : IAsyncLifetime
         {
             if (!await db.Users.AnyAsync(u => u.Id == id))
             {
-                string email = id == _seededUserIds[0] ? "alice@example.com" : "john@example.com";
+                var email = id == _seededUserIds[0] ? "alice@example.com" : "john@example.com";
 
                 await db.Users.AddAsync(new User
                 {

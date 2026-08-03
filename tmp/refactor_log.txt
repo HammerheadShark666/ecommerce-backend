@@ -1,0 +1,10 @@
+Refactor started: replacing explicit local declarations with var where initializer makes type obvious.
+Files targeted:
+- ECommerce.Infrastructure\Background Jobs\TokenCleanupJob.cs
+- ECommerce.Infrastructure\Services\TokenCleanupService.cs
+- ECommerce.Infrastructure\Library\Authentication\JwtGenerator.cs
+- ECommerce.Infrastructure\Email\EmailTemplateService.cs
+
+Changes will replace patterns like: TypeName x = new TypeName(...); -> var x = new TypeName(...);
+
+Note: Will skip fields, properties, method parameters, tuple deconstructions, and cases where var is not allowed.

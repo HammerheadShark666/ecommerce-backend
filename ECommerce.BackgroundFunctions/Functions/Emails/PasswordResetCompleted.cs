@@ -25,12 +25,12 @@ public class PasswordResetCompleted(IEmailSender emailSender,
         {
             logger.LogInformation("Processing message (Password reset completed Successful): {MessageId}", message.MessageId);
 
-            PasswordResetCompletedMessage? envelope = message.Body.ToObjectFromJson<PasswordResetCompletedMessage>()
+            var envelope = message.Body.ToObjectFromJson<PasswordResetCompletedMessage>()
             ?? throw new InvalidOperationException("Unable to deserialize UserRegisteredMessage from Service Bus message.");
 
-            PasswordResetCompletedPayload payload = envelope.Payload;
+            var payload = envelope.Payload;
 
-            string htmlBody = await emailTemplateService.RenderAsync(
+            var htmlBody = await emailTemplateService.RenderAsync(
                 EmailConstants.EmailTemplatePasswordResetCompletedRequest,
                 new()
                 {

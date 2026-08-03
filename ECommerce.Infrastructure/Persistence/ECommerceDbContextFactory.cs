@@ -9,11 +9,11 @@ public class ApplicationDbContextFactory
 {
     public ECommerceDbContext CreateDbContext(string[] args)
     {
-        string environment =
+        var environment =
             Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
             ?? "Development";
 
-        IConfigurationRoot configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile(
@@ -22,7 +22,7 @@ public class ApplicationDbContextFactory
             .AddEnvironmentVariables()
             .Build();
 
-        string? connectionString =
+        var connectionString =
             configuration.GetConnectionString("DefaultConnection");
 
         var optionsBuilder =

@@ -14,10 +14,10 @@ public class DatabaseHelper : IDatabaseHelper
  
     public async Task<User> SeedUserAsync(SqlServerFixture fixture, string email, string password, bool isTwoFactor = false, string? oneTimePasswordSecret = null)
     {
-        DbContextOptions<ECommerceDbContext> options = CreateOptions(fixture);
+        var options = CreateOptions(fixture);
         await using var db = new ECommerceDbContext(options);
 
-        string hash = BCrypt.Net.BCrypt.HashPassword(password);
+        var hash = BCrypt.Net.BCrypt.HashPassword(password);
 
         var user = new User
         {

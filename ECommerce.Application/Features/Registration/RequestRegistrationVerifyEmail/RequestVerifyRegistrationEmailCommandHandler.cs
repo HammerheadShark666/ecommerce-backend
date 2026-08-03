@@ -18,7 +18,7 @@ internal class RequestVerifyRegistrationEmailCommandHandler(IECommerceDbContext 
 {
     public async Task<RequestVerifyRegistrationEmailResponse> Handle(RequestVerifyRegistrationEmailCommand request, CancellationToken cancellationToken)
     {
-        User user = await GetUser(request.Email, cancellationToken);
+        var user = await GetUser(request.Email, cancellationToken);
 
         await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
 

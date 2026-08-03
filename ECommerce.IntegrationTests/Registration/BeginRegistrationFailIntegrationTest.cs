@@ -24,15 +24,15 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
     public async Task VerifyRegistration_WithInvalidCode_ReturnsUnauthorized()
     {
         // Arrange
-        string email = "badcode@example.com";
-        string password = "RegPass!1";
+        var email = "badcode@example.com";
+        var password = "RegPass!1";
 
         // Act
-        HttpResponseMessage beginResp = await PostRegisterRawAsync(email, password, password);
+        var beginResp = await PostRegisterRawAsync(email, password, password);
         beginResp.EnsureSuccessStatusCode();
 
         // Act
-        HttpResponseMessage verifyResp = await PostConfirmRegisterRawAsync(email, "000000");
+        var verifyResp = await PostConfirmRegisterRawAsync(email, "000000");
 
         // Assert
         verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest); 
@@ -47,15 +47,15 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
     public async Task Begin_Register_Email_WhenInvalidFormat_ShouldHaveValidationError(string invalidEmail)
     {
         //Arrange
-        string password = "RegPass!1";
+        var password = "RegPass!1";
 
         //Act
-        HttpResponseMessage resp = await PostRegisterRawAsync(invalidEmail, password, password);
+        var resp = await PostRegisterRawAsync(invalidEmail, password, password);
 
         //Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("email");
@@ -68,17 +68,17 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
     public async Task Registration_Fails_With_Missing_Entries()
     {
         // Arrange
-        string email = "";
-        string password = "";
-        string confirmPassword = "";
+        var email = "";
+        var password = "";
+        var confirmPassword = "";
 
         // Act
-        HttpResponseMessage resp = await PostRegisterRawAsync(email, password, confirmPassword);
+        var resp = await PostRegisterRawAsync(email, password, confirmPassword);
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("email");
@@ -103,17 +103,17 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
     public async Task Registration_Fails_With_Password_ConfirmPassword_Too_Short()
     {
         // Arrange
-        string email = "email@example.com";
-        string password = "RegPass";
-        string confirmPassword = "RegPass";
+        var email = "email@example.com";
+        var password = "RegPass";
+        var confirmPassword = "RegPass";
 
         // Act
-        HttpResponseMessage resp = await PostRegisterRawAsync(email, password, confirmPassword);
+        var resp = await PostRegisterRawAsync(email, password, confirmPassword);
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("password");
@@ -130,17 +130,17 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
     public async Task Registration_Fails_With_Password_ConfirmPassword_Not_Matching()
     {
         // Arrange
-        string email = "badcode@example.com";
-        string password = "RegPass!1";
-        string confirmPassword = "RegPass!2";
+        var email = "badcode@example.com";
+        var password = "RegPass!1";
+        var confirmPassword = "RegPass!2";
 
         // Act
-        HttpResponseMessage resp = await PostRegisterRawAsync(email, password, confirmPassword);
+        var resp = await PostRegisterRawAsync(email, password, confirmPassword);
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("confirmpassword");

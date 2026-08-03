@@ -14,7 +14,7 @@ internal class GetTwoFactorStatusQueryHandler(IECommerceDbContext dbContext) : I
 { 
     public async Task<GetTwoFactorStatusResponse> Handle(GetTwoFactorStatusQuery request, CancellationToken cancellationToken)
     {
-        User user = await GetUserAsync(request.Email, cancellationToken);
+        var user = await GetUserAsync(request.Email, cancellationToken);
         return new GetTwoFactorStatusResponse(user.IsTwoFactorEnabled);
     }
 

@@ -8,8 +8,8 @@ public class QrCodeGenerator : IQrCodeGenerator
 {
     public string BuildOneTimePasswordAuthUri(string issuer, string accountName, string base32Secret)
     {
-        string encodedIssuer = Uri.EscapeDataString(issuer);
-        string encodedAccount = Uri.EscapeDataString(accountName);
+        var encodedIssuer = Uri.EscapeDataString(issuer);
+        var encodedAccount = Uri.EscapeDataString(accountName);
 
         return $"otpauth://totp/{encodedIssuer}:{encodedAccount}" +
                $"?secret={base32Secret}" +
@@ -22,7 +22,7 @@ public class QrCodeGenerator : IQrCodeGenerator
     public string GenerateQrCodeBase64(string oneTimePasswordAuthUri, int pixelsPerModule = 10)
     {
         using var qrGenerator = new QRCodeGenerator();
-        using QRCodeData qrData = qrGenerator.CreateQrCode(oneTimePasswordAuthUri, QRCodeGenerator.ECCLevel.Q);
+        using var qrData = qrGenerator.CreateQrCode(oneTimePasswordAuthUri, QRCodeGenerator.ECCLevel.Q);
         using var qrCode = new PngByteQRCode(qrData);
 
         return Convert.ToBase64String(qrCode.GetGraphic(pixelsPerModule));

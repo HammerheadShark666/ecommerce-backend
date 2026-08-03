@@ -25,15 +25,15 @@ public class ConfirmRegistrationIntegrationTest : IAsyncLifetime
     public async Task Email_WhenEmpty_ShouldHaveValidationError()
     {
         //Arrange
-        string email = "";
+        var email = "";
         const string anyValidCode = "000000";
 
         //Act
-        HttpResponseMessage resp = await PostConfirmRegisterRawAsync(email, anyValidCode);
+        var resp = await PostConfirmRegisterRawAsync(email, anyValidCode);
 
         //Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("email");
@@ -54,11 +54,11 @@ public class ConfirmRegistrationIntegrationTest : IAsyncLifetime
         const string anyValidCode = "000000";
 
         //Act
-        HttpResponseMessage resp = await PostConfirmRegisterRawAsync(invalidEmail, anyValidCode);
+        var resp = await PostConfirmRegisterRawAsync(invalidEmail, anyValidCode);
 
         //Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("email");
@@ -71,15 +71,15 @@ public class ConfirmRegistrationIntegrationTest : IAsyncLifetime
     public async Task Code_WhenEmpty_ShouldHaveValidationError()
     {
         //Arrange
-        string email = "validemail@example.com";
-        string code = "";
+        var email = "validemail@example.com";
+        var code = "";
 
         //Act
-        HttpResponseMessage resp = await PostConfirmRegisterRawAsync(email, code);
+        var resp = await PostConfirmRegisterRawAsync(email, code);
 
         //Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("code");
@@ -96,14 +96,14 @@ public class ConfirmRegistrationIntegrationTest : IAsyncLifetime
     public async Task Code_WhenNotExactlySixCharacters_ShouldHaveValidationError(string badCode)
     {
         //Arrange
-        string email = "validemail@example.com";
+        var email = "validemail@example.com";
 
         //Act
-        HttpResponseMessage resp = await PostConfirmRegisterRawAsync(email, badCode);
+        var resp = await PostConfirmRegisterRawAsync(email, badCode);
 
         //Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        ValidationProblemDetails? problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("code");

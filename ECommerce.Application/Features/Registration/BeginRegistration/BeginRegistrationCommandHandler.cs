@@ -25,9 +25,9 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
     { 
         await ValidateRegistrationDetails(request.Email, cancellationToken);
 
-        (string oneTimePasswordSecret, string encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
+        (var oneTimePasswordSecret, var encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
 
-        User user = await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret,
+        var user = await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret,
                              request.LastName, request.FirstName, request.PhoneNumber, cancellationToken);
 
         await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
@@ -47,8 +47,8 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
 
     private async Task<(string secret, string encryptedSecrete)> GenerateAndEncryptOneTimePasswordSecretAsync()
     {
-        string secret = oneTimePasswordGenerator.GenerateSecret();     
-        string encryptedSecrect = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
+        var secret = oneTimePasswordGenerator.GenerateSecret();
+        var encryptedSecrect = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
 
         return (secret, encryptedSecrect);
     }
@@ -67,7 +67,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
             Status = RegistrationConstants.RegistrationInActive
         };
 
-            dbContext.Users.Add(user);
+        dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return user;

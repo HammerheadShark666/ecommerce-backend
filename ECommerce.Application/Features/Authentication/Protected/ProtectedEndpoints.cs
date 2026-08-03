@@ -18,8 +18,8 @@ public static class ProtectedEndpoints
                              .RequireAuthorization();
 
         group.MapGet("/me", (HttpContext http, [FromServices] ILogger<LoginCommandHandler> logger) =>
-        { 
-            ClaimsPrincipal user = http.User;
+        {
+            var user = http.User;
             if (user?.Identity == null || !user.Identity.IsAuthenticated)
             {
                 logger.LogInformation("Protected Endpoint - Unauthenticated"); 

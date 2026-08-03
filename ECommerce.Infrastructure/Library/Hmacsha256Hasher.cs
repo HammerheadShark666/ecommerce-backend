@@ -8,7 +8,7 @@ public class Hmacsha256Hasher : IHmacsha256Hasher
 {
     public string HashToken(string token, string purpose, string hashSecret)
     {
-        byte[] hashSecretBytes = Convert.FromBase64String(hashSecret);
+        var hashSecretBytes = Convert.FromBase64String(hashSecret);
 
         using var hmac = new HMACSHA256(hashSecretBytes);
 

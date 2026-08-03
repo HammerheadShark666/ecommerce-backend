@@ -17,7 +17,7 @@ public static class DatabaseSeeder
 
     private static readonly CategorySeed[] Catalogue =
     {
-        new("Electronics", new[] { "Acme", "Nimbus", "Vertex" }, ColorVariants, new[]
+        new("Electronics", ["Acme", "Nimbus", "Vertex"], ColorVariants, new[]
         {
             new ProductType("Wireless Headphones", 199.99m), new ProductType("Bluetooth Speaker", 59.99m),
             new ProductType("Smart Watch", 149.99m), new ProductType("Fitness Band", 49.99m),
@@ -41,7 +41,7 @@ public static class DatabaseSeeder
             new ProductType("HDMI Cable", 9.99m), new ProductType("Graphics Tablet", 79.99m)
         }),
 
-        new("Home & Kitchen", new[] { "Cascade", "Aurora" }, ColorVariants, new[]
+        new("Home & Kitchen", ["Cascade", "Aurora"], ColorVariants, new[]
         {
             new ProductType("Table Lamp", 34.99m), new ProductType("Floor Lamp", 59.99m),
             new ProductType("Desk Lamp", 24.99m), new ProductType("Pendant Light", 44.99m),
@@ -65,7 +65,7 @@ public static class DatabaseSeeder
             new ProductType("Steam Mop", 69.99m), new ProductType("Laundry Hamper", 24.99m)
         }),
 
-        new("Clothing", new[] { "Vertex", "Aurora" }, ColorVariants, new[]
+        new("Clothing", ["Vertex", "Aurora"], ColorVariants, new[]
         {
             new ProductType("Men's T-Shirt", 19.99m), new ProductType("Women's T-Shirt", 19.99m),
             new ProductType("Men's Jeans", 54.99m), new ProductType("Women's Jeans", 54.99m),
@@ -89,7 +89,7 @@ public static class DatabaseSeeder
             new ProductType("Men's Swim Shorts", 24.99m), new ProductType("Women's Swimsuit", 39.99m)
         }),
 
-        new("Sports & Outdoors", new[] { "Nimbus", "Cascade" }, ColorVariants, new[]
+        new("Sports & Outdoors", ["Nimbus", "Cascade"], ColorVariants, new[]
         {
             new ProductType("Yoga Mat", 24.99m), new ProductType("Foam Roller", 22.99m),
             new ProductType("Resistance Bands Set", 17.99m), new ProductType("Dumbbell Set", 149.99m),
@@ -166,11 +166,11 @@ public static class DatabaseSeeder
             return; // Already seeded — safe to call on every startup
         }
 
-        DateTime now = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
         var random = new Random(12345); // fixed seed => reproducible demo data across environments
 
-        string[] brandNames = Catalogue.SelectMany(c => c.Brands).Distinct().ToArray();
-        Dictionary<string, Brand> brandsByName = brandNames.ToDictionary(
+        var brandNames = Catalogue.SelectMany(c => c.Brands).Distinct().ToArray();
+        var brandsByName = brandNames.ToDictionary(
             name => name,
             name => new Brand
             {
@@ -201,20 +201,20 @@ public static class DatabaseSeeder
             };
             await dbContext.Categories.AddAsync(category, cancellationToken);
 
-            Brand[] categoryBrands = categorySeed.Brands.Select(b => brandsByName[b]).ToArray();
+            var categoryBrands = categorySeed.Brands.Select(b => brandsByName[b]).ToArray();
 
             foreach (ProductType type in categorySeed.Types)
             {
                 foreach (string variant in categorySeed.Variants)
                 {
-                    Brand brand = categoryBrands[random.Next(categoryBrands.Length)];
-                    string name = $"{type.BaseName} - {variant}";
+                    var brand = categoryBrands[random.Next(categoryBrands.Length)];
+                    var name = $"{type.BaseName} - {variant}";
 
                     // +/-5% price jitter per variant so identical variants aren't all exactly the same price
-                    decimal jitter = 1 + ((decimal)(random.NextDouble() * 0.1) - 0.05m);
+                    var jitter = 1 + ((decimal)(random.NextDouble() * 0.1) - 0.05m);
 
                     var price = new Money(Math.Round(type.Price * jitter, 2), CurrencyConstants.CurrencyGBPound);
-                    int stockQuantity = random.Next(0, 500); // Random stock quantity between 0 and 99
+                    var stockQuantity = random.Next(0, 500); // Random stock quantity between 0 and 99
 
                     var product = new Product
                     {

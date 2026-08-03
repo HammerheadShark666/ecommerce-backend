@@ -28,12 +28,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -43,12 +43,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products");
+        var resp = await client.GetAsync("/products");
 
         // Assert
         resp.EnsureSuccessStatusCode();
 
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result.Should().NotBeNull();
         result!.Items.Should().ContainSingle(p => p.Name == "Wireless Headphones");
@@ -60,15 +60,15 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products");
+        var resp = await client.GetAsync("/products");
 
         // Assert
         resp.EnsureSuccessStatusCode();
 
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result.Should().NotBeNull();
         result!.Items.Should().BeEmpty();
@@ -80,13 +80,13 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category electronics = CreateCategory("Electronics");
-            Category books = CreateCategory("Books");
-            Brand brand = CreateBrand();
+            var electronics = CreateCategory("Electronics");
+            var books = CreateCategory("Books");
+            var brand = CreateBrand();
 
             db.Categories.AddRange(electronics, books);
             db.Brands.Add(brand);
@@ -98,10 +98,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?category=Electronics");
+        var resp = await client.GetAsync("/products?category=Electronics");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Items.Should().ContainSingle();
         result.Items.Single().Name.Should().Be("Headphones");
@@ -112,12 +112,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -130,10 +130,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?minPrice=20&maxPrice=100");
+        var resp = await client.GetAsync("/products?minPrice=20&maxPrice=100");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Items.Should().ContainSingle();
         result.Items.Single().Name.Should().Be("Mid Item");
@@ -144,12 +144,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -161,10 +161,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?search=Headphones");
+        var resp = await client.GetAsync("/products?search=Headphones");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Items.Should().ContainSingle();
         result.Items.Single().Name.Should().Be("Wireless Headphones");
@@ -175,12 +175,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -193,10 +193,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?sortBy=Price");
+        var resp = await client.GetAsync("/products?sortBy=Price");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Items.Should().BeInAscendingOrder(p => p.Price.Amount);
     }
@@ -206,12 +206,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -222,10 +222,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?page=2&pageSize=10&sortBy=Price");
+        var resp = await client.GetAsync("/products?page=2&pageSize=10&sortBy=Price");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Page.Should().Be(2);
         result!.Items.Should().HaveCount(5);
@@ -237,12 +237,12 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         await using (var db = new ECommerceDbContext(DbOptions))
         {
-            Category category = CreateCategory();
-            Brand brand = CreateBrand();
+            var category = CreateCategory();
+            var brand = CreateBrand();
 
             db.Categories.Add(category);
             db.Brands.Add(brand);
@@ -254,10 +254,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
         }
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products");
+        var resp = await client.GetAsync("/products");
 
         // Assert
-        GetProductsResponse? result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
+        var result = await resp.Content.ReadFromJsonAsync<GetProductsResponse>();
 
         result!.Items.Should().ContainSingle();
         result.Items.Single().Name.Should().Be("Active Product");
@@ -268,10 +268,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?pageSize=500");
+        var resp = await client.GetAsync("/products?pageSize=500");
 
         // Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -282,10 +282,10 @@ public class GetProductsIntegrationTests(SqlServerFixture fixture) : IAsyncLifet
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
         // Act
-        HttpResponseMessage resp = await client.GetAsync("/products?minPrice=100&maxPrice=50");
+        var resp = await client.GetAsync("/products?minPrice=100&maxPrice=50");
 
         // Assert
         resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);

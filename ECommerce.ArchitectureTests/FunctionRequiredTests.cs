@@ -12,9 +12,9 @@ public class FunctionRequiredTests
     [Fact]
     public void Every_Command_Should_Have_A_Handler()
     {
-        Assembly commandAssembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
+        var commandAssembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
 
-        IEnumerable<Type> commands = commandAssembly.GetTypes()
+        var commands = commandAssembly.GetTypes()
             .Where(t =>
                 !t.IsAbstract &&
                 typeof(ICommand<Response>).IsAssignableFrom(t));
@@ -23,7 +23,7 @@ public class FunctionRequiredTests
 
         foreach (Type command in commands)
         {
-            bool exists = handlers.Any(h =>
+            var exists = handlers.Any(h =>
                 h.GetInterfaces().Any(i =>
                     i.IsGenericType &&
                     i.GetGenericArguments().Contains(command)));
@@ -35,9 +35,9 @@ public class FunctionRequiredTests
     [Fact]
     public void Every_Query_Should_Have_A_Handler()
     {
-        Assembly assembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
+        var assembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
 
-        IEnumerable<Type> queries = assembly.GetTypes()
+        var queries = assembly.GetTypes()
             .Where(t =>
                 !t.IsAbstract &&
                 t.GetInterfaces()
@@ -45,11 +45,11 @@ public class FunctionRequiredTests
                         i.IsGenericType &&
                         i.GetGenericTypeDefinition() == typeof(IQuery<>)));
 
-        Type[] handlers = assembly.GetTypes();
+        var handlers = assembly.GetTypes();
 
-        foreach (Type query in queries)
+        foreach (var query in queries)
         {
-            bool exists = handlers.Any(h =>
+            var exists = handlers.Any(h =>
                 h.GetInterfaces().Any(i =>
                     i.IsGenericType &&
                     i.GetGenericArguments().Contains(query)));
@@ -61,14 +61,14 @@ public class FunctionRequiredTests
     [Fact]
     public void Every_Command_Should_Have_A_Validator()
     {
-        Assembly assembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
+        var assembly = typeof(ECommerce.Application.AssemblyMarker).Assembly;
 
-        IEnumerable<Type> commands = assembly.GetTypes()
+        var commands = assembly.GetTypes()
             .Where(t =>
                 !t.IsAbstract &&
                 typeof(ICommand).IsAssignableFrom(t));
 
-        Type[] validators = assembly.GetTypes();
+        var validators = assembly.GetTypes();
 
         foreach (Type command in commands)
         {

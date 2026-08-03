@@ -19,12 +19,10 @@ internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbCon
 { 
     public async Task<ConfirmTwoFactorEnrolmentResponse> Handle(ConfirmTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
     {
-        (User? user, string? otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
+        (var user, var otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
 
-        bool codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
+        var codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
         await UpdateTwoFactorEnabledState(user, cancellationToken);
-
-
 
         return codeIsValid
             ? new ConfirmTwoFactorEnrolmentResponse(true, "2FA enabled successfully.")
@@ -33,10 +31,9 @@ internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbCon
 
     private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
     {
-        User? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
             ?? throw new NotFoundException(nameof(User), email);
-        ;
-
+         
         if (user.OneTimePasswordSecret is null)
         {
             throw new TwoFactorEnrolmentNotStartedException();
@@ -52,9 +49,9 @@ internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbCon
 
     private async Task<bool> ValidateCodeAsync(string otpSecret, string code)
     {
-        string decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
+        var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
 
-        bool valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
+        var valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
         if (!valid)
         {
             throw new UnauthorizedAccessException();

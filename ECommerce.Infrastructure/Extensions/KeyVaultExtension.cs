@@ -13,7 +13,7 @@ public static class KeyVaultExtension
     {
         if (environment.IsProduction())
         {
-            string keyVaultUri = GetKeyVaultUri(environment, configuration);
+            var keyVaultUri = GetKeyVaultUri(environment, configuration);
 
             configuration.AddAzureKeyVault(
                 new Uri(keyVaultUri),
@@ -24,10 +24,10 @@ public static class KeyVaultExtension
     } 
     
     private static string GetKeyVaultUri(IHostEnvironment environment, IConfiguration configuration)
-    { 
-        string env = environment.IsProduction() ? "Production" : "Development";
+    {
+        var env = environment.IsProduction() ? "Production" : "Development";
 
-        string? keyVaultUri = env switch
+        var keyVaultUri = env switch
         {
             "Development" => configuration["KeyVault:DevelopmentVaultUri"],
             "Production" => configuration["KeyVault:ProductionVaultUri"],

@@ -9,7 +9,7 @@ public sealed class TokenCleanupService(IECommerceDbContext dbContext,
 { 
     public async Task CleanupAsync(CancellationToken cancellationToken)
     {
-        DateTimeOffset now = timeProvider.GetUtcNow();
+        var now = timeProvider.GetUtcNow();
 
         await dbContext.RefreshTokens
             .Where(x =>

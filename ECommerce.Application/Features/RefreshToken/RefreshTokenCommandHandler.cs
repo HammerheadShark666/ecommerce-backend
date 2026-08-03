@@ -24,14 +24,14 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
 {
     public async Task<RefreshTokenResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        string hashedRefreshToken = hmacsha256Hasher.HashToken(request.RefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+        var hashedRefreshToken = hmacsha256Hasher.HashToken(request.RefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-        Domain.Entities.Authentication.RefreshToken refreshToken = await GetRefreshTokenRecord(hashedRefreshToken, cancellationToken);
+        var refreshToken = await GetRefreshTokenRecord(hashedRefreshToken, cancellationToken);
 
-        User user = refreshToken.User
+        var user = refreshToken.User
             ?? throw new UnauthorizedAccessException();
 
-        (string? accessToken, string? newRefreshToken) = await GetNewTokensAsync(user, cancellationToken);
+        (var accessToken, var newRefreshToken) = await GetNewTokensAsync(user, cancellationToken);
 
         await UpdateRefreshTokenTable(refreshToken, newRefreshToken, cancellationToken);
 
@@ -59,7 +59,7 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
 
     private Domain.Entities.Authentication.RefreshToken CreateRefreshToken(Guid userId, string newRefreshToken, TimeSpan refreshTokenLifeSpan)  
     {
-        string hashedRefreshToken = hmacsha256Hasher.HashToken(newRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+        var hashedRefreshToken = hmacsha256Hasher.HashToken(newRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
         return new Domain.Entities.Authentication.RefreshToken
         {
@@ -71,10 +71,10 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
 
     private async Task<(string, string)> GetNewTokensAsync(User user, CancellationToken cancellationToken)
     {
-        string accessToken =
+        var accessToken =
            await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
-        string newRefreshToken =
+        var newRefreshToken =
             refreshTokenGenerator.GenerateRefreshToken();
 
         return (accessToken, newRefreshToken);
@@ -83,13 +83,13 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
     private async Task<Domain.Entities.Authentication.RefreshToken> GetRefreshTokenRecord(string hashedRefreshToken, 
                                                                          CancellationToken cancellationToken)
     {
-        Domain.Entities.Authentication.RefreshToken? refreshToken = await dbContext.RefreshTokens
-                                                .Include(x => x.User)
-                                                .SingleOrDefaultAsync(
-                                                    x => x.Token == hashedRefreshToken &&
-                                                         x.RevokedAt == null &&
-                                                         x.ExpiresAt > timeProvider.GetUtcNow().UtcDateTime,
-                                                        cancellationToken) ?? throw new UnauthorizedAccessException();         
+        var refreshToken = await dbContext.RefreshTokens
+                                    .Include(x => x.User)
+                                    .SingleOrDefaultAsync(
+                                        x => x.Token == hashedRefreshToken &&
+                                                x.RevokedAt == null &&
+                                                x.ExpiresAt > timeProvider.GetUtcNow().UtcDateTime,
+                                            cancellationToken) ?? throw new UnauthorizedAccessException();         
         return refreshToken;
     }     
 }

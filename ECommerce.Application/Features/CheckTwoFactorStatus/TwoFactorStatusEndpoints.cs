@@ -10,12 +10,12 @@ public static class TwoFactorStatusEndpoints
     public static IEndpointRouteBuilder MapTwoFactorStatusEndpoints(
         this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("/2fa")
+        var group = endpoints.MapGroup("/2fa")
                              .WithTags("ECommerce");
 
         group.MapGet("/status", async (string email, IMediator mediator) =>
         {
-            GetTwoFactorStatusResponse result = await mediator.Send(new GetTwoFactorStatusQuery(email));
+            var result = await mediator.Send(new GetTwoFactorStatusQuery(email));
             return Results.Ok(result);
         });
 

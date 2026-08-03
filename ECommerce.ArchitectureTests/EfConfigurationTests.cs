@@ -10,7 +10,7 @@ public class EfConfigurationsArchitectureTests
     [Fact]
     public void Ef_Configurations_Should_Only_Exist_In_Infrastructure()
     {
-        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         var configurationTypes = assemblies
             .SelectMany(a =>
@@ -46,7 +46,7 @@ public class EfConfigurationsArchitectureTests
     [Fact]
     public void Features_Should_Not_Contain_Ef_Configurations()
     {
-        Assembly assembly = typeof(Application.AssemblyMarker).Assembly;
+        var assembly = typeof(Application.AssemblyMarker).Assembly;
 
         var failures = assembly.GetTypes()
             .Where(t =>
@@ -65,7 +65,7 @@ public class EfConfigurationsArchitectureTests
     [Fact]
     public void Domain_Should_Not_Contain_Ef_Configurations()
     {
-        TestResult result = Types.InAssembly(
+        var result = Types.InAssembly(
                 typeof(Domain.AssemblyMarker).Assembly)
             .ShouldNot()
             .ImplementInterface(
@@ -78,7 +78,7 @@ public class EfConfigurationsArchitectureTests
     [Fact]
     public void All_Configurations_Should_Be_Located_In_Configurations_Namespace()
     {
-        Assembly assembly = typeof(Infrastructure.AssemblyMarker).Assembly;
+        var assembly = typeof(Infrastructure.AssemblyMarker).Assembly;
 
         var failures = assembly.GetTypes()
             .Where(t =>

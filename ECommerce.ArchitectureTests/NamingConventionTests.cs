@@ -14,7 +14,7 @@ public class NamingConventionTests : BaseTest
     [Fact]
     public void QueryHandlers_Should_Have_Name_Ending_With_QueryHandler()
     {
-        ClassesShouldConjunction rule = Classes()
+        var rule = Classes()
             .That()
             .ImplementInterface(typeof(IQueryHandler<,>))  
             .Should()
@@ -26,7 +26,7 @@ public class NamingConventionTests : BaseTest
     [Fact]
     public void CommandHandlers_Should_Have_Name_Ending_With_CommandHandler()
     {
-        ClassesShouldConjunction rule = Classes()
+        var rule = Classes()
             .That()
             .ImplementInterface(typeof(ICommandHandler<,>))
             .Should()
@@ -74,7 +74,7 @@ public class NamingConventionTests : BaseTest
 
     private static bool IsAsyncMethod(MethodInfo method)
     {
-        Type returnType = method.ReturnType;
+        var returnType = method.ReturnType;
 
         return returnType == typeof(Task)
                || returnType == typeof(ValueTask)

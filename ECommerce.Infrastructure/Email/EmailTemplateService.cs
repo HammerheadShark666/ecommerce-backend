@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using ECommerce.Application.Abstractions.Email;
+﻿using ECommerce.Application.Abstractions.Email;
 using ECommerce.Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 
@@ -10,7 +9,7 @@ public sealed class EmailTemplateService(IOptions<UrlOptions> options) : IEmailT
     public async Task<string> RenderAsync(string templateName,
                                           Dictionary<string, string> values)
     {
-        string template = await GetHtmlTemplate(templateName);
+        var template = await GetHtmlTemplate(templateName);
         template = PopulateValues(template, values);
 
         return template;
@@ -18,9 +17,9 @@ public sealed class EmailTemplateService(IOptions<UrlOptions> options) : IEmailT
 
     private static async Task<string> GetHtmlTemplate(string templateName)
     {
-        Assembly assembly = typeof(EmailTemplateService).Assembly;
+        var assembly = typeof(EmailTemplateService).Assembly;
 
-        string resourceName =
+        var resourceName =
             $"ECommerce.Infrastructure.Email.Templates.{templateName}.html";
 
         await using Stream stream =

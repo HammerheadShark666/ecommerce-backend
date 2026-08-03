@@ -11,20 +11,20 @@ public static class RefreshTokenEndPoints
 {
     public static IEndpointRouteBuilder MapRefreshTokenEndPoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("/refresh-token")
+        var group = endpoints.MapGroup("/refresh-token")
                                                 .WithTags("RefreshToken");
 
         group.MapPost("/", async (HttpRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) => {
 
-            string? refreshToken =
+            var refreshToken =
                     request.Cookies["refreshToken"];
 
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return Results.Unauthorized();
-            } 
+            }
 
-            RefreshTokenResponse result = await mediator.Send(new RefreshTokenCommand(refreshToken));
+            var result = await mediator.Send(new RefreshTokenCommand(refreshToken));
             response.SetRefreshToken(result.RefreshToken, jwtSettings.RefreshTokenExpiryDays); 
 
             return Results.Ok(new RefreshTokenOnlyResponse(result.Token));

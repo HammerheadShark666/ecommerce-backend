@@ -7,7 +7,7 @@ public class RefreshTokenGenerator : IRefreshTokenGenerator
 {
     public string GenerateRefreshToken()
     {
-        byte[] randomBytes = RandomNumberGenerator.GetBytes(64);
+        var randomBytes = RandomNumberGenerator.GetBytes(64);
         return Convert.ToBase64String(randomBytes);
     }
 }

@@ -22,12 +22,12 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "requestverify@example.com";
+        var email = "requestverify@example.com";
 
         // insert a user who is not email verified
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(_fixture.ConnectionString)
             .Options;
 
@@ -48,7 +48,7 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
         }
 
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
+        var resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
 
         // Assert
         resp.EnsureSuccessStatusCode();
@@ -62,12 +62,12 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "alreadyverified@example.com";
+        var email = "alreadyverified@example.com";
 
         // insert a user who is already verified
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(_fixture.ConnectionString)
             .Options;
 
@@ -88,7 +88,7 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
         }
 
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
+        var resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);

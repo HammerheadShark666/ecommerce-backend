@@ -38,7 +38,7 @@ public static class JwtExtension
                     {
                         context.HandleResponse();
 
-                        HttpContext http = context.HttpContext;
+                        var http = context.HttpContext;
                         if (!http.Response.HasStarted)
                         {
                             http.Response.StatusCode = StatusCodes.Status401Unauthorized;

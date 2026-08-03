@@ -14,9 +14,9 @@ public static class RateLimitingExtensions
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
             context =>
             {
-                string? userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                string key = userId
+                var key = userId
                             ?? context.Connection.RemoteIpAddress?.ToString()
                             ?? "anonymous";
 

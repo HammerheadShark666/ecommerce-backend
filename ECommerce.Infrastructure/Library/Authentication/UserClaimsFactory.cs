@@ -10,7 +10,7 @@ public class UserClaimsFactory(ECommerceDbContext dbContext) : IUserClaimsFactor
 {
     public async Task<IReadOnlyList<Claim>> CreateRoleClaimsAsync(User user, CancellationToken cancellationToken)
     {
-        List<string> roleNames = await dbContext.UserRoles
+        var roleNames = await dbContext.UserRoles
            .Where(ur => ur.UserId == user.Id)
            .Select(ur => ur.Role.Name)
            .ToListAsync(cancellationToken);

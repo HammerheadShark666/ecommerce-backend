@@ -38,8 +38,8 @@ public sealed class ValidationBehaviour<TRequest, TResponse>(
             .ToList();
 
         // TResponse is Result<T> — construct failure via reflection-free generic factory
-        Type resultType = typeof(TResponse).GetGenericArguments()[0];
-        MethodInfo failMethod = typeof(Result)
+        var resultType = typeof(TResponse).GetGenericArguments()[0];
+        var failMethod = typeof(Result)
             .GetMethods()
             .First(m => m.Name == nameof(Result.Fail) && m.IsGenericMethod && m.GetParameters()[0].ParameterType == typeof(IEnumerable<IError>))
             .MakeGenericMethod(resultType);

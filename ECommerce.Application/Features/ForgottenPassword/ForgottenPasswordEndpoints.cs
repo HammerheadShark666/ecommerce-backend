@@ -11,7 +11,7 @@ public static class ForgottenPasswordEndpoints
 { 
     public static IEndpointRouteBuilder MapForgottenPasswordEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("forgotten-password")
+        var group = endpoints.MapGroup("forgotten-password")
                              .WithTags("forgotten-password");
 
         group.MapPost("", async ([FromBody] ForgottenPasswordRequest request, IMediator mediator) => 
@@ -20,7 +20,7 @@ public static class ForgottenPasswordEndpoints
 
         group.MapPost("/reset/validate", async ([FromBody] PasswordResetValidateRequest request, IMediator mediator, HttpContext httpContext) =>
         {
-            string? ipAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
             await mediator.Send(new PasswordResetValidateCommand(request.Token, request.Email, request.NewPassword, request.Code, ipAddress));
         })                                            
         .RequireRateLimiting(RateLimiterPolicyConstants.ForgottonPassword); 

@@ -30,11 +30,11 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
     public async Task<PasswordResetValidateResponse> Handle(PasswordResetValidateCommand request, CancellationToken cancellationToken)
     {
         //Validate token
-        PasswordResetToken passwordResetToken = await GetPasswordResetTokenAsync(request.Token, cancellationToken);
+        var passwordResetToken = await GetPasswordResetTokenAsync(request.Token, cancellationToken);
 
         //Validate code
-        (User user, string otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
-        bool codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
+        (var user, var otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
+        var codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
 
         if (!codeIsValid)
         {
@@ -49,9 +49,9 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
 
     private async Task<bool> ValidateCodeAsync(string otpSecret, string code)
     {
-        string decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
+        var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
 
-        bool valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
+        var valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
         if (!valid)
         {
             throw new UnauthorizedAccessException();
@@ -62,7 +62,7 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
 
     private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
     {
-        User? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
             ?? throw new NotFoundException(nameof(User), email); 
 
         if (user.OneTimePasswordSecret is null)
@@ -74,8 +74,8 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
     }
 
     private async Task<PasswordResetToken> GetPasswordResetTokenAsync(string token, CancellationToken cancellationToken)
-    { 
-        string hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
+    {
+        var hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
 
         return await dbContext.PasswordResetTokens
                                 .FirstOrDefaultAsync(t => t.TokenHash == hashedPasswordResetToken, cancellationToken) 

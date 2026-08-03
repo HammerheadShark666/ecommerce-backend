@@ -23,9 +23,9 @@ public class RefreshTokenIntegrationTests(SqlServerFixture fixture) : IAsyncLife
     public async Task RefreshToken_WhenNoCookie_ReturnsUnauthorized()
     {
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        HttpResponseMessage resp = await client.PostAsync("/refresh-token/", new StringContent(string.Empty));
+        var resp = await client.PostAsync("/refresh-token/", new StringContent(string.Empty));
 
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
     }
@@ -44,7 +44,7 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
     protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
     {
         // Attach cookies for the request
-        string cookieHeader = _cookieContainer.GetCookieHeader(_baseUri);
+        var cookieHeader = _cookieContainer.GetCookieHeader(_baseUri);
         if (!string.IsNullOrEmpty(cookieHeader))
         {
             if (request.Headers.Contains("Cookie"))
@@ -55,7 +55,7 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
             request.Headers.Add("Cookie", cookieHeader);
         }
 
-        HttpResponseMessage response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         // Read Set-Cookie headers and store them in the container
         if (response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string>? setCookieHeaders))
@@ -85,9 +85,9 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
 
         // Create a CookieContainer and a delegating handler that will forward to the test server
         var cookieContainer = new System.Net.CookieContainer();
-        Uri baseUri = appFactory.Server.BaseAddress ?? new Uri("http://localhost");
+        var baseUri = appFactory.Server.BaseAddress ?? new Uri("http://localhost");
 
-        HttpMessageHandler serverHandler = appFactory.Server.CreateHandler();
+        var serverHandler = appFactory.Server.CreateHandler();
         var cookieDelegatingHandler = new CookieDelegatingHandler(cookieContainer, baseUri)
         {
             InnerHandler = serverHandler
@@ -98,19 +98,19 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
             BaseAddress = baseUri
         };
 
-        string plainOldRefreshToken = "old-refresh-token-1";
-        string email = "rtuser@example.com";
+        var plainOldRefreshToken = "old-refresh-token-1";
+        var email = "rtuser@example.com";
         Guid userId;
 
         // compute hash for stored token and insert user + refresh token
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            IHmacsha256Hasher hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
-            IHashSettings hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
+            var hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
+            var hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
 
-            string hashedOld = hmac.HashToken(plainOldRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+            var hashedOld = hmac.HashToken(plainOldRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
@@ -148,7 +148,7 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
         cookieContainer.Add(baseUri, new System.Net.Cookie("refreshToken", plainOldRefreshToken));
 
         // Act
-        HttpResponseMessage resp = await client.PostAsync("/refresh-token/", new StringContent(string.Empty));
+        var resp = await client.PostAsync("/refresh-token/", new StringContent(string.Empty));
 
         // Assert
         resp.EnsureSuccessStatusCode();
@@ -157,30 +157,30 @@ internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandle
         const string expectedNewPlain = "TEST_NEW_REFRESH_TOKEN";
 
         // CookieDelegatingHandler should have stored the cookie; if present verify it matches expected
-        string? cookieValue = cookieContainer.GetCookies(baseUri)["refreshToken"]?.Value;
+        var cookieValue = cookieContainer.GetCookies(baseUri)["refreshToken"]?.Value;
         cookieValue?.Should().Be(expectedNewPlain);
 
-        string newPlainRefreshToken = expectedNewPlain;
+        var newPlainRefreshToken = expectedNewPlain;
 
         // verify DB: old token revoked, new token exists
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            IHmacsha256Hasher hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
-            IHashSettings hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
+            var hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
+            var hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
 
-            string hashedNew = hmac.HashToken(newPlainRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
-            string hashedOld = hmac.HashToken(plainOldRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+            var hashedNew = hmac.HashToken(newPlainRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+            var hashedOld = hmac.HashToken(plainOldRefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
             await using var db = new ECommerceDbContext(options);
-            Domain.Entities.Authentication.RefreshToken? old = await db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == hashedOld && t.UserId == userId);
+            var old = await db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == hashedOld && t.UserId == userId);
             old.Should().NotBeNull();
             old!.RevokedAt.Should().NotBeNull();
 
-            Domain.Entities.Authentication.RefreshToken? added = await db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == hashedNew && t.UserId == userId);
+            var added = await db.RefreshTokens.FirstOrDefaultAsync(t => t.Token == hashedNew && t.UserId == userId);
             added.Should().NotBeNull();
             added!.RevokedAt.Should().BeNull();
         }
