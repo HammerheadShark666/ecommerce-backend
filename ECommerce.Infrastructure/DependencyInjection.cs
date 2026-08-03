@@ -1,5 +1,6 @@
 ﻿using ECommerce.Infrastructure.Configurations;
 using ECommerce.Infrastructure.Extensions;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +21,9 @@ public static class DependencyInjection
         services.AddJwtExtension(jwtOptions);
         services.AddCors();
         services.AddMessaging(configuration); 
-        services.AddAzureCredentials(); 
+        services.AddAzureCredentials();
+
+        services.AddAuthorization(options => options.AddPolicy("RequireAdmin", p => p.RequireRole(AuthenticationConstants.RoleAdmin)));
 
         return services;
     }

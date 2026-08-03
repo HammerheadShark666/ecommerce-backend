@@ -37,7 +37,7 @@ public class PasswordResetRequestedEmail(IECommerceDbContext dbContext,
             PasswordResetRequestPayload payload = envelope.Payload;
                          
             string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-            string hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
+            string hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, Application.Constants.AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
              
             await MarkExistingTokensAsUsedAsync(cancellationToken);
             await CreatePasswordResetTokenAsync(payload.UserId, hashedPasswordResetToken, cancellationToken);

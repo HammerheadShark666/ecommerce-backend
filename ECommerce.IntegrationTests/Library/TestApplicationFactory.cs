@@ -1,4 +1,5 @@
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Fakes;

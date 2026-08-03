@@ -1,5 +1,6 @@
 using Azure.Messaging.ServiceBus;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Email;
 using ECommerce.Application.Constants;

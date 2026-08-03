@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;

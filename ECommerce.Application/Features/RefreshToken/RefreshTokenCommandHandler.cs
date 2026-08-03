@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Constants;
 using ECommerce.Domain.Entities.User;
@@ -30,7 +31,7 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
         User user = refreshToken.User
             ?? throw new UnauthorizedAccessException();
 
-        (string? accessToken, string? newRefreshToken) = await GetNewTokensAsync(user);
+        (string? accessToken, string? newRefreshToken) = await GetNewTokensAsync(user, cancellationToken);
 
         await UpdateRefreshTokenTable(refreshToken, newRefreshToken, cancellationToken);
 
@@ -68,10 +69,10 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
         };
     }
 
-    private async Task<(string, string)> GetNewTokensAsync(User user)
+    private async Task<(string, string)> GetNewTokensAsync(User user, CancellationToken cancellationToken)
     {
         string accessToken =
-           await jwtGenerator.GenerateTokenAsync(user);
+           await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
         string newRefreshToken =
             refreshTokenGenerator.GenerateRefreshToken();

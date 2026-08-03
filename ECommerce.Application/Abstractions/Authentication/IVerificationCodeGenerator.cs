@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Application.Abstractions;
+﻿namespace ECommerce.Application.Abstractions.Authentication;
 
 public interface IVerificationCodeGenerator
 {

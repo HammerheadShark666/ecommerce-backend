@@ -140,6 +140,27 @@ public static class DatabaseSeeder
 
     public static async Task SeedAsync(ECommerceDbContext dbContext, CancellationToken cancellationToken = default)
     {
+        if (await dbContext.Roles.AnyAsync(cancellationToken))
+        {
+            return; // Already seeded — safe to call on every startup
+        }
+
+        dbContext.Roles.Add(new Domain.Entities.User.Role()
+        {
+            Id = 2,
+            Name = "Admin",
+            Description = "Administrator role with full access to the system",
+            CreatedAt = DateTime.UtcNow,
+        });
+
+        dbContext.Roles.Add(new Domain.Entities.User.Role()
+        {
+            Id = 4,
+            Name = "Customer",
+            Description = "Customer with access to commercial side of the system",
+            CreatedAt = DateTime.UtcNow,
+        });
+
         if (await dbContext.Products.AnyAsync(cancellationToken))
         {
             return; // Already seeded — safe to call on every startup

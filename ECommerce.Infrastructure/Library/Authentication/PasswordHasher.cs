@@ -1,6 +1,6 @@
-﻿using ECommerce.Application.Abstractions;
+﻿using ECommerce.Application.Abstractions.Authentication;
 
-namespace ECommerce.Infrastructure.Library;
+namespace ECommerce.Infrastructure.Library.Authentication;
 
 public class PasswordHasher : IPasswordHasher
 {

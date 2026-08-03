@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Constants;
@@ -38,7 +39,7 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         await ClearPendingTokenAsync(pendingTwoFactorLogin);
 
         string refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
-        string jwtToken = await jwtGenerator.GenerateTokenAsync(user);
+        string jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
         return new VerifyTwoFactorLoginResponse(jwtToken, refreshToken);
     }

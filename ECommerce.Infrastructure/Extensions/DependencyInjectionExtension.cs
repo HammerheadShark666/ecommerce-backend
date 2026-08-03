@@ -1,8 +1,10 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Email;
 using ECommerce.Infrastructure.Background_Jobs;
 using ECommerce.Infrastructure.Email;
 using ECommerce.Infrastructure.Library;
+using ECommerce.Infrastructure.Library.Authentication;
 using ECommerce.Infrastructure.Services;
 using ECommerce.Infrastructure.Services.Intefaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,7 @@ public static class DependencyInjectionExtension
         services.AddScoped<IHmacsha256Hasher, Hmacsha256Hasher>();
         services.AddScoped<ITokenCleanupService, TokenCleanupService>();     
         services.AddScoped<IEmailSender, AzureCommunicationEmailSender>();
+        services.AddScoped<IUserClaimsFactory, UserClaimsFactory>();
 
         services.AddHostedService<TokenCleanupJob>();
     }
