@@ -16,18 +16,18 @@ public static class ProductEndpoints
     public static IEndpointRouteBuilder MapProductEndpoints(
         this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("/products")
+        var group = endpoints.MapGroup("/products")
                              .WithTags("Products");
 
         group.MapGet("", async ([AsParameters] GetProductsRequest request, IMediator mediator) =>
         {
-            Result<GetProductsResponse> result = await mediator.Send(new GetProductsQuery(request.Page ?? 1,
-                                                                                          request.PageSize ?? 20,
-                                                                                          request.Category,
-                                                                                          request.MinPrice.HasValue ? new Money(request.MinPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
-                                                                                          request.MaxPrice.HasValue ? new Money(request.MaxPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
-                                                                                          request.Search,
-                                                                                          request.SortBy));
+            var result = await mediator.Send(new GetProductsQuery(request.Page ?? 1,
+                                                                  request.PageSize ?? 20,
+                                                                  request.Category,
+                                                                  request.MinPrice.HasValue ? new Money(request.MinPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
+                                                                  request.MaxPrice.HasValue ? new Money(request.MaxPrice.Value, CurrencyConstants.CurrencyGBPound) : null,
+                                                                  request.Search,
+                                                                  request.SortBy));
             if (result.IsFailed)
             {
                 return result.ToHttpResult();
@@ -40,7 +40,7 @@ public static class ProductEndpoints
 
         group.MapGet("/{id:guid}/{slug}", async (Guid id, string slug, ISender sender, CancellationToken cancellationToken) =>
         {
-            Result<GetProductResult> result = await sender.Send(new GetProductQuery(id, slug), cancellationToken);
+            var result = await sender.Send(new GetProductQuery(id, slug), cancellationToken);
 
             if (result.IsFailed)
             {

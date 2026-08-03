@@ -10,7 +10,7 @@ public static class AzureCredentialsExtension
     public static void AddAzureCredentials(this IServiceCollection services) => 
                                            services.AddSingleton<TokenCredential>(sp =>
                                            {
-                                               IHostEnvironment env = sp.GetRequiredService<IHostEnvironment>();
+                                               var env = sp.GetRequiredService<IHostEnvironment>();
 
                                                return env.IsDevelopment()
                                                    ? new DefaultAzureCredential(new DefaultAzureCredentialOptions

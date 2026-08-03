@@ -9,8 +9,8 @@ public static class SeedDataExtension
     {
         if (app.Environment.IsDevelopment())
         {
-            using IServiceScope scope = app.Services.CreateScope();
-            ECommerceDbContext dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
             await DatabaseSeeder.SeedAsync(dbContext);
         }
 

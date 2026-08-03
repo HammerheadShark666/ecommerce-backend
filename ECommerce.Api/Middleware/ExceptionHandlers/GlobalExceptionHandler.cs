@@ -10,7 +10,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
         Exception exception,        
         CancellationToken cancellationToken)
     {
-        string correlationId = httpContext.TraceIdentifier;
+        var correlationId = httpContext.TraceIdentifier;
 
         logger.LogError(
             exception,

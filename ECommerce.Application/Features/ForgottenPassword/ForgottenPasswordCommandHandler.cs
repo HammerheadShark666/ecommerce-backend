@@ -17,9 +17,9 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
     private static readonly TimeSpan PendingTokenTtl = TimeSpan.FromMinutes(5);
 
     public async Task<ForgottenPasswordResponse> Handle(ForgottenPasswordCommand request, CancellationToken cancellationToken)
-    { 
-        string normaliseEmail = request.Email.Trim().ToUpperInvariant();
-        User user = await GetUserAsync(normaliseEmail, cancellationToken);
+    {
+        var normaliseEmail = request.Email.Trim().ToUpperInvariant();
+        var user = await GetUserAsync(normaliseEmail, cancellationToken);
 
         if(user is not null)
         {

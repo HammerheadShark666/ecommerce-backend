@@ -22,12 +22,12 @@ public class RegistrationCompletedFunction(IEmailSender emailSender,
         {
             logger.LogInformation("Processing message (Registration Successful): {MessageId}", message.MessageId);
 
-            UserRegisteredMessage? envelope = message.Body.ToObjectFromJson<UserRegisteredMessage>() 
-            ?? throw new InvalidOperationException("Unable to deserialize UserRegisteredMessage from Service Bus message.");
+            var envelope = message.Body.ToObjectFromJson<UserRegisteredMessage>() 
+                ?? throw new InvalidOperationException("Unable to deserialize UserRegisteredMessage from Service Bus message.");
 
-            UserRegisteredPayload payload = envelope.Payload;
+            var payload = envelope.Payload;
 
-            string htmlBody = await emailTemplateService.RenderAsync(
+            var htmlBody = await emailTemplateService.RenderAsync(
                 EmailConstants.EmailTemplateRegistrationSuccessful, 
                 new() {
                     ["Name"] = payload.FirstName,

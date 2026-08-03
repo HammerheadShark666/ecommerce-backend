@@ -20,9 +20,9 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
 {
     public async Task<VerifyRegistrationResponse> Handle(VerifyRegistrationCommand request, CancellationToken cancellationToken)
     {
-        string hashedCode = hmacsha256Hasher.HashToken(request.Code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
+        var hashedCode = hmacsha256Hasher.HashToken(request.Code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
 
-        User user = await GetUser(request.Email, hashedCode, cancellationToken);
+        var user = await GetUser(request.Email, hashedCode, cancellationToken);
         await UpdateUser(user, cancellationToken);
 
         await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);

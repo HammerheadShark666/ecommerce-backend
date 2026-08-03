@@ -12,8 +12,8 @@ public static class ResultExtensions
             return Results.Ok(result.Value);
         }
 
-        IError error = result.Errors.First();
-        int statusCode = error.Metadata.TryGetValue("StatusCode", out object? code)
+        var error = result.Errors.First();
+        var statusCode = error.Metadata.TryGetValue("StatusCode", out object? code)
             ? (int)code
             : StatusCodes.Status500InternalServerError;
 

@@ -15,8 +15,8 @@ public sealed class AzureServiceBusMessagePublisher(
         CancellationToken cancellationToken = default)
         where TMessage : IMessage
     {
-        string queueName = resolver.GetQueueName(typeof(TMessage));
-        ServiceBusSender _sender = client.CreateSender(queueName);
+        var queueName = resolver.GetQueueName(typeof(TMessage));
+        var _sender = client.CreateSender(queueName);
 
         await _sender.SendMessageAsync(
            CreateMessage(message),
@@ -27,7 +27,7 @@ public sealed class AzureServiceBusMessagePublisher(
     where TMessage : IMessage
     {
         var envelope = MessageEnvelope.Create(message);
-        string json = JsonSerializer.Serialize(envelope);
+        var json = JsonSerializer.Serialize(envelope);
 
         return new ServiceBusMessage(json)
         {

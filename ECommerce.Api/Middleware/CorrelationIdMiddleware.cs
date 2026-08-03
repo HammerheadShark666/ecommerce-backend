@@ -11,7 +11,7 @@ public sealed class CorrelationIdMiddleware(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context)
     {
-        string correlationId =
+        var correlationId =
             context.Request.Headers[HeaderName].FirstOrDefault()
             ?? context.TraceIdentifier
             ?? Guid.NewGuid().ToString();

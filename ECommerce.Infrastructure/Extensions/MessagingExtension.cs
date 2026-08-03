@@ -19,7 +19,7 @@ public static class MessagingExtension
 
         services.AddSingleton<ServiceBusClient>(sp =>
         {
-            IOptions<AzureServiceBusOptions> options =
+            var options =
                 sp.GetRequiredService<IOptions<AzureServiceBusOptions>>();
 
             return new ServiceBusClient(

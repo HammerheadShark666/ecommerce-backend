@@ -8,7 +8,7 @@ public class OneTimePasswordGenerator : IOneTimePasswordGenerator
 { 
     public string GenerateSecret()
     {
-        byte[] key = KeyGeneration.GenerateRandomKey(Constants.OneTimePasswordConstants.SecretSizeBytes);
+        var key = KeyGeneration.GenerateRandomKey(Constants.OneTimePasswordConstants.SecretSizeBytes);
         return Base32Encoding.ToString(key);
     }
 

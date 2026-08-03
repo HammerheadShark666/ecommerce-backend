@@ -24,16 +24,16 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
 {
     public async Task<BeginTwoFactorEnrolmentResponse> Handle(BeginTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
     {
-        User user = await GetUserAsync(request.Email, cancellationToken);
+        var user = await GetUserAsync(request.Email, cancellationToken);
 
         if (user.IsTwoFactorEnabled)
         {
             throw new InvalidTwoFactorStateException("2FA is already enabled for this user.");
         }
 
-        (string oneTimePasswordSecret, string encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
+        (var oneTimePasswordSecret, var encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
         await UpdateUser(user, encryptedOneTimePasswordSecret, cancellationToken);
-        (string qrBase64, string uri) = GenerateQrCode(request.Email, oneTimePasswordSecret);
+        (var qrBase64, var uri) = GenerateQrCode(request.Email, oneTimePasswordSecret);
 
         return new BeginTwoFactorEnrolmentResponse(qrBase64, uri); 
     }
@@ -43,8 +43,8 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
 
     private async Task<(string secret, string encryptedSecrete)> GenerateAndEncryptOneTimePasswordSecretAsync()
     {
-        string secret = oneTimePasswordGenerator.GenerateSecret();
-        string encryptedSecrect = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
+        var secret = oneTimePasswordGenerator.GenerateSecret();
+        var encryptedSecrect = aesEncryptionHelper.Encrypt(secret, encryptionSettings.OneTimePasswordKey);
 
         return (secret, encryptedSecrect);
     }
@@ -59,8 +59,8 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
 
     private (string qrBase64, string uri) GenerateQrCode(string email, string secret)
     {
-        string uri = qrCodeGenerator.BuildOneTimePasswordAuthUri(jwtSettings.Issuer, email, secret);
-        string qrBase64 = qrCodeGenerator.GenerateQrCodeBase64(uri);
+        var uri = qrCodeGenerator.BuildOneTimePasswordAuthUri(jwtSettings.Issuer, email, secret);
+        var qrBase64 = qrCodeGenerator.GenerateQrCodeBase64(uri);
 
         return (qrBase64, uri);
     }

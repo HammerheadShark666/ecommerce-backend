@@ -13,12 +13,12 @@ public static class LoginEndpoints
 { 
     public static IEndpointRouteBuilder MapLoginEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("")
+        var group = endpoints.MapGroup("")
                              .WithTags("Login");
 
         group.MapPost("/login", async ([FromBody] LoginRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
-        { 
-            LoginResponse result = await mediator.Send(new LoginCommand(request.Email, request.Password));
+        {
+            var result = await mediator.Send(new LoginCommand(request.Email, request.Password));
 
             if(result.RequiresTwoFactor)
             {

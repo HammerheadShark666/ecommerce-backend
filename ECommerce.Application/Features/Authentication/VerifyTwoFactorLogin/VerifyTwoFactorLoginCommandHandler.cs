@@ -28,18 +28,18 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
                                                   IJwtGenerator jwtGenerator) : ICommandHandler<VerifyTwoFactorLoginCommand, VerifyTwoFactorLoginResponse>
 { 
     public async Task<VerifyTwoFactorLoginResponse> Handle(VerifyTwoFactorLoginCommand request, CancellationToken cancellationToken)
-    {        
-        string normaliseEmail = request.Email.Trim().ToUpperInvariant();
+    {
+        var normaliseEmail = request.Email.Trim().ToUpperInvariant();
 
-        User user = await GetUserAsync(normaliseEmail, cancellationToken);
+        var user = await GetUserAsync(normaliseEmail, cancellationToken);
 
-        PendingTwoFactorLogin pendingTwoFactorLogin = await ValidateTwoFactorPendingToken(request.PendingToken, request.PendingTokenId, cancellationToken);
+        var pendingTwoFactorLogin = await ValidateTwoFactorPendingToken(request.PendingToken, request.PendingTokenId, cancellationToken);
 
         await ValidateTwoFactorCodeAsync(user.OneTimePasswordSecret, request.Code);
         await ClearPendingTokenAsync(pendingTwoFactorLogin);
 
-        string refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
-        string jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
+        var refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
+        var jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
         return new VerifyTwoFactorLoginResponse(jwtToken, refreshToken);
     }
@@ -59,7 +59,7 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
 
     private async Task<PendingTwoFactorLogin> ValidateTwoFactorPendingToken(string pendingToken, Guid pendingTokenId, CancellationToken cancellationToken)
     {
-        PendingTwoFactorLogin? pendingTwoFactorLogin = await dbContext.PendingTwoFactorLogins
+        var pendingTwoFactorLogin = await dbContext.PendingTwoFactorLogins
                                                 .AsNoTracking()
                                                 .FirstOrDefaultAsync(x =>
                                                      x.Id == pendingTokenId,                                                    
@@ -87,16 +87,16 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
 
     private void ValidatePendingToken(string pendingToken, string storedPendingToken)
     {
-        string incomingHashedToken =
+        var incomingHashedToken =
             hmacsha256Hasher.HashToken(
                 pendingToken,
                 "pending",
                 hashSettings.Secret);
 
-        byte[] incomingHashBytes =
+        var incomingHashBytes =
             Convert.FromBase64String(incomingHashedToken);
 
-        byte[] storedHashBytes =
+        var storedHashBytes =
             Convert.FromBase64String(storedPendingToken);
 
         if (!CryptographicOperations.FixedTimeEquals(
@@ -113,9 +113,9 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         {
             throw new UnauthorizedAccessException();
         }
-       
-        string oneTimePassEncryptionKey = encryptionSettings.OneTimePasswordKey;
-        string decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(oneTimePasswordSecret, oneTimePassEncryptionKey);
+
+        var oneTimePassEncryptionKey = encryptionSettings.OneTimePasswordKey;
+        var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(oneTimePasswordSecret, oneTimePassEncryptionKey);
 
         if (!oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code))
         {           
@@ -125,8 +125,8 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
 
     private async Task<string> GenerateRefreshTokenAsync(User user, CancellationToken cancellationToken)
     {
-        string refreshToken = refreshTokenGenerator.GenerateRefreshToken();
-        string hashedRefreshToken = hmacsha256Hasher.HashToken(refreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
+        var refreshToken = refreshTokenGenerator.GenerateRefreshToken();
+        var hashedRefreshToken = hmacsha256Hasher.HashToken(refreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
         await dbContext.RefreshTokens.AddAsync(
           new Domain.Entities.Authentication.RefreshToken

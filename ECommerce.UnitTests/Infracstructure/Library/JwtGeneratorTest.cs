@@ -52,9 +52,9 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
         // A valid JWT has exactly three Base64url segments separated by dots
-        string[] parts = token.Split('.');
+        var parts = token.Split('.');
 
         // Assert
         Assert.Equal(3, parts.Length);
@@ -65,11 +65,11 @@ public class JwtGeneratorTest
     {
         // Arrange
         var jwtGenerator = CreateSut();
-        User user = CreateUser();
+        var user = CreateUser();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
 
         // Assert
         Assert.NotNull(parsed);
@@ -79,13 +79,13 @@ public class JwtGeneratorTest
     public async Task GenerateToken_ClaimsContainCorrectSubject()
     {
         // Arrange
-        User user = CreateUser();
+        var user = CreateUser();
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        Claim sub = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var sub = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub);
 
         // Assert
         Assert.Equal(user.Id.ToString(), sub.Value);
@@ -95,13 +95,13 @@ public class JwtGeneratorTest
     public async Task GenerateToken_ClaimsContainCorrectEmail()
     {
         // Arrange
-        User user = CreateUser();
+        var user = CreateUser();
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        Claim email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
 
         // Assert
         Assert.Equal(user.Email, email.Value);
@@ -114,8 +114,8 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
         Claim? jti = parsed.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti);
 
         // Assert
@@ -131,10 +131,10 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
         DateTime after = DateTime.UtcNow;
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        DateTime expires = parsed.ValidTo;
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var expires = parsed.ValidTo;
 
         // Assert
         Assert.InRange(expires,
@@ -149,8 +149,8 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
 
         // Assert
         Assert.Equal(ValidIssuer, parsed.Issuer);
@@ -163,8 +163,8 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
 
         // Assert
         Assert.Equal(ValidAudience, parsed.Audiences.First());
@@ -175,10 +175,10 @@ public class JwtGeneratorTest
     {
         // Act
         var jwtGenerator = CreateSut();
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
 
         var handler = new JwtSecurityTokenHandler();
-        JwtSecurityToken parsed = handler.ReadJwtToken(token);
+        var parsed = handler.ReadJwtToken(token);
 
         // Assert
         Assert.Equal(SecurityAlgorithms.HmacSha256, parsed.Header.Alg);
@@ -192,16 +192,16 @@ public class JwtGeneratorTest
     public async Task GenerateToken_TwoCallsForSameUser_ProduceDifferentJtis()
     {
         // Arrange
-        User user = CreateUser();
+        var user = CreateUser();
         var jwtGenerator = CreateSut();
 
         // Act
-        string token1 = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        string token2 = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var token1 = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var token2 = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
 
         var handler = new JwtSecurityTokenHandler();
-        JwtSecurityToken jti1 = handler.ReadJwtToken(token1);
-        JwtSecurityToken jti2 = handler.ReadJwtToken(token2);
+        var jti1 = handler.ReadJwtToken(token1);
+        var jti2 = handler.ReadJwtToken(token2);
 
         // Assert
         Assert.NotEqual(jti1.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value, jti2.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
@@ -221,8 +221,8 @@ public class JwtGeneratorTest
         var handler = new JwtSecurityTokenHandler();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
-        JwtSecurityToken parsed = handler.ReadJwtToken(token);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var parsed = handler.ReadJwtToken(token);
 
         // Assert
         Assert.Equal(ValidIssuer, parsed.Issuer);
@@ -237,7 +237,7 @@ public class JwtGeneratorTest
 
         // Act
         var handler = new JwtSecurityTokenHandler();
-        JwtSecurityToken parsed = handler.ReadJwtToken(token);
+        var parsed = handler.ReadJwtToken(token);
 
         // Assert
         Assert.Equal(ValidAudience, parsed.Audiences.First());
@@ -281,7 +281,7 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut(GetJwtSettings(audience: null));
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None); // must not throw
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None); // must not throw
 
         // Assert
         Assert.False(string.IsNullOrWhiteSpace(token));
@@ -295,7 +295,7 @@ public class JwtGeneratorTest
         var jwtGenerator = CreateSut(GetJwtSettings(audience: null));
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
 
         // Assert
         Assert.False(string.IsNullOrWhiteSpace(token));
@@ -321,13 +321,13 @@ public class JwtGeneratorTest
     public async Task GenerateToken_WithEmptyEmail_TokenContainsEmptyEmailClaim()
     {
         // Arrange
-        User user = CreateUser("");
+        var user = CreateUser("");
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        Claim email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
 
         // Assert
         Assert.Equal("", email.Value);
@@ -337,14 +337,14 @@ public class JwtGeneratorTest
     public async Task GenerateToken_WithVeryLongEmail_TokenContainsFullEmail()
     {
         // Arrange
-        string longEmail = new string('a', 200) + "@example.com";
-        User user = CreateUser(longEmail);
+        var longEmail = new string('a', 200) + "@example.com";
+        var user = CreateUser(longEmail);
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        Claim email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
 
         // Assert
         Assert.Equal(longEmail, email.Value);
@@ -353,13 +353,13 @@ public class JwtGeneratorTest
     [Fact]
     public async Task GenerateToken_WithSpecialCharactersInUsername_EncodesCorrectly()
     {
-        User user = CreateUser("a@b.com");
+        var user = CreateUser("a@b.com");
         var jwtGenerator = CreateSut();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
-        JwtSecurityToken parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
-        Claim email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
+        var token = await jwtGenerator.GenerateTokenAsync(user, CancellationToken.None);
+        var parsed = ParseToken(token, ValidSecret, ValidIssuer, ValidAudience);
+        var email = parsed.Claims.First(c => c.Type == JwtRegisteredClaimNames.Email);
 
         // Assert
         Assert.Equal(user.Email, email.Value);
@@ -374,13 +374,13 @@ public class JwtGeneratorTest
     {
         // Arrange
         var jwtGenerator = CreateSut();
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
 
         // Flip one character in the signature segment
-        string[] parts = token.Split('.');
-        string sig = parts[2];
+        var parts = token.Split('.');
+        var sig = parts[2];
         parts[2] = (sig[0] == 'A' ? "B" : "A") + sig[1..];
-        string tampered = string.Join('.', parts);
+        var tampered = string.Join('.', parts);
 
         // Act & Assert
         Assert.Throws<SecurityTokenSignatureKeyNotFoundException>(
@@ -392,7 +392,7 @@ public class JwtGeneratorTest
     {
         // Arrange
         var jwtGenerator = CreateSut();
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
 
         string wrongSecret = new('z', 32);
 
@@ -413,8 +413,8 @@ public class JwtGeneratorTest
         var handler = new JwtSecurityTokenHandler();
 
         // Act
-        string token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
-        JwtSecurityToken parsed = handler.ReadJwtToken(token);
+        var token = await jwtGenerator.GenerateTokenAsync(CreateUser(), CancellationToken.None);
+        var parsed = handler.ReadJwtToken(token);
 
         string[] customTypes =
         [

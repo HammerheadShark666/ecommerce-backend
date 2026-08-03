@@ -31,21 +31,18 @@ public class PasswordResetRequestedEmail(IECommerceDbContext dbContext,
         {
             logger.LogInformation("Processing message (password reset request): {MessageId}", message.MessageId);
 
-            PasswordResetRequestMessage? envelope = message.Body.ToObjectFromJson<PasswordResetRequestMessage>()
+            var envelope = message.Body.ToObjectFromJson<PasswordResetRequestMessage>()
             ?? throw new InvalidOperationException("Unable to deserialize PasswordResetRequestMessage from Service Bus message.");
 
-            PasswordResetRequestPayload payload = envelope.Payload;
-                         
-            string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-            string hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, Application.Constants.AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
+            var payload = envelope.Payload;
+
+            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            var hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, Application.Constants.AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
              
             await MarkExistingTokensAsUsedAsync(cancellationToken);
             await CreatePasswordResetTokenAsync(payload.UserId, hashedPasswordResetToken, cancellationToken);
-             
-            //Cleanup job: a scheduled task(or just filter WHERE ExpiresAt > UtcNow in your queries) to purge expired rows periodically, otherwise the table grows forever
-             
 
-            string htmlBody = await emailTemplateService.RenderAsync(
+            var htmlBody = await emailTemplateService.RenderAsync(
                 EmailConstants.EmailTemplatePasswordResetRequest,
                 new()
                 {

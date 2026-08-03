@@ -36,7 +36,7 @@ public sealed class AzureCommunicationEmailSender(
                 Html = htmlBody
             });
 
-        EmailSendOperation operation = await _client.SendAsync(
+        var operation = await _client.SendAsync(
             WaitUntil.Completed,
             message,
             cancellationToken);

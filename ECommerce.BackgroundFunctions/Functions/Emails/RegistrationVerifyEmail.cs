@@ -33,7 +33,7 @@ public class RegistrationVerifyEmail(IECommerceDbContext dbContext,
         {
             logger.LogInformation("Processing message (Verify Registration Email Successful): {MessageId}", message.MessageId);
 
-            VerifyRegisterationEmailPayload payload = GetPayload(message);
+            var payload = GetPayload(message);
 
             (string code, string hashedCode) = GenerateAndHashCode();
             await UpdateUserAsync(payload.UserId, payload.Email, hashedCode, cancellationToken);
@@ -57,14 +57,14 @@ public class RegistrationVerifyEmail(IECommerceDbContext dbContext,
 
     private (string code, string hashedCode) GenerateAndHashCode()
     {
-        string code = verificationCodeGenerator.Generate();
-        string hashedCode = hmacsha256Hasher.HashToken(code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
+        var code = verificationCodeGenerator.Generate();
+        var hashedCode = hmacsha256Hasher.HashToken(code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
 
         return (code, hashedCode);
     }
     private async Task UpdateUserAsync(Guid id, string email, string hashedCode, CancellationToken cancellationToken)
     {
-        User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Email == email, cancellationToken)
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Email == email, cancellationToken)
                 ?? throw new NotFoundException(nameof(User), id);
 
         user.EmailVerificationCode = hashedCode;
@@ -74,7 +74,7 @@ public class RegistrationVerifyEmail(IECommerceDbContext dbContext,
 
     public static VerifyRegisterationEmailPayload GetPayload(ServiceBusReceivedMessage message)
     {
-        VerifyRegisterationEmailMessage? envelope = message.Body.ToObjectFromJson<VerifyRegisterationEmailMessage>()
+        var envelope = message.Body.ToObjectFromJson<VerifyRegisterationEmailMessage>()
                    ?? throw new InvalidOperationException("Unable to deserialize VerifyRegisterationEmailMessage from Service Bus message.");
 
         return envelope.Payload;

@@ -20,17 +20,16 @@ public class DatabaseTest(SqlServerFixture fixture)
     public async Task GetUser_Should_Return_Seeded_Data()
     {
         // Arrange
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(_fixture.ConnectionString)
             .Options;
 
         await using var context = new ECommerceDbContext(options);
 
-        User? user = await context.Users.FirstOrDefaultAsync(u => u.Email == "alice");
-            
-            
-         user.Should().NotBeNull();
-         user.Email.Should().Be("alice");
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == "alice");
+                        
+        user.Should().NotBeNull();
+        user.Email.Should().Be("alice");
          
         user = await context.Users.FirstOrDefaultAsync(u => u.Email == "john");
 

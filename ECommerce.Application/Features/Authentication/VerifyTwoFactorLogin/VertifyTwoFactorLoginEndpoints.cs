@@ -14,14 +14,14 @@ public static class VerifyTwoFactorLoginEndpoints
 {
     public static IEndpointRouteBuilder MapVerifyTwoFactorLoginEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        RouteGroupBuilder group = endpoints.MapGroup("/login")
+        var group = endpoints.MapGroup("/login")
                              .WithTags("VerifyTwoFactorLogin");
 
         group.MapPost("/2fa/verify", async ([FromBody] VerifyTwoFactorLoginRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         {
-            VerifyTwoFactorLoginResponse result = await mediator.Send(new VerifyTwoFactorLoginCommand(request.Email, request.PendingToken, request.Code, request.PendingTokenId));
+            var result = await mediator.Send(new VerifyTwoFactorLoginCommand(request.Email, request.PendingToken, request.Code, request.PendingTokenId));
 
-            string refreshToken = result.RefreshToken
+            var refreshToken = result.RefreshToken
                                         ?? throw new RefreshTokenMissingException();
            
             response.SetRefreshToken(refreshToken, jwtSettings.RefreshTokenExpiryDays); 

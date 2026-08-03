@@ -27,28 +27,28 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "pwdreset@example.com";
-        string plainOtpSecret = "FAKESECRET"; // matches FakeOneTimePasswordGenerator
-        string token = "reset-token-1";
-        string newPassword = "NewPass!1";
-        string code = "123456"; // FakeOneTimePasswordGenerator returns this
+        var email = "pwdreset@example.com";
+        var plainOtpSecret = "FAKESECRET"; // matches FakeOneTimePasswordGenerator
+        var token = "reset-token-1";
+        var newPassword = "NewPass!1";
+        var code = "123456"; // FakeOneTimePasswordGenerator returns this
 
         Guid userId;
 
         // Insert user and password reset token using real project services to compute hashes/encryption
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            IAesEncryptionHelper aes = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
-            IEncryptionSettings encSettings = scope.ServiceProvider.GetRequiredService<IEncryptionSettings>();
-            IHmacsha256Hasher hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
-            IHashSettings hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
-            IPasswordHasher pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            var aes = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
+            var encSettings = scope.ServiceProvider.GetRequiredService<IEncryptionSettings>();
+            var hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
+            var hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
+            var pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
-            string encryptedSecret = aes.Encrypt(plainOtpSecret, encSettings.OneTimePasswordKey);
+            var encryptedSecret = aes.Encrypt(plainOtpSecret, encSettings.OneTimePasswordKey);
 
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
@@ -70,7 +70,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
             userId = user.Id;
 
-            string tokenHash = hmac.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
+            var tokenHash = hmac.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
 
             var prt = new PasswordResetToken
             {
@@ -85,23 +85,23 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         }
 
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = code });
+        var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = code });
 
         // Assert
         resp.EnsureSuccessStatusCode();
 
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
             await using var db = new ECommerceDbContext(options);
-            PasswordResetToken? prt = await db.PasswordResetTokens.FirstOrDefaultAsync(t => t.UserId == userId);
+            var prt = await db.PasswordResetTokens.FirstOrDefaultAsync(t => t.UserId == userId);
             prt.Should().NotBeNull();
             prt!.Used.Should().BeTrue();
 
-            User? user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
             user.Should().NotBeNull();
             user!.PasswordHash.Should().NotBeNullOrWhiteSpace();
             user.PasswordHash.Should().NotBe("OldPass!1");
@@ -115,27 +115,27 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "pwdreset2@example.com";
-        string plainOtpSecret = "FAKESECRET";
-        string token = "reset-token-2";
-        string newPassword = "NewPass!1";
-        string invalidCode = "000000";
+        var email = "pwdreset2@example.com";
+        var plainOtpSecret = "FAKESECRET";
+        var token = "reset-token-2";
+        var newPassword = "NewPass!1";
+        var invalidCode = "000000";
 
         Guid userId;
 
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            IAesEncryptionHelper aes = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
-            IEncryptionSettings encSettings = scope.ServiceProvider.GetRequiredService<IEncryptionSettings>();
-            IHmacsha256Hasher hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
-            IHashSettings hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
-            IPasswordHasher pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            var aes = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
+            var encSettings = scope.ServiceProvider.GetRequiredService<IEncryptionSettings>();
+            var hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
+            var hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
+            var pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
-            string encryptedSecret = aes.Encrypt(plainOtpSecret, encSettings.OneTimePasswordKey);
+            var encryptedSecret = aes.Encrypt(plainOtpSecret, encSettings.OneTimePasswordKey);
 
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
@@ -157,7 +157,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
             userId = user.Id;
 
-            string tokenHash = hmac.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
+            var tokenHash = hmac.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
 
             var prt = new PasswordResetToken
             {
@@ -172,23 +172,23 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         }
 
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode });
+        var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode });
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
 
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+            var options = new DbContextOptionsBuilder<ECommerceDbContext>()
                 .UseSqlServer(_fixture.ConnectionString)
                 .Options;
 
             await using var db = new ECommerceDbContext(options);
-            PasswordResetToken? prt = await db.PasswordResetTokens.FirstOrDefaultAsync(t => t.UserId == userId);
+            var prt = await db.PasswordResetTokens.FirstOrDefaultAsync(t => t.UserId == userId);
             prt.Should().NotBeNull();
             prt!.Used.Should().BeFalse();
 
-            User? user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
             user.Should().NotBeNull();
             user!.PasswordHash.Should().NotBeNullOrWhiteSpace();
 

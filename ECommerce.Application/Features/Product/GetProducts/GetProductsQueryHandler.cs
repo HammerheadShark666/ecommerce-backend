@@ -10,8 +10,8 @@ public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext) : IRe
     public async Task<Result<GetProductsResponse>> Handle(
         GetProductsQuery request,
         CancellationToken cancellationToken)
-    { 
-        IQueryable<Domain.Entities.Product.Product> query = dbContext.Products
+    {
+        var query = dbContext.Products
             .AsNoTracking()
             .Where(p => p.IsActive);
 
@@ -41,9 +41,9 @@ public sealed class GetProductsQueryHandler(IECommerceDbContext dbContext) : IRe
 
         query = ApplySort(query, request.SortBy);
 
-        int totalCount = await query.CountAsync(cancellationToken);
+        var totalCount = await query.CountAsync(cancellationToken);
 
-        List<ProductDto> items = await query
+        var items = await query
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(p => new ProductDto(

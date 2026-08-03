@@ -41,30 +41,30 @@ public class LoginIntegrationTest : IAsyncLifetime
         //Arrange
         const string email = "e2e2fa@example.com";
         const string password = "E2ePass!23";       
-        string oneTimePasswordCode = "";
+        var oneTimePasswordCode = "";
 
         using (IServiceScope scope = _appFactory.Services.CreateScope())
         {
-            IAesEncryptionHelper aesEncryptionHelper = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
-            IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
-            IOneTimePasswordGenerator oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
+            var aesEncryptionHelper = scope.ServiceProvider.GetRequiredService<IAesEncryptionHelper>();
+            var databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+            var oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
 
-            string oneTimePasswordSecret = oneTimePasswordGenerator.GenerateSecret();
+            var oneTimePasswordSecret = oneTimePasswordGenerator.GenerateSecret();
 
-            IOptions<EncryptionOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<EncryptionOptions>>();
-            EncryptionOptions encryptionSettings = options.Value;
+            var options = scope.ServiceProvider.GetRequiredService<IOptions<EncryptionOptions>>();
+            var encryptionSettings = options.Value;
 
-            string encryptionKey = encryptionSettings.OneTimePasswordKey;
-            string encryptedOneTimePasswordSecret = aesEncryptionHelper.Encrypt(oneTimePasswordSecret, encryptionKey);
+            var encryptionKey = encryptionSettings.OneTimePasswordKey;
+            var encryptedOneTimePasswordSecret = aesEncryptionHelper.Encrypt(oneTimePasswordSecret, encryptionKey);
 
-            User user = await SeedTwoFactorUserAsync(scope, email, password, encryptedOneTimePasswordSecret);
+            var user = await SeedTwoFactorUserAsync(scope, email, password, encryptedOneTimePasswordSecret);
             oneTimePasswordCode = ResolveOneTimePasswordCode(scope, encryptedOneTimePasswordSecret);
         }
 
         //Act
-        LoginResponseDto loginDto = await LoginAsync(email, password);
-        VerifyResponseDto verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId); 
-        HttpResponseMessage protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
+        var loginDto = await LoginAsync(email, password);
+        var verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId); 
+        var protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
 
         //Assert
         protectedResp.EnsureSuccessStatusCode();
@@ -76,14 +76,14 @@ public class LoginIntegrationTest : IAsyncLifetime
         //Arrange
         IOptions<JwtOptions> options;
 
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
             options = scope.ServiceProvider.GetRequiredService<IOptions<JwtOptions>>();
         }
 
-        string secret = options.Value.Secret;
-        string issuer = options.Value.Issuer;
-        string audience = options.Value.Audience;
+        var secret = options.Value.Secret;
+        var issuer = options.Value.Issuer;
+        var audience = options.Value.Audience;
 
         var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret));
         var creds = new Microsoft.IdentityModel.Tokens.SigningCredentials(key, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256);
@@ -95,11 +95,11 @@ public class LoginIntegrationTest : IAsyncLifetime
             expires: DateTime.UtcNow.AddMinutes(-10), // already expired (beyond default clock skew)
             signingCredentials: creds);
 
-        string expiredToken = new JwtSecurityTokenHandler().WriteToken(token);
+        var expiredToken = new JwtSecurityTokenHandler().WriteToken(token);
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", expiredToken);
 
         // Act
-        HttpResponseMessage resp = await _client.GetAsync("/protected/me");
+        var resp = await _client.GetAsync("/protected/me");
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -109,22 +109,22 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task Jwt_Tampered_IsRejected()
     {
         IJwtGenerator jwtGen;
-        string token;
+        var token = "";
 
         //Arrange
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
             jwtGen = scope.ServiceProvider.GetRequiredService<IJwtGenerator>();
-            IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
-            User user = await databaseHelper.SeedUserAsync(_fixture, "jwt@example.com", "JwtPass1!", isTwoFactor: false);
+            var databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+            var user = await databaseHelper.SeedUserAsync(_fixture, "jwt@example.com", "JwtPass1!", isTwoFactor: false);
             token = await jwtGen.GenerateTokenAsync(user, CancellationToken.None);
         }
 
-        string tamperedJwtToken = CreateTamperedJwtToken(token);
+        var tamperedJwtToken = CreateTamperedJwtToken(token);
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tamperedJwtToken);
 
         // Act
-        HttpResponseMessage resp = await _client.GetAsync("/protected/me");
+        var resp = await _client.GetAsync("/protected/me");
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -134,14 +134,14 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task Login_Returns_Jwt_When_TwoFactor_Disabled()
     {
         //Arrange
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
-            IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
-            User user = await databaseHelper.SeedUserAsync(_fixture, "no2fa@example.com", "P@ssw0rd!", isTwoFactor: false);
+            var databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+            var user = await databaseHelper.SeedUserAsync(_fixture, "no2fa@example.com", "P@ssw0rd!", isTwoFactor: false);
         }
 
         // Act
-        LoginResponseDto? dto = await PostLoginAndParseAsync("no2fa@example.com", "P@ssw0rd!");
+        var dto = await PostLoginAndParseAsync("no2fa@example.com", "P@ssw0rd!");
 
         // Assert
         dto.Should().NotBeNull();
@@ -153,14 +153,14 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task Login_Returns_PendingToken_When_TwoFactor_Enabled()
     {
         //Arrange
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
-            IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
-            User user = await databaseHelper.SeedUserAsync(_fixture, "with2fa@example.com", "Secret123!", isTwoFactor: true, oneTimePasswordSecret: "JBSWY3DPEHPK3PXP");
+            var databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+            var user = await databaseHelper.SeedUserAsync(_fixture, "with2fa@example.com", "Secret123!", isTwoFactor: true, oneTimePasswordSecret: "JBSWY3DPEHPK3PXP");
         }
 
         // Act
-        LoginResponseDto? dto = await PostLoginAndParseAsync("with2fa@example.com", "Secret123!");
+        var dto = await PostLoginAndParseAsync("with2fa@example.com", "Secret123!");
 
         // Assert
         dto.Should().NotBeNull();
@@ -172,7 +172,7 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task Login_Fails_With_Invalid_Username()
     {
         // Act  
-        HttpResponseMessage resp = await PostLoginRawAsync("doesnotexist@example.com", "whatever");
+        var resp = await PostLoginRawAsync("doesnotexist@example.com", "whatever");
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -183,14 +183,14 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task Login_Fails_With_Invalid_Password()
     {
         //Arrange
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
-            IDatabaseHelper databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
-            User user = await databaseHelper.SeedUserAsync(_fixture, "badpass@example.com", "RightPass1!", isTwoFactor: false);
+            var databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+            var user = await databaseHelper.SeedUserAsync(_fixture, "badpass@example.com", "RightPass1!", isTwoFactor: false);
         }
 
         // Act
-        HttpResponseMessage resp = await PostLoginRawAsync("badpass@example.com", "WrongPass!");
+        var resp = await PostLoginRawAsync("badpass@example.com", "WrongPass!");
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -200,20 +200,20 @@ public class LoginIntegrationTest : IAsyncLifetime
     public async Task PendingTokenExpiry_IsRejected_And_Cleared()
     {
         // Arrange
-        string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-        byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(token));
-        string stored = Convert.ToBase64String(hash);
-        string email = "expired@example.com";
-        string password = "Expired1!";
-        string secret = "JBSWY3DPEHPK3PXP";
-        DateTime expiry = DateTime.UtcNow.AddSeconds(-10); // already expired
+        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+        var stored = Convert.ToBase64String(hash);
+        var email = "expired@example.com";
+        var password = "Expired1!";
+        var secret = "JBSWY3DPEHPK3PXP";
+        var expiry = DateTime.UtcNow.AddSeconds(-10); // already expired
 
         IDatabaseHelper databaseHelper;
         DbContextOptions<ECommerceDbContext> options;
         User user;
         string oneTimeCode;
 
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
             databaseHelper = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
             user = await databaseHelper.SeedUserAsync(_fixture, email, password, isTwoFactor: true, oneTimePasswordSecret: secret);
@@ -233,9 +233,9 @@ public class LoginIntegrationTest : IAsyncLifetime
         }
 
         // get one time code
-        using (IServiceScope scope = _appFactory.Services.CreateScope())
+        using (var scope = _appFactory.Services.CreateScope())
         {
-            IOneTimePasswordGenerator oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
+            var oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
             oneTimeCode = oneTimePasswordGenerator.GetCurrentCode(secret);
         }
 
@@ -247,9 +247,9 @@ public class LoginIntegrationTest : IAsyncLifetime
 
         await using (var db = new ECommerceDbContext(options))
         {
-            PendingTwoFactorLogin refreshed = db.PendingTwoFactorLogins.First(u => u.UserId == user.Id);
+            var refreshed = db.PendingTwoFactorLogins.First(u => u.UserId == user.Id);
 
-            string hashedToken = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+            var hashedToken = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
             refreshed.PendingTwoFactorToken.Should().Be(hashedToken);
             refreshed.PendingTokenExpiresAt.Should().Be(expiry);
         }
@@ -268,7 +268,7 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private async Task<LoginResponseDto?> PostLoginAndParseAsync(string email, string password)
     {
-        HttpResponseMessage resp = await PostLoginRawAsync(email, password);
+        var resp = await PostLoginRawAsync(email, password);
         if (!resp.IsSuccessStatusCode)
         {
             return null;
@@ -280,7 +280,7 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private static string ResolveOneTimePasswordCode(IServiceScope scope, string oneTimePasswordSecret)
     {
-        IOneTimePasswordGenerator oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
+        var oneTimePasswordGenerator = scope.ServiceProvider.GetRequiredService<IOneTimePasswordGenerator>();
         return oneTimePasswordGenerator.GetCurrentCode(oneTimePasswordSecret);
     }
 
@@ -301,7 +301,7 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private async Task<VerifyResponseDto> Verify2FaAsync(string email, string pendingToken, string totpCode, Guid? pendingTokenId)
     {       
-        HttpResponseMessage resp = await _client.PostAsJsonAsync("/login/2fa/verify", new { Email = email, PendingToken = pendingToken, Code = totpCode, PendingTokenId = pendingTokenId });
+        var resp = await _client.PostAsJsonAsync("/login/2fa/verify", new { Email = email, PendingToken = pendingToken, Code = totpCode, PendingTokenId = pendingTokenId });
         resp.EnsureSuccessStatusCode();
 
         VerifyResponseDto? dto = await resp.Content.ReadFromJsonAsync<VerifyResponseDto>();
@@ -315,7 +315,7 @@ public class LoginIntegrationTest : IAsyncLifetime
         using var request = new HttpRequestMessage(HttpMethod.Get, "/protected/me");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-        HttpResponseMessage response = await _client.SendAsync(request);
+        var response = await _client.SendAsync(request);
 
         return response;
     }

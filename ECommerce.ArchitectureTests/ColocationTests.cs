@@ -24,28 +24,28 @@ public class ColocationTests : BaseTest
 
         var pairs = new TheoryData<Type, Type>();
 
-        IEnumerable<Type> handlers = ApplicationAssembly
+        var handlers = ApplicationAssembly
             .GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false, IsGenericTypeDefinition: false })
             .Where(t => t.DeclaringType is null);
 
-        foreach (Type handler in handlers)
+        foreach (var handler in handlers)
         {
-            foreach (Type iface in handler.GetInterfaces())
+            foreach (var iface in handler.GetInterfaces())
             {
                 if (!iface.IsGenericType)
                 {
                     continue;
                 }
 
-                Type genericDef = iface.GetGenericTypeDefinition();
+                var genericDef = iface.GetGenericTypeDefinition();
 
                 if (!handlerInterfaces.Contains(genericDef))
                 {
                     continue;
                 }
 
-                Type commandOrQueryType = iface.GetGenericArguments()[0];
+                var commandOrQueryType = iface.GetGenericArguments()[0];
                 pairs.Add(handler, commandOrQueryType);
             }
         }

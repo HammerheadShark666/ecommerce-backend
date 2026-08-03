@@ -25,13 +25,13 @@ public class RegistrationEndToEndSuccessTest(SqlServerFixture fixture) : IAsyncL
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "sbtest@example.com";
-        string password = "RegPass!1";
+        var email = "sbtest@example.com";
+        var password = "RegPass!1";
 
         // Act: begin registration
-        HttpResponseMessage beginResp = await client.PostAsJsonAsync("/register", new { Email = email, Password = password, ConfirmPassword = password, LastName = "Smith", FirstName = "John", PhoneNumber = "01924 4323432" });
+        var beginResp = await client.PostAsJsonAsync("/register", new { Email = email, Password = password, ConfirmPassword = password, LastName = "Smith", FirstName = "John", PhoneNumber = "01924 4323432" });
         beginResp.EnsureSuccessStatusCode();
 
         // Ensure a message was published to be processed by the background function
@@ -41,18 +41,18 @@ public class RegistrationEndToEndSuccessTest(SqlServerFixture fixture) : IAsyncL
         // verification code, hashing it and updating the user record in the database.
         const string fixedCode = "123456"; // deterministic code for test
 
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            IHmacsha256Hasher hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
-            IHashSettings hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
+            var hmac = scope.ServiceProvider.GetRequiredService<IHmacsha256Hasher>();
+            var hashSettings = scope.ServiceProvider.GetRequiredService<IHashSettings>();
 
-            string hashedCode = hmac.HashToken(fixedCode, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
+            var hashedCode = hmac.HashToken(fixedCode, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
 
-            ECommerceDbContext db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+            var db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
 
             // User emails are stored upper-case in the DB during creation
-            string storedEmail = email.Trim().ToUpperInvariant();
-            User? user = await db.Users.FirstOrDefaultAsync(u => u.Email == storedEmail);
+            var storedEmail = email.Trim().ToUpperInvariant();
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == storedEmail);
             user.Should().NotBeNull();
 
             user!.EmailVerificationCode = hashedCode;
@@ -61,15 +61,15 @@ public class RegistrationEndToEndSuccessTest(SqlServerFixture fixture) : IAsyncL
         }
 
         // Act: call verification endpoint with the plain code
-        HttpResponseMessage verifyResp = await client.PostAsJsonAsync("/register/verify-email", new { Email = email, Code = fixedCode });
+        var verifyResp = await client.PostAsJsonAsync("/register/verify-email", new { Email = email, Code = fixedCode });
         verifyResp.EnsureSuccessStatusCode();
 
         // Assert: user updated in DB and a UserRegistered message published
-        using (IServiceScope scope = appFactory.Services.CreateScope())
+        using (var scope = appFactory.Services.CreateScope())
         {
-            ECommerceDbContext db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
-            string storedEmail = email.Trim().ToUpperInvariant();
-            User? user = await db.Users.FirstOrDefaultAsync(u => u.Email == storedEmail);
+            var db = scope.ServiceProvider.GetRequiredService<ECommerceDbContext>();
+            var storedEmail = email.Trim().ToUpperInvariant();
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == storedEmail);
 
             user.Should().NotBeNull();
             user!.IsEmailVerified.Should().BeTrue();

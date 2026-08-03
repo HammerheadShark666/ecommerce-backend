@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Extensions;
-using ECommerce.Application.Features.Product.GetProduct;
 using ECommerce.Application.MediatR;
 using FluentValidation;
 using MediatR;

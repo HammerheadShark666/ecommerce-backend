@@ -22,12 +22,12 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "forgotten@example.com";
+        var email = "forgotten@example.com";
 
         // insert a user with normalized email (handler normalizes to upper-case)
-        DbContextOptions<ECommerceDbContext> options = new DbContextOptionsBuilder<ECommerceDbContext>()
+        var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(_fixture.ConnectionString)
             .Options;
 
@@ -48,7 +48,7 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
         }
 
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
+        var resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
 
         // Assert
         resp.EnsureSuccessStatusCode();
@@ -62,13 +62,13 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
-        HttpClient client = appFactory.CreateClient();
+        var client = appFactory.CreateClient();
 
-        string email = "unknownuser@example.com";
+        var email = "unknownuser@example.com";
 
         // Ensure no user exists with this email
         // Act
-        HttpResponseMessage resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
+        var resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
