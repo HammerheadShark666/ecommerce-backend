@@ -1,42 +1,39 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using ECommerce.Infrastructure.Services.Intefaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ECommerce.Infrastructure.Background_Jobs;
 
-public class TokenCleanupJob : BackgroundService
+public sealed class TokenCleanupJob(
+    IServiceScopeFactory scopeFactory,
+    TimeProvider timeProvider) : BackgroundService
 {
-    private readonly Services.Intefaces.ITokenCleanupService _tokenCleanupService;
-    private readonly ILogger<TokenCleanupJob> _logger;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
-    public TokenCleanupJob(Services.Intefaces.ITokenCleanupService tokenCleanupService, ILogger<TokenCleanupJob> logger)
+    protected override async Task ExecuteAsync(
+        CancellationToken stoppingToken)
     {
-        _tokenCleanupService = tokenCleanupService;
-        _logger = logger;
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        // Register a callback to capture a stack trace when the token is cancelled
-        stoppingToken.Register(() =>
-            _logger.LogWarning("stoppingToken cancelled. StackTrace:\n{stack}", new System.Diagnostics.StackTrace(true).ToString()));
-
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await CleanupAsync(stoppingToken);
+            await CleanupAsync(stoppingToken);
 
-                await Task.Delay(
-                    TimeSpan.FromHours(1),
-                    stoppingToken);
-            }
-        }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-        {
-            _logger.LogInformation("TokenCleanupJob stopped due to host cancellation.");
+            await Task.Delay(
+                TimeSpan.FromHours(1),
+                stoppingToken);
         }
     }
 
-    private async Task CleanupAsync(CancellationToken stoppingToken) =>
-        await _tokenCleanupService.CleanupAsync(stoppingToken);
+    private async Task CleanupAsync(
+        CancellationToken cancellationToken)
+    {
+        using IServiceScope scope =
+            _scopeFactory.CreateScope();
+
+        ITokenCleanupService cleanupService =
+            scope.ServiceProvider
+                .GetRequiredService<ITokenCleanupService>();
+
+        await cleanupService.CleanupAsync(cancellationToken);
+    }
 }
