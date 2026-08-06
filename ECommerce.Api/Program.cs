@@ -37,7 +37,7 @@ try
     builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-    builder.Configuration.AddKeyVaultExtension(builder.Environment);
+    builder.Configuration.AddKeyVault(builder.Environment);
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddApiRateLimiting();
@@ -51,7 +51,7 @@ try
     app.UseAuthorization();
     app.UseSerilogRequestLogging(options => options.EnrichDiagnosticContext = (diag, httpContext) => diag.Set("CorrelationId", httpContext.TraceIdentifier));
 
-    await builder.AddSeedDataExtensionAsync(app);
+    await builder.AddSeedDataAsync(app);
 
     if (app.Environment.IsDevelopment())
     {

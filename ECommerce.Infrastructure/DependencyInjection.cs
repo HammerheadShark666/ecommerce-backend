@@ -15,10 +15,11 @@ public static class DependencyInjection
           .Get<JwtOptions>()
           ?? throw new InvalidOperationException("Jwt configuration section is missing");
          
-        services.AddSqlServerExtension(configuration);
-        services.AddInterfaceClassExtension();
-        services.AddAuthenticationExtension();
-        services.AddJwtExtension(jwtOptions);
+        services.AddSqlServer(configuration);
+        services.AddInterfaceClasses();
+        services.AddJwtAuthentication();
+        services.AddAuthenticationPolicy();
+        services.AddJwt(jwtOptions);
         services.AddCors();
         services.AddMessaging(configuration); 
         services.AddAzureCredentials();

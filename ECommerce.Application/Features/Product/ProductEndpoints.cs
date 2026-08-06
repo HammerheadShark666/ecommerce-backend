@@ -36,7 +36,7 @@ public static class ProductEndpoints
             return Results.Ok(result.Value);
         })
         .WithName("GetProducts")
-        .WithTags("Products");
+        .WithTags("Products");        
 
         group.MapGet("/{id:guid}/{slug}", async (Guid id, string slug, ISender sender, CancellationToken cancellationToken) =>
         {
@@ -74,8 +74,8 @@ public static class ProductEndpoints
         //.Produces(StatusCodes.Status400BadRequest)
         //.Produces<object>(StatusCodes.Status201Created)
         //.ProducesValidationProblem()
-        //.RequireAuthorization(policy => policy.RequireRole(AuthenticationConstants.RoleAdmin));
-         
+        //.RequireAuthorization(PolicyNamesConstants.CanManageProducts); 
+
         return endpoints;
     }
 }

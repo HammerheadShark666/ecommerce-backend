@@ -7,9 +7,7 @@ namespace ECommerce.Infrastructure.Extensions;
 
 public static class KeyVaultExtension
 {
-    public static IConfigurationManager AddKeyVaultExtension(
-    this IConfigurationManager configuration,
-    IHostEnvironment environment)
+    public static IConfigurationManager AddKeyVault(this IConfigurationManager configuration, IHostEnvironment environment)
     {
         if (environment.IsProduction())
         {
