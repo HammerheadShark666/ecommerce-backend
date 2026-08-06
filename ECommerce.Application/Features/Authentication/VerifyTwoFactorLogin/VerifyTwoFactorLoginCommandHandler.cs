@@ -4,8 +4,10 @@ using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Constants;
+using ECommerce.Application.Features.Authentication.Login;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
@@ -27,7 +29,7 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
                                                   IEncryptionSettings encryptionSettings,
                                                   IJwtGenerator jwtGenerator) : ICommandHandler<VerifyTwoFactorLoginCommand, VerifyTwoFactorLoginResponse>
 { 
-    public async Task<VerifyTwoFactorLoginResponse> Handle(VerifyTwoFactorLoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<VerifyTwoFactorLoginResponse>> Handle(VerifyTwoFactorLoginCommand request, CancellationToken cancellationToken)
     {
         var normaliseEmail = request.Email.Trim().ToUpperInvariant();
 
@@ -41,7 +43,7 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         var refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
         var jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
-        return new VerifyTwoFactorLoginResponse(jwtToken, refreshToken);
+        return Result.Ok(new VerifyTwoFactorLoginResponse(jwtToken, refreshToken));
     }
 
     private async Task ClearPendingTokenAsync(PendingTwoFactorLogin pendingTwoFactorLogin)

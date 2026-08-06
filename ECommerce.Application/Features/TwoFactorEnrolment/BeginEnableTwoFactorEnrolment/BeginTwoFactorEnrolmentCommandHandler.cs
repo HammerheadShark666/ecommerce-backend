@@ -4,6 +4,7 @@ using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.TwoFactorEnrolment.BeginEnableTwoFactorEnrolment;
@@ -22,7 +23,7 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
                                                      IJwtSettings jwtSettings,
                                                      IEncryptionSettings encryptionSettings) : ICommandHandler<BeginTwoFactorEnrolmentCommand, BeginTwoFactorEnrolmentResponse>
 {
-    public async Task<BeginTwoFactorEnrolmentResponse> Handle(BeginTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BeginTwoFactorEnrolmentResponse>> Handle(BeginTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
     {
         var user = await GetUserAsync(request.Email, cancellationToken);
 
@@ -35,7 +36,7 @@ internal class BeginTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbConte
         await UpdateUser(user, encryptedOneTimePasswordSecret, cancellationToken);
         (var qrBase64, var uri) = GenerateQrCode(request.Email, oneTimePasswordSecret);
 
-        return new BeginTwoFactorEnrolmentResponse(qrBase64, uri); 
+        return Result.Ok(new BeginTwoFactorEnrolmentResponse(qrBase64, uri));
     }
 
     private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)

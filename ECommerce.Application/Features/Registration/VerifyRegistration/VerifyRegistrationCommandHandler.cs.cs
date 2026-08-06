@@ -5,6 +5,7 @@ using ECommerce.Application.Constants;
 using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Registration.VerifyRegistration;
@@ -18,7 +19,7 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                 IHashSettings hashSettings,
                                                 IMessagePublisher _publisher) : ICommandHandler<VerifyRegistrationCommand, VerifyRegistrationResponse>
 {
-    public async Task<VerifyRegistrationResponse> Handle(VerifyRegistrationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<VerifyRegistrationResponse>> Handle(VerifyRegistrationCommand request, CancellationToken cancellationToken)
     {
         var hashedCode = hmacsha256Hasher.HashToken(request.Code, RegistrationConstants.HashTypeVerifyRegistrationEmail, hashSettings.Secret);
 
@@ -27,7 +28,7 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
 
         await _publisher.PublishAsync(new UserRegistered(user.Id, user.Email, user.FirstName), cancellationToken);
 
-        return new VerifyRegistrationResponse();
+        return Result.Ok(new VerifyRegistrationResponse());
     }
 
     private async Task<User> GetUser(string email, string hashedCode, CancellationToken cancellationToken) =>

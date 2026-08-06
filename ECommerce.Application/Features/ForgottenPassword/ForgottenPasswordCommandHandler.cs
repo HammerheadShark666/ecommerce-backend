@@ -2,6 +2,7 @@
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Features.ForgottenPassword.Events;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.ForgottenPassword;
@@ -16,7 +17,7 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
 {
     private static readonly TimeSpan PendingTokenTtl = TimeSpan.FromMinutes(5);
 
-    public async Task<ForgottenPasswordResponse> Handle(ForgottenPasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result<ForgottenPasswordResponse>> Handle(ForgottenPasswordCommand request, CancellationToken cancellationToken)
     {
         var normaliseEmail = request.Email.Trim().ToUpperInvariant();
         var user = await GetUserAsync(normaliseEmail, cancellationToken);
@@ -25,9 +26,8 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
         {
             await _publisher.PublishAsync(new PasswordResetRequested(user.Id, user.FirstName, user.Email), cancellationToken); 
         }
- 
 
-        return new ForgottenPasswordResponse("If an account exists for that email, a reset link has been sent.");
+        return Result.Ok(new ForgottenPasswordResponse("If an account exists for that email, a reset link has been sent."));
     } 
     private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
           await dbContext.Users

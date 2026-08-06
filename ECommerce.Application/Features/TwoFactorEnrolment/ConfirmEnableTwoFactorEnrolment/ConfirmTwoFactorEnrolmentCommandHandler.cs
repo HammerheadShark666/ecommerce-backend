@@ -2,22 +2,24 @@ using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.TwoFactorEnrolment.ConfirmEnableTwoFactorEnrolment;
 
 public record ConfirmTwoFactorEnrolmentCommand(string Email, string Code) : ICommand<ConfirmTwoFactorEnrolmentResponse>;
 
-public record ConfirmTwoFactorEnrolmentResponse(bool Success, string Message);
+public record ConfirmTwoFactorEnrolmentResponse(string Message);
 
 internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbContext,
                                                        IAesEncryptionHelper aesEncryptionHelper,                                                      
                                                        IEncryptionSettings encryptionSettings,
                                                        IOneTimePasswordGenerator oneTimePasswordGenerator) : ICommandHandler<ConfirmTwoFactorEnrolmentCommand, ConfirmTwoFactorEnrolmentResponse>
 { 
-    public async Task<ConfirmTwoFactorEnrolmentResponse> Handle(ConfirmTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<ConfirmTwoFactorEnrolmentResponse>> Handle(ConfirmTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
     {
         (var user, var otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
 
@@ -25,8 +27,8 @@ internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbCon
         await UpdateTwoFactorEnabledState(user, cancellationToken);
 
         return codeIsValid
-            ? new ConfirmTwoFactorEnrolmentResponse(true, "2FA enabled successfully.")
-            : new ConfirmTwoFactorEnrolmentResponse(false, "Invalid or expired code. Please try again.");
+            ? Result.Ok(new ConfirmTwoFactorEnrolmentResponse("2FA enabled successfully."))
+            : Result.Fail(new InvalidCredentialsError());
     }
 
     private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
@@ -44,7 +46,7 @@ internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbCon
             throw new InvalidTwoFactorStateException("2FA is already confirmed and enabled.");
         } 
 
-        return (user, user.OneTimePasswordSecret);
+        return (user, user.OneTimePasswordSecret); 
     }
 
     private async Task<bool> ValidateCodeAsync(string otpSecret, string code)

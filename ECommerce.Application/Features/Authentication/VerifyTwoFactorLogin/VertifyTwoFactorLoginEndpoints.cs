@@ -21,12 +21,12 @@ public static class VerifyTwoFactorLoginEndpoints
         {
             var result = await mediator.Send(new VerifyTwoFactorLoginCommand(request.Email, request.PendingToken, request.Code, request.PendingTokenId));
 
-            var refreshToken = result.RefreshToken
+            var refreshToken = result.Value.RefreshToken
                                         ?? throw new RefreshTokenMissingException();
            
             response.SetRefreshToken(refreshToken, jwtSettings.RefreshTokenExpiryDays); 
             
-            return Results.Ok(new LoginResponse(result.Token));
+            return Results.Ok(new LoginResponse(result.Value.Token));
         }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
 
         return endpoints;

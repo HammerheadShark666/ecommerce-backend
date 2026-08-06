@@ -18,13 +18,13 @@ public static class TwoFactorEnrolmentEndpoints
 
         group.MapPost("", async (string email, IMediator mediator) =>
         {
-            BeginTwoFactorEnrolmentResponse result = await mediator.Send(new BeginTwoFactorEnrolmentCommand(email));
+            var result = await mediator.Send(new BeginTwoFactorEnrolmentCommand(email));
             return Results.Ok(result);
         });
 
         group.MapPost("/confirm", async ([FromBody] ConfirmTwoFactorEnrolmentRequest request, IMediator mediator) =>
         {
-            ConfirmTwoFactorEnrolmentResponse result = await mediator.Send(new ConfirmTwoFactorEnrolmentCommand(request.email, request.Code));
+            var result = await mediator.Send(new ConfirmTwoFactorEnrolmentCommand(request.email, request.Code));
             return Results.Ok(result);
         });
 

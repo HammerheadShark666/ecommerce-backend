@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
 using ECommerce.Application.Extensions;
 using MediatR;
@@ -20,30 +21,52 @@ public static class LoginEndpoints
         {
             var result = await mediator.Send(new LoginCommand(request.Email, request.Password));
 
-            if(result.RequiresTwoFactor)
+            if (result.HasError<InvalidCredentialsError>())
+            {
+                var error = result.Errors
+                    .OfType<InvalidCredentialsError>()
+                    .First();
+
+                return Results.Problem(
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: "Authentication failed",
+                    detail: error.Message);
+            }
+
+            if (result.IsFailed)
+            {
+                return Results.BadRequest(new
+                {
+                    errors = result.Errors.Select(x => x.Message)
+                });
+            } 
+
+            var login = result.Value;
+
+            if (login.RequiresTwoFactor)
             {
                 return Results.Ok(new
                 {
                     RequiresTwoFactor = true,
-                    result.PendingToken,
-                    result.PendingTokenId
-                });
-            } 
-            else
-            {
-                if (result.RefreshToken is not null)
-                { 
-                    response.SetRefreshToken(result.RefreshToken, jwtSettings.RefreshTokenExpiryDays);
-                }
-
-                return Results.Ok(new
-                {
-                    RequiresTwoFactor = false,
-                    result.Token
+                    login.PendingToken,
+                    login.PendingTokenId
                 });
             }
-        }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
 
+            if (login.RefreshToken is not null)
+            {
+                response.SetRefreshToken(
+                    login.RefreshToken,
+                    jwtSettings.RefreshTokenExpiryDays);
+            }
+
+            return Results.Ok(new
+            {
+                RequiresTwoFactor = false,
+                login.Token
+            }); 
+
+        }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
  
         return endpoints;
     }

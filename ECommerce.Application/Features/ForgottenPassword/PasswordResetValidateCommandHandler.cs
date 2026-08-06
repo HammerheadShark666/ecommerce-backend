@@ -7,6 +7,7 @@ using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.ForgottenPassword.Events;
 using ECommerce.Domain.Entities.PasswordReset;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.ForgottenPassword;
@@ -27,7 +28,7 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
 {
     private static readonly TimeSpan PendingTokenTtl = TimeSpan.FromMinutes(5);
 
-    public async Task<PasswordResetValidateResponse> Handle(PasswordResetValidateCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PasswordResetValidateResponse>> Handle(PasswordResetValidateCommand request, CancellationToken cancellationToken)
     {
         //Validate token
         var passwordResetToken = await GetPasswordResetTokenAsync(request.Token, cancellationToken);
@@ -44,7 +45,7 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
         await UpdateRecordsAsync(user, passwordResetToken, request.NewPassword, request.IpAddress, cancellationToken);
         await _publisher.PublishAsync(new PasswordResetCompleted(user.Id, user.FirstName, user.Email, timeProvider.GetUtcNow().UtcDateTime), cancellationToken); 
 
-        return new PasswordResetValidateResponse("Password successfully changed.");
+        return Result.Ok(new PasswordResetValidateResponse("Password successfully changed."));
     }
 
     private async Task<bool> ValidateCodeAsync(string otpSecret, string code)

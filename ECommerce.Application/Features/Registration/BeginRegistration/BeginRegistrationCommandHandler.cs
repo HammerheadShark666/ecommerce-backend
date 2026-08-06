@@ -6,6 +6,7 @@ using ECommerce.Application.Constants;
 using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Registration.BeginRegistration;
@@ -21,7 +22,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                IAesEncryptionHelper aesEncryptionHelper,                                                
                                                IEncryptionSettings encryptionSettings) : ICommandHandler<BeginRegistrationCommand, BeginRegistrationResponse>                                        
 {    
-    public async Task<BeginRegistrationResponse> Handle(BeginRegistrationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BeginRegistrationResponse>> Handle(BeginRegistrationCommand request, CancellationToken cancellationToken)
     { 
         await ValidateRegistrationDetails(request.Email, cancellationToken);
 
@@ -30,9 +31,9 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
         var user = await CreateUserAsync(request.Email, request.Password, encryptedOneTimePasswordSecret,
                              request.LastName, request.FirstName, request.PhoneNumber, cancellationToken);
 
-        await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
+        await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);         
 
-        return new BeginRegistrationResponse();
+        return Result.Ok(new BeginRegistrationResponse());
     }
 
     private async Task ValidateRegistrationDetails(string email, CancellationToken cancellationToken)
