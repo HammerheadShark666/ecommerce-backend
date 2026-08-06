@@ -9,7 +9,7 @@ namespace ECommerce.Infrastructure.Extensions;
 
 public static class SqlServerExtension
 {
-    public static void AddSqlServerExtension(this IServiceCollection services, IConfiguration configuration)
+    public static void AddSqlServer(this IServiceCollection services, IConfiguration configuration)
     { 
         services.AddSingleton<AuditableEntityInterceptor>();
 

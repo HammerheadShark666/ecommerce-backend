@@ -1,9 +1,9 @@
 ﻿using ECommerce.Application.Common;
 using ECommerce.Application.Constants;
+using ECommerce.Application.Features.Product.AddProduct;
 using ECommerce.Application.Features.Product.GetProduct;
 using ECommerce.Application.Features.Product.GetProducts;
 using ECommerce.Domain.ValueObjects;
-using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +36,7 @@ public static class ProductEndpoints
             return Results.Ok(result.Value);
         })
         .WithName("GetProducts")
-        .WithTags("Products");
+        .WithTags("Products");        
 
         group.MapGet("/{id:guid}/{slug}", async (Guid id, string slug, ISender sender, CancellationToken cancellationToken) =>
         {
@@ -61,6 +61,20 @@ public static class ProductEndpoints
         .Produces<ProductResponse>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status301MovedPermanently);
+
+        //group.MapPost("", async (AddProductCommand command, IMediator mediator) =>
+        //{
+        //    var id = await mediator.Send(command);
+        //    var slug = "";
+        //    return Results.Created($"/{{id:guid}}/{{slug}}", new { id, slug });
+        //})
+        //.WithName("AddProduct")
+        //.WithTags("Products")
+        //.Produces<ProductResponse>(StatusCodes.Status200OK)
+        //.Produces(StatusCodes.Status400BadRequest)
+        //.Produces<object>(StatusCodes.Status201Created)
+        //.ProducesValidationProblem()
+        //.RequireAuthorization(PolicyNamesConstants.CanManageProducts); 
 
         return endpoints;
     }

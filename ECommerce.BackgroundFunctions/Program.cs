@@ -9,11 +9,11 @@ FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-builder.Configuration.AddKeyVaultExtension(builder.Environment);
+builder.Configuration.AddKeyVault(builder.Environment);
 builder.Services.AddAzureCredentials();
 builder.Services.AddApplicationSettings(builder.Configuration);
 builder.Services.AddOptions(builder.Configuration);
-builder.Services.AddSqlServerExtension(builder.Configuration);
+builder.Services.AddSqlServer(builder.Configuration);
 builder.Services.AddDependencyInjection();
 
 builder.Build().Run(); 

@@ -13,7 +13,7 @@ namespace ECommerce.Infrastructure.Extensions;
 
 public static class DependencyInjectionExtension
 {
-    public static void AddInterfaceClassExtension(this IServiceCollection services)
+    public static void AddInterfaceClasses(this IServiceCollection services)
     {
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtGenerator, JwtGenerator>();

@@ -5,7 +5,7 @@ namespace ECommerce.Api.Extensions;
 
 public static class SeedDataExtension
 {
-    public static async Task<WebApplicationBuilder> AddSeedDataExtensionAsync(this WebApplicationBuilder builder, WebApplication app)
+    public static async Task<WebApplicationBuilder> AddSeedDataAsync(this WebApplicationBuilder builder, WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using ECommerce.Infrastructure.Configurations;
 using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,7 +12,7 @@ namespace ECommerce.Infrastructure.Extensions;
 
 public static class JwtExtension
 {
-    public static void AddJwtExtension(this IServiceCollection services, JwtOptions jwtOptions) => services
+    public static void AddJwt(this IServiceCollection services, JwtOptions jwtOptions) => services
             .AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
             .Configure(options =>
             {
@@ -29,7 +30,8 @@ public static class JwtExtension
                         KeyId = jwtOptions.KeyId
                     },
 
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+                    RoleClaimType = ClaimTypes.Role
                 };
 
                 options.Events = new JwtBearerEvents

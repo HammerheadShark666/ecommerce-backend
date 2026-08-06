@@ -1,4 +1,6 @@
-﻿namespace ECommerce.Application.Constants;
+﻿using Microsoft.VisualBasic;
+
+namespace ECommerce.Application.Constants;
 
 public static class AuthenticationConstants
 { 
@@ -7,4 +9,6 @@ public static class AuthenticationConstants
     public const string HashTypeTokenPending = "pending";
     public const string HashTypeTokenRefresh = "refresh";
     public const string HashTypeTokenPasswordReset = "passwordReset";
+
+    public const string RoleAdmin = "Admin"; 
 }
