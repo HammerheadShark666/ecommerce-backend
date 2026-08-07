@@ -1,11 +1,12 @@
-﻿using FluentValidation;
+﻿using ECommerce.Application.Features.Authentication.TwoFactorLogin;
+using FluentValidation;
 
 namespace ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
 
  
-public class VerifyTwoFactorLoginCommandValidator : AbstractValidator<VerifyTwoFactorLoginCommand>
+public class TwoFactorLoginCommandValidator : AbstractValidator<TwoFactorLoginCommand>
 {
-    public VerifyTwoFactorLoginCommandValidator()
+    public TwoFactorLoginCommandValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")

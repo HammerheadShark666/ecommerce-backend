@@ -3,22 +3,16 @@ using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
-using ECommerce.Application.Features.Authentication.Login;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
-
-public record VerifyTwoFactorLoginCommand(string Email, string PendingToken, string Code, Guid PendingTokenId) : ICommand<VerifyTwoFactorLoginResponse>;
-
-public record VerifyTwoFactorLoginResponse(string? Token, string RefreshToken);
-
-public record LoginResponse(string? Token);
-
-internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
+namespace ECommerce.Application.Features.Authentication.TwoFactorLogin;
+ 
+internal class TwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
                                                   TimeProvider timeProvider,
                                                   IHmacsha256Hasher hmacsha256Hasher,
                                                   IOneTimePasswordGenerator oneTimePasswordGenerator,
@@ -27,23 +21,41 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
                                                   IJwtSettings jwtSettings,
                                                   IHashSettings hashSettings,                                                 
                                                   IEncryptionSettings encryptionSettings,
-                                                  IJwtGenerator jwtGenerator) : ICommandHandler<VerifyTwoFactorLoginCommand, VerifyTwoFactorLoginResponse>
+                                                  IJwtGenerator jwtGenerator) : ICommandHandler<TwoFactorLoginCommand, TwoFactorLoginResponse>
 { 
-    public async Task<Result<VerifyTwoFactorLoginResponse>> Handle(VerifyTwoFactorLoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<TwoFactorLoginResponse>> Handle(TwoFactorLoginCommand request, CancellationToken cancellationToken)
     {
         var normaliseEmail = request.Email.Trim().ToUpperInvariant();
 
         var user = await GetUserAsync(normaliseEmail, cancellationToken);
+        if (user is null)
+        {
+            return Result.Fail<TwoFactorLoginResponse>(new InvalidCredentialsError());
+        } 
 
         var pendingTwoFactorLogin = await ValidateTwoFactorPendingToken(request.PendingToken, request.PendingTokenId, cancellationToken);
+        if (pendingTwoFactorLogin.IsFailed)
+        {
+            return Result.Fail<TwoFactorLoginResponse>(pendingTwoFactorLogin.Errors);
+        } 
 
-        await ValidateTwoFactorCodeAsync(user.OneTimePasswordSecret, request.Code);
-        await ClearPendingTokenAsync(pendingTwoFactorLogin);
+        var validateTwoFactorCodeResult = await ValidateTwoFactorCodeAsync(user.OneTimePasswordSecret, request.Code);
+        if (validateTwoFactorCodeResult.IsFailed)
+        {
+            return Result.Fail<TwoFactorLoginResponse>(validateTwoFactorCodeResult.Errors);
+        }
+
+        await ClearPendingTokenAsync(pendingTwoFactorLogin.Value);       
 
         var refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
         var jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
-        return Result.Ok(new VerifyTwoFactorLoginResponse(jwtToken, refreshToken));
+        if(refreshToken is null || jwtToken is null)
+        {
+            return Result.Fail<TwoFactorLoginResponse>(new InvalidCredentialsError());
+        }
+
+        return Result.Ok(new TwoFactorLoginResponse(jwtToken, refreshToken));
     }
 
     private async Task ClearPendingTokenAsync(PendingTwoFactorLogin pendingTwoFactorLogin)
@@ -53,13 +65,18 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         return;
     }
 
-    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) => 
-           await dbContext.Users
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-           ?? throw new UnauthorizedAccessException();
+    //private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) => 
+    //       await dbContext.Users
+    //                .AsNoTracking()
+    //                .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
+    //       ?? throw new UnauthorizedAccessException();
 
-    private async Task<PendingTwoFactorLogin> ValidateTwoFactorPendingToken(string pendingToken, Guid pendingTokenId, CancellationToken cancellationToken)
+    private Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>
+                        dbContext.Users
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+    private async Task<Result<PendingTwoFactorLogin>> ValidateTwoFactorPendingToken(string pendingToken, Guid pendingTokenId, CancellationToken cancellationToken)
     {
         var pendingTwoFactorLogin = await dbContext.PendingTwoFactorLogins
                                                 .AsNoTracking()
@@ -67,27 +84,40 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
                                                      x.Id == pendingTokenId,                                                    
                                                      cancellationToken) ?? throw new UnauthorizedAccessException();
        
+        //if (pendingTwoFactorLogin.PendingTwoFactorToken is null)
+        //{            
+        //    throw new UnauthorizedAccessException();
+        //}
+
         if (pendingTwoFactorLogin.PendingTwoFactorToken is null)
-        {            
-            throw new UnauthorizedAccessException();
+        {
+            return Result.Fail<PendingTwoFactorLogin>(
+                new InvalidCredentialsError());
         }
 
-        ValidatePendingToken(pendingToken, pendingTwoFactorLogin.PendingTwoFactorToken);
-        await CleanUpPendingTokenAsync(pendingTwoFactorLogin);
+        ValidatePendingToken(pendingToken, pendingTwoFactorLogin.PendingTwoFactorToken);         
 
-        return pendingTwoFactorLogin;
+        var cleanUpPendingTokenResult = await CleanUpPendingTokenAsync(pendingTwoFactorLogin);
+        if (cleanUpPendingTokenResult.IsFailed)
+        {
+            return Result.Fail(new InvalidCredentialsError());
+        }
+
+        return Result.Ok(pendingTwoFactorLogin);
     }
 
-    private async Task CleanUpPendingTokenAsync(PendingTwoFactorLogin pendingTwoFactorLogin)
+    private async Task<Result> CleanUpPendingTokenAsync(PendingTwoFactorLogin pendingTwoFactorLogin)
     {
         if (!pendingTwoFactorLogin.PendingTokenExpiresAt.HasValue || pendingTwoFactorLogin.PendingTokenExpiresAt.Value < DateTime.UtcNow)
         {
-            await ClearPendingTokenAsync(pendingTwoFactorLogin);
-            throw new UnauthorizedAccessException();
+            await ClearPendingTokenAsync(pendingTwoFactorLogin);             
+            return Result.Fail(new InvalidCredentialsError());            
         }
+
+        return Result.Ok();
     }
 
-    private void ValidatePendingToken(string pendingToken, string storedPendingToken)
+    private Result ValidatePendingToken(string pendingToken, string storedPendingToken)
     {
         var incomingHashedToken =
             hmacsha256Hasher.HashToken(
@@ -101,28 +131,36 @@ internal class VerifyTwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         var storedHashBytes =
             Convert.FromBase64String(storedPendingToken);
 
-        if (!CryptographicOperations.FixedTimeEquals(
-                incomingHashBytes,
-                storedHashBytes))
+        if (!CryptographicOperations.FixedTimeEquals(incomingHashBytes, storedHashBytes))
         {
-            throw new UnauthorizedAccessException();
+            //throw new UnauthorizedAccessException();
+            return Result.Fail(new InvalidCredentialsError());
         }
+
+        return Result.Ok();
     }
 
-    private async Task ValidateTwoFactorCodeAsync(string? oneTimePasswordSecret, string code)
+    private async Task<Result> ValidateTwoFactorCodeAsync(string? oneTimePasswordSecret, string code)
     {
-        if (oneTimePasswordSecret == null)
+        //if (oneTimePasswordSecret == null)
+        //{
+        //    throw new UnauthorizedAccessException();
+        //}
+
+        if (oneTimePasswordSecret is null)
         {
-            throw new UnauthorizedAccessException();
+            return Result.Fail(new InvalidCredentialsError());
         }
 
         var oneTimePassEncryptionKey = encryptionSettings.OneTimePasswordKey;
         var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(oneTimePasswordSecret, oneTimePassEncryptionKey);
 
         if (!oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code))
-        {           
-            throw new UnauthorizedAccessException();
+        {
+            return Result.Fail(new InvalidCredentialsError());
         }
+
+        return Result.Ok();
     }
 
     private async Task<string> GenerateRefreshTokenAsync(User user, CancellationToken cancellationToken)

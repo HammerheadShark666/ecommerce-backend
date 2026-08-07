@@ -1,19 +1,19 @@
-using Serilog;
 using ECommerce.Api.Extensions;
 using ECommerce.Api.Middleware;
 using ECommerce.Api.Middleware.ExceptionHandlers;
 using ECommerce.Application;
 using ECommerce.Application.Features.Authentication.Login;
 using ECommerce.Application.Features.Authentication.Protected;
-using ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
+using ECommerce.Application.Features.Authentication.TwoFactorLogin;
 using ECommerce.Application.Features.CheckTwoFactorStatus;
+using ECommerce.Application.Features.ForgottenPassword;
+using ECommerce.Application.Features.Product;
 using ECommerce.Application.Features.RefreshToken;
 using ECommerce.Application.Features.Registration;
 using ECommerce.Application.Features.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
-using ECommerce.Application.Features.ForgottenPassword;
-using ECommerce.Application.Features.Product;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -60,7 +60,7 @@ try
 
     app.MapLoginEndpoints();
     app.MapTwoFactorStatusEndpoints();
-    app.MapVerifyTwoFactorLoginEndpoints();
+    app.MapTwoFactorLoginEndpoints();
     app.MapTwoFactorEnrolmentEndpoints();
     app.MapRegistrationEndpoints();
     app.MapRefreshTokenEndPoints();
