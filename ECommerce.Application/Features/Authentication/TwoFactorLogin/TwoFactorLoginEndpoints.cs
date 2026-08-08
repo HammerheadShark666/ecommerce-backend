@@ -1,7 +1,5 @@
 ﻿using ECommerce.Application.Abstractions.Configuration;
-using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
-using ECommerce.Application.Exceptions;
 using ECommerce.Application.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -21,37 +19,20 @@ public static class TwoFactorLoginEndpoints
         group.MapPost("/2fa/verify", async ([FromBody] TwoFactorLoginCommand request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         {
             var result = await mediator.Send(new TwoFactorLoginCommand(request.Email, request.PendingToken, request.Code, request.PendingTokenId));
-
-            if (result.HasError<InvalidCredentialsError>())
+            if (result.IsFailed)
             {
-                var error = result.Errors
-                    .OfType<InvalidCredentialsError>()
-                    .First();
-
-                return Results.Problem(
-                    statusCode: StatusCodes.Status401Unauthorized,
-                    title: "Authentication failed",
-                    detail: error.Message);
-            }
-
-
-
-            //if (result.IsFailed)
-            //{
-            //    return Results.BadRequest(new
-            //    {
-            //        errors = result.Errors.Select(x => x.Message)
-            //    });
-            //}
-
-
-            //?? throw new RefreshTokenMissingException();
-
+                return result.ToHttpResult();
+            } 
 
             var refreshToken = result.Value.RefreshToken;
             response.SetRefreshToken(refreshToken, jwtSettings.RefreshTokenExpiryDays); 
-            
-            return Results.Ok(new LoginResponse(result.Value.Token));
+
+            return Results.Ok(new
+            {
+                RequiresTwoFactor = false,
+                result.Value.Token
+            });
+
         }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
 
         return endpoints;

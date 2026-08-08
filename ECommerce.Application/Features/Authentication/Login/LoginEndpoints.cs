@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Abstractions.Configuration;
-using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
 using ECommerce.Application.Extensions;
 using MediatR;
@@ -20,50 +19,32 @@ public static class LoginEndpoints
         group.MapPost("/login", async ([FromBody] LoginRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         {
             var result = await mediator.Send(new LoginCommand(request.Email, request.Password));
-
-            if (result.HasError<InvalidCredentialsError>())
-            {
-                var error = result.Errors
-                    .OfType<InvalidCredentialsError>()
-                    .First();
-
-                return Results.Problem(
-                    statusCode: StatusCodes.Status401Unauthorized,
-                    title: "Authentication failed",
-                    detail: error.Message);
-            }
-
             if (result.IsFailed)
             {
-                return Results.BadRequest(new
-                {
-                    errors = result.Errors.Select(x => x.Message)
-                });
+                return result.ToHttpResult();
             } 
 
-            var login = result.Value;
-
-            if (login.RequiresTwoFactor)
+            if (result.Value.RequiresTwoFactor)
             {
                 return Results.Ok(new
                 {
                     RequiresTwoFactor = true,
-                    login.PendingToken,
-                    login.PendingTokenId
+                    result.Value.PendingToken,
+                    result.Value.PendingTokenId
                 });
             }
 
-            if (login.RefreshToken is not null)
+            if (result.Value.RefreshToken is not null)
             {
                 response.SetRefreshToken(
-                    login.RefreshToken,
+                    result.Value.RefreshToken,
                     jwtSettings.RefreshTokenExpiryDays);
-            }
+            } 
 
             return Results.Ok(new
             {
                 RequiresTwoFactor = false,
-                login.Token
+                result.Value.Token
             }); 
 
         }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
