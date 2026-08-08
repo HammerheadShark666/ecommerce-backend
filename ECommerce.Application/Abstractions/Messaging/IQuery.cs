@@ -1,9 +1,11 @@
-﻿using MediatR;
+﻿using FluentResults;
+using MediatR;
 
 namespace ECommerce.Application.Abstractions.Messaging;
- 
-public interface IQuery<out TResponse> : IRequest<TResponse>; 
+
+public interface IQuery<TResponse>
+    : IRequest<Result<TResponse>>;
 
 public interface IQueryHandler<in TQuery, TResponse>
-    : IRequestHandler<TQuery, TResponse>
+    : IRequestHandler<TQuery, Result<TResponse>>
     where TQuery : IQuery<TResponse>;

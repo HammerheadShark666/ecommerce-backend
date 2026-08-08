@@ -1,23 +1,29 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.CheckTwoFactorStatus;
-
-public record GetTwoFactorStatusQuery(string Email) : IQuery<GetTwoFactorStatusResponse>;
-
-public record GetTwoFactorStatusResponse(bool IsEnabled);
-
+ 
 internal class GetTwoFactorStatusQueryHandler(IECommerceDbContext dbContext) : IQueryHandler<GetTwoFactorStatusQuery, GetTwoFactorStatusResponse>
 { 
-    public async Task<GetTwoFactorStatusResponse> Handle(GetTwoFactorStatusQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetTwoFactorStatusResponse>> Handle(GetTwoFactorStatusQuery request, CancellationToken cancellationToken)
     {
-        var user = await GetUserAsync(request.Email, cancellationToken);
-        return new GetTwoFactorStatusResponse(user.IsTwoFactorEnabled);
+        var normaliseEmail = request.Email.Trim().ToUpperInvariant(); 
+
+        var user = await GetUserAsync(normaliseEmail, cancellationToken);
+        if (user is null)
+        {
+            return Result.Fail<GetTwoFactorStatusResponse>(new EmailNotFound());
+        }
+
+        return Result.Ok(new GetTwoFactorStatusResponse(user.IsTwoFactorEnabled)); 
     }
 
-    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-            ?? throw new NotFoundException(nameof(User), email);
+    private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>
+                        await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+           
 }
