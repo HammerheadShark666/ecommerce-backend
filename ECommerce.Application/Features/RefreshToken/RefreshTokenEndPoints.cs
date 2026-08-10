@@ -1,14 +1,14 @@
-﻿using MediatR;
+﻿using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using ECommerce.Application.Extensions;
-using ECommerce.Application.Abstractions.Configuration;
 
 namespace ECommerce.Application.Features.RefreshToken;
 
 public static class RefreshTokenEndPoints
-{
+{ 
     public static IEndpointRouteBuilder MapRefreshTokenEndPoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/refresh-token")
@@ -16,18 +16,15 @@ public static class RefreshTokenEndPoints
 
         group.MapPost("/", async (HttpRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) => {
 
-            var refreshToken =
-                    request.Cookies["refreshToken"];
-
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                return Results.Unauthorized();
-            }
-
+            var refreshToken = request.Cookies["refreshToken"] ?? "";
+             
             var result = await mediator.Send(new RefreshTokenCommand(refreshToken));
-            response.SetRefreshToken(result.RefreshToken, jwtSettings.RefreshTokenExpiryDays); 
+            if (result.IsSuccess)
+            {
+                response.SetRefreshToken(result.Value.RefreshToken, jwtSettings.RefreshTokenExpiryDays);
+            } 
 
-            return Results.Ok(new RefreshTokenOnlyResponse(result.Token));
+            return result.ToHttpResult();
         });
 
         return endpoints;
