@@ -2,11 +2,11 @@
 
 namespace ECommerce.Application.Common.Errors;
  
-public sealed class EmailNotFound : ApiError
+public sealed class UserNotFound : ApiError
 {
-    public EmailNotFound()
+    public UserNotFound()
         : base(
-            "Email not found.",
+            "User not found.",
             StatusCodes.Status404NotFound)
     {
     }
