@@ -2,9 +2,9 @@
 
 namespace ECommerce.Application.Common.Errors;
  
-public sealed class RefreshTokenNotFound : ApiError
+public sealed class RefreshTokenNotFoundError : ApiError
 {
-    public RefreshTokenNotFound()
+    public RefreshTokenNotFoundError()
         : base(
             "Refresh token not found.",
             StatusCodes.Status404NotFound)

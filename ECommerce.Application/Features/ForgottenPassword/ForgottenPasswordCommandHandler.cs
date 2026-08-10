@@ -17,7 +17,7 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
         var user = await GetUserAsync(normaliseEmail, cancellationToken);
         if (user is null)
         {
-            return Result.Fail<ForgottenPasswordResponse>(new UserNotFound());
+            return Result.Fail<ForgottenPasswordResponse>(new InvalidCredentialsError());
         }
       
         await _publisher.PublishAsync(new PasswordResetRequested(user.Id, user.FirstName, user.Email), cancellationToken); 

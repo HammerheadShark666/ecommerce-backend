@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Common.Errors;
+using ECommerce.Application.Constants;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 
@@ -20,7 +21,7 @@ public static class ResultExtensions
         if (apiError is not null)
         {
             return Results.Problem(
-                statusCode: apiError.StatusCode, 
+                statusCode: (int)apiError.Metadata[ErrorMetadataKeys.StatusCode], 
                 detail: apiError.Message);
         }
 

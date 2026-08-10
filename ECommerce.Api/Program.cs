@@ -13,6 +13,7 @@ using ECommerce.Application.Features.Registration;
 using ECommerce.Application.Features.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
+using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -23,7 +24,7 @@ Log.Information(">>> PROGRAM STARTED");
 
 try
 {
-    WebApplicationBuilder builder = WebApplication.CreateBuilder(args); 
+    var builder = WebApplication.CreateBuilder(args); 
 
     builder.AddAppSettings();
     builder.AddApplicationLogging();
@@ -42,7 +43,16 @@ try
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddApiRateLimiting();
 
-    WebApplication app = builder.Build();
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+
+    var app = builder.Build();
+
+    app.UseForwardedHeaders();
 
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();

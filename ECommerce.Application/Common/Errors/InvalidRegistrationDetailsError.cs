@@ -2,11 +2,11 @@
 
 namespace ECommerce.Application.Common.Errors;
  
-public sealed class RefreshTokenNotPassed : ApiError
+public sealed class InvalidRegistrationDetailsError : ApiError
 {
-    public RefreshTokenNotPassed()
+    public InvalidRegistrationDetailsError()
         : base(
-            "Refresh token not passed.",
+            "Invalid registration details error",
             StatusCodes.Status400BadRequest)
     {
     }

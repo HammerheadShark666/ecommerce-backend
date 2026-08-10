@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.RefreshToken;
 
-public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext, 
+internal sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext, 
                                                IHmacsha256Hasher hmacsha256Hasher,
                                                IJwtGenerator jwtGenerator,
                                                TimeProvider timeProvider,
@@ -25,7 +25,7 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
         var refreshToken = await GetRefreshTokenRecord(hashedRefreshToken, cancellationToken);
         if(refreshToken is null || refreshToken.User is null)
         {
-            return Result.Fail<RefreshTokenResponse>(new RefreshTokenNotFound());
+            return Result.Fail<RefreshTokenResponse>(new RefreshTokenNotFoundError());
         }
           
         (var accessToken, var newRefreshToken) = await GetNewTokensAsync(refreshToken.User, cancellationToken);

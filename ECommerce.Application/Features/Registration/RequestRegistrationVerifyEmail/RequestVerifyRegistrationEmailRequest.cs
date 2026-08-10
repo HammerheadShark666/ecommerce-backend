@@ -1,3 +1,0 @@
-﻿namespace ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
-
-public record RequestVerifyRegistrationEmailRequest(string Email);

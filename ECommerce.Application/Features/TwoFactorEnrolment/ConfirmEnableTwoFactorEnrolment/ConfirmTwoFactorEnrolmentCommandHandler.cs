@@ -3,63 +3,48 @@ using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Common.Errors;
-using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.TwoFactorEnrolment.ConfirmEnableTwoFactorEnrolment;
-
-public record ConfirmTwoFactorEnrolmentCommand(string Email, string Code) : ICommand<ConfirmTwoFactorEnrolmentResponse>;
-
-public record ConfirmTwoFactorEnrolmentResponse(string Message);
-
+ 
 internal class ConfirmTwoFactorEnrolmentCommandHandler(IECommerceDbContext dbContext,
                                                        IAesEncryptionHelper aesEncryptionHelper,                                                      
                                                        IEncryptionSettings encryptionSettings,
                                                        IOneTimePasswordGenerator oneTimePasswordGenerator) : ICommandHandler<ConfirmTwoFactorEnrolmentCommand, ConfirmTwoFactorEnrolmentResponse>
 { 
     public async Task<Result<ConfirmTwoFactorEnrolmentResponse>> Handle(ConfirmTwoFactorEnrolmentCommand request, CancellationToken cancellationToken)
-    {
-        (var user, var otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
-
-        var codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
-        await UpdateTwoFactorEnabledState(user, cancellationToken);
-
-        return codeIsValid
-            ? Result.Ok(new ConfirmTwoFactorEnrolmentResponse("2FA enabled successfully."))
-            : Result.Fail(new InvalidCredentialsError());
-    }
-
-    private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
-    {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-            ?? throw new NotFoundException(nameof(User), email);
-         
-        if (user.OneTimePasswordSecret is null)
+    { 
+        var user = await GetUserAsync(request.Email, cancellationToken);
+        if (user is null || user.OneTimePasswordSecret is null)
         {
-            throw new TwoFactorEnrolmentNotStartedException();
+            return Result.Fail<ConfirmTwoFactorEnrolmentResponse>(new InvalidCredentialsError());
         }
 
         if (user.IsTwoFactorEnabled)
         {
-            throw new InvalidTwoFactorStateException("2FA is already confirmed and enabled.");
-        } 
+            return Result.Fail<ConfirmTwoFactorEnrolmentResponse>(new TwofaAlreadyEnabledError());
+        }
 
-        return (user, user.OneTimePasswordSecret); 
+        var codeIsValid = await ValidateCodeAsync(user.OneTimePasswordSecret, request.Code);
+        if (!codeIsValid)
+        {
+            return Result.Fail<ConfirmTwoFactorEnrolmentResponse>(new InvalidCredentialsError());
+        }
+
+        await UpdateTwoFactorEnabledState(user, cancellationToken);
+
+        return Result.Ok(new ConfirmTwoFactorEnrolmentResponse("2FA enabled successfully."));             
     }
+
+    private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) => 
+                        await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken); 
 
     private async Task<bool> ValidateCodeAsync(string otpSecret, string code)
     {
         var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
-
-        var valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
-        if (!valid)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        return true;
+        return  oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);      
     }
 
     private async Task UpdateTwoFactorEnabledState(User user, CancellationToken cancellationToken)

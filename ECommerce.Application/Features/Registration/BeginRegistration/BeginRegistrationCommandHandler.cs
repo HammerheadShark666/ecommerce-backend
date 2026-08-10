@@ -2,18 +2,14 @@
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
-using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Registration.BeginRegistration;
-
-public record BeginRegistrationCommand(string Email, string Password, string ConfirmPassword, string LastName, string FirstName, string PhoneNumber) : ICommand<BeginRegistrationResponse>;
-
-public record BeginRegistrationResponse(string Message = "Registration initiated successfully. Email sent to verify email.");
 
 internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
                                                IOneTimePasswordGenerator oneTimePasswordGenerator,
@@ -24,7 +20,11 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
 {    
     public async Task<Result<BeginRegistrationResponse>> Handle(BeginRegistrationCommand request, CancellationToken cancellationToken)
     { 
-        await ValidateRegistrationDetails(request.Email, cancellationToken);
+        var emailExists = await EmailExistsAsync(request.Email, cancellationToken);
+        if (emailExists)
+        {
+            return Result.Fail<BeginRegistrationResponse>(new InvalidRegistrationDetailsError());
+        }
 
         (var oneTimePasswordSecret, var encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();
 
@@ -36,15 +36,10 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
         return Result.Ok(new BeginRegistrationResponse());
     }
 
-    private async Task ValidateRegistrationDetails(string email, CancellationToken cancellationToken)
-    {
-        if (await dbContext.Users
+    private async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken) => 
+                        await dbContext.Users
                             .AsNoTracking()
-                            .AnyAsync(u => u.Email == email, cancellationToken))
-        {
-            throw new DuplicateEmailException($"User with email '{email}' already exists.");
-        }
-    }
+                            .AnyAsync(u => u.Email == email, cancellationToken); 
 
     private async Task<(string secret, string encryptedSecrete)> GenerateAndEncryptOneTimePasswordSecretAsync()
     {

@@ -2,11 +2,11 @@
 
 namespace ECommerce.Application.Common.Errors;
  
-public sealed class InvalidCredentialsError : ApiError
+public sealed class TwofaAlreadyEnabledError : ApiError
 {
-    public InvalidCredentialsError()
+    public TwofaAlreadyEnabledError()
         : base(
-            "Unauthorised",
+            "2fa already enabled for this user.",
             StatusCodes.Status401Unauthorized)
     {
     }

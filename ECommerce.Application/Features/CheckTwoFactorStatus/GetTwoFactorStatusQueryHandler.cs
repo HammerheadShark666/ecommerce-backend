@@ -17,7 +17,7 @@ internal class GetTwoFactorStatusQueryHandler(IECommerceDbContext dbContext) : I
         var user = await GetUserAsync(normaliseEmail, cancellationToken);
         if (user is null)
         {
-            return Result.Fail<GetTwoFactorStatusResponse>(new UserNotFound());
+            return Result.Fail<GetTwoFactorStatusResponse>(new InvalidCredentialsError());
         }
 
         return Result.Ok(new GetTwoFactorStatusResponse(user.IsTwoFactorEnabled)); 
