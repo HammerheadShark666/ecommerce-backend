@@ -53,7 +53,6 @@ try
     var app = builder.Build();
 
     app.UseForwardedHeaders();
-
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseAuthentication();

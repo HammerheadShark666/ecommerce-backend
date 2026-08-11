@@ -21,7 +21,7 @@ public static class ResultExtensions
         if (apiError is not null)
         {
             return Results.Problem(
-                statusCode: (int)apiError.Metadata[ErrorMetadataKeys.StatusCode], 
+                statusCode: (int)apiError.Metadata[ErrorMetadataKeys.StatusCode],
                 detail: apiError.Message);
         }
 

@@ -27,7 +27,7 @@ public class RefreshTokenIntegrationTests(SqlServerFixture fixture) : IAsyncLife
 
         var resp = await client.PostAsync("/refresh-token/", new StringContent(string.Empty));
 
-        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
 
 internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandler

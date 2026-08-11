@@ -90,18 +90,11 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
                                "/forgotten-password/reset/validate")
         {
             Content = JsonContent.Create(new { Token = token, Email = email, NewPassword = newPassword, Code = code })
-        };
-
-        request.Headers.TryAddWithoutValidation(
-            "X-Forwarded-For",
-            "192.168.1.100");
-
+        }; 
+       
+        request = TestHelpers.SetForwardedHeader(request);
         var resp = await client.SendAsync(request);
-
-
-        // Act
-        //var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = code });
-
+         
         // Assert
         resp.EnsureSuccessStatusCode();
 
@@ -137,7 +130,6 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         var token = "X+qXaioKNxX6O/ceDCs9+5TjWU9ARJ7FE0iX4kGtwrk=";
         var newPassword = "NewPass!1";
         var invalidCode = "000000";
-        var ipAddress = "";
 
         Guid userId;
 
@@ -193,18 +185,11 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
                                "/forgotten-password/reset/validate")
         {
             Content = JsonContent.Create(new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode })
-        };
-
-        request.Headers.TryAddWithoutValidation(
-            "X-Forwarded-For",
-            "192.168.1.100");
-
+        }; 
+       
+        request = TestHelpers.SetForwardedHeader(request);
         var resp = await client.SendAsync(request);
-
-
-        // Act
-        //var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode });
-
+         
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
 

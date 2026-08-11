@@ -7,3 +7,14 @@ public sealed class ValidationError : Error
 {
     public ValidationError(string message) : base(message) => Metadata.Add("StatusCode", StatusCodes.Status400BadRequest);
 }
+
+
+//public sealed class ValidationError : Error
+//{
+//    public string PropertyName { get; }
+
+//    public ValidationError(
+//        string propertyName,
+//        string message)
+//        : base(message) => PropertyName = propertyName;
+//}

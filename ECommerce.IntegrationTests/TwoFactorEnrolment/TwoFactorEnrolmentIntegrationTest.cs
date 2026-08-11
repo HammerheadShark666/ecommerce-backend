@@ -57,9 +57,10 @@ public class TwoFactorEnrolmentIntegrationTest : IAsyncLifetime
         confirmResp.EnsureSuccessStatusCode();
 
         // Assert response
-        var confirmDto = await confirmResp.Content.ReadFromJsonAsync<ConfirmEnrolResponse>();
+        var confirmDto = await confirmResp.Content.ReadFromJsonAsync<ConfirmTwoFactorEnrolmentResponse>();
         confirmDto.Should().NotBeNull();
-        confirmDto!.Success.Should().BeTrue();
+        confirmDto.Message.Should().Be("2FA enabled successfully.");
+
 
         // Assert DB updated
         var options = new DbContextOptionsBuilder<ECommerceDbContext>()
@@ -77,7 +78,7 @@ public class TwoFactorEnrolmentIntegrationTest : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     private record BeginEnrolResponse(string QrCodeBase64, string OtpAuthUri);
-    private record ConfirmEnrolResponse(bool Success, string Message);
+    private record ConfirmTwoFactorEnrolmentResponse(string Message);
 
     private string GetOneTimeCode(string secret)
     {
