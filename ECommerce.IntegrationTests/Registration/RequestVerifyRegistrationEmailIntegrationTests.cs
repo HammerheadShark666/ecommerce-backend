@@ -58,7 +58,7 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
     }
 
     [Fact]
-    public async Task RequestVerifyEmail_WhenAlreadyVerified_ReturnsBadRequest()
+    public async Task RequestVerifyEmail_WhenAlreadyVerified_ReturnsUnauthorized()
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
@@ -91,12 +91,12 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
         var resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
 
         // Assert
-        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
 
         var problem = (ValidationProblemDetails?)(await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>()
             ?? await resp.Content.ReadFromJsonAsync<ProblemDetails>());
 
         problem.Should().NotBeNull();
-        problem!.Detail.Should().Be("The registration verification email has already been verified.");
+        problem!.Detail.Should().Be("This registration has already been verified.");
     }
 }

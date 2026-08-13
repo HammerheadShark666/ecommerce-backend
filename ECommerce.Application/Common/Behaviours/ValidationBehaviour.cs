@@ -1,8 +1,9 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
+using ECommerce.Application.Common.Errors;
 using FluentResults;
 using FluentValidation;
-using global::ECommerce.Application.Common.Errors;
-using global::MediatR;
+using MediatR;
 
 namespace ECommerce.Application.Common.Behaviours;
 
@@ -11,6 +12,8 @@ public sealed class ValidationBehaviour<TRequest, TResponse>(
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
+    private static readonly ConcurrentDictionary<Type, Func<List<IError>, object>> FailFactories = new();
+
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -21,10 +24,10 @@ public sealed class ValidationBehaviour<TRequest, TResponse>(
             return await next();
         }
 
-        var failures = validators
-            .Select(v => v.Validate(request))
+        var context = new ValidationContext<TRequest>(request);
+        var failures = (await Task.WhenAll(
+                validators.Select(v => v.ValidateAsync(context, cancellationToken))))
             .SelectMany(r => r.Errors)
-            .Where(f => f is not null)
             .ToList();
 
         if (failures.Count == 0)
@@ -33,17 +36,33 @@ public sealed class ValidationBehaviour<TRequest, TResponse>(
         }
 
         var errors = failures
-            .Select(f => new ValidationError(f.ErrorMessage))
-            .Cast<IError>()
+            .Select(f => (IError)new ValidationError(f.PropertyName, f.ErrorMessage))
             .ToList();
 
-        // TResponse is Result<T> — construct failure via reflection-free generic factory
-        var resultType = typeof(TResponse).GetGenericArguments()[0];
-        var failMethod = typeof(Result)
-            .GetMethods()
-            .First(m => m.Name == nameof(Result.Fail) && m.IsGenericMethod && m.GetParameters()[0].ParameterType == typeof(IEnumerable<IError>))
-            .MakeGenericMethod(resultType);
+        return (TResponse)CreateFailedResult(typeof(TResponse), errors);
+    }
 
-        return (TResponse)failMethod.Invoke(null, [errors])!;
+    private static object CreateFailedResult(Type responseType, List<IError> errors)
+    {
+        var factory = FailFactories.GetOrAdd(responseType, static type =>
+        {
+            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Result<>))
+            {
+                throw new InvalidOperationException(
+                    $"{type.Name} must be Result<T> to use {nameof(ValidationBehaviour<object, object>)}.");
+            }
+
+            var failMethod = typeof(Result)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Single(m => m.Name == nameof(Result.Fail)
+                             && m.IsGenericMethodDefinition
+                             && m.GetParameters() is [var p]
+                             && p.ParameterType == typeof(IEnumerable<IError>))
+                .MakeGenericMethod(type.GetGenericArguments()[0]);
+
+            return errs => failMethod.Invoke(null, [errs])!;
+        });
+
+        return factory(errors);
     }
 }

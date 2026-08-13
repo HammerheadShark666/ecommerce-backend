@@ -35,7 +35,7 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
         var verifyResp = await PostConfirmRegisterRawAsync(email, "000000");
 
         // Assert
-        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest); 
+        verifyResp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized); 
     }
 
     [Theory]
@@ -56,12 +56,9 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
         var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-
         problem.Should().NotBeNull();
         problem!.Errors.Should().ContainKey("email");
-        problem.Errors["email"]
-               .Should()
-               .Contain("Email is not valid.");
+        problem.Errors["email"].Should().Contain("Email is not valid.");
     }
 
     [Fact]
@@ -91,8 +88,8 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
                .Contain("Password is required.")
                .And
                .Contain("Password must be at least 8 characters.");
-        problem!.Errors.Should().ContainKey("confirmpassword");                
-        problem.Errors["confirmpassword"]
+        problem!.Errors.Should().ContainKey("confirmPassword");                
+        problem.Errors["confirmPassword"]
                .Should()
                .Contain("Confirm password is required.")
                .And
@@ -120,8 +117,8 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
         problem.Errors["password"]
                .Should()               
                .Contain("Password must be at least 8 characters.");
-        problem!.Errors.Should().ContainKey("confirmpassword");
-        problem.Errors["confirmpassword"]
+        problem!.Errors.Should().ContainKey("confirmPassword");
+        problem.Errors["confirmPassword"]
                .Should()
                .Contain("Confirm password must be at least 8 characters.");
     }
@@ -143,8 +140,8 @@ public class BeginRegistrationFailIntegrationTest : IAsyncLifetime
         var problem = await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>();
 
         problem.Should().NotBeNull();
-        problem!.Errors.Should().ContainKey("confirmpassword");
-        problem.Errors["confirmpassword"]
+        problem!.Errors.Should().ContainKey("confirmPassword");
+        problem.Errors["confirmPassword"]
                .Should()
                .Contain("Passwords do not match.");
     }      

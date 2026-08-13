@@ -1,13 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace ECommerce.Application.Common.Errors;
- 
-public sealed class RefreshTokenNotFoundError : ApiError
-{
-    public RefreshTokenNotFoundError()
-        : base(
-            "Refresh token not found.",
-            StatusCodes.Status404NotFound)
-    {
-    }
-}
+
+public sealed class RefreshTokenNotFoundError()
+    : ApplicationError("Refresh token not found.", StatusCodes.Status404NotFound);

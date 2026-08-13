@@ -23,7 +23,7 @@ internal class BeginRegistrationCommandHandler(IECommerceDbContext dbContext,
         var emailExists = await EmailExistsAsync(request.Email, cancellationToken);
         if (emailExists)
         {
-            return Result.Fail<BeginRegistrationResponse>(new InvalidRegistrationDetailsError());
+            return Result.Fail<BeginRegistrationResponse>(new ConflictError("An account with this email already exists."));
         }
 
         (var oneTimePasswordSecret, var encryptedOneTimePasswordSecret) = await GenerateAndEncryptOneTimePasswordSecretAsync();

@@ -23,7 +23,7 @@ internal class VerifyRegistrationCommandHandler(IECommerceDbContext dbContext,
         if (user is null)
         {
             return Result.Fail<VerifyRegistrationResponse>(new InvalidCredentialsError());
-        }
+        } 
 
         await UpdateUser(user, cancellationToken);
 
