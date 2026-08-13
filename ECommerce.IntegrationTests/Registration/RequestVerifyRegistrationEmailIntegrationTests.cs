@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;
@@ -58,7 +59,7 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
     }
 
     [Fact]
-    public async Task RequestVerifyEmail_WhenAlreadyVerified_ReturnsUnauthorized()
+    public async Task RequestVerifyEmail_WhenAlreadyVerified_ReturnsSuccess()
     {
         // Arrange
         var appFactory = new TestApplicationFactory(_fixture.ConnectionString);
@@ -91,12 +92,10 @@ public class RequestVerifyRegistrationEmailIntegrationTests(SqlServerFixture fix
         var resp = await client.PostAsJsonAsync("/register/request-verify-email", new { Email = email });
 
         // Assert
-        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+        resp.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-        var problem = (ValidationProblemDetails?)(await resp.Content.ReadFromJsonAsync<ValidationProblemDetails>()
-            ?? await resp.Content.ReadFromJsonAsync<ProblemDetails>());
-
-        problem.Should().NotBeNull();
-        problem!.Detail.Should().Be("This registration has already been verified.");
+        var body = await resp.Content.ReadFromJsonAsync<RequestVerifyRegistrationEmailResponse>();
+        body.Should().NotBeNull();
+        body!.Message.Should().Be("Registration has already been verified.");
     }
 }
