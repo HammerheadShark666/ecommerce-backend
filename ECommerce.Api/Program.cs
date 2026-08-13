@@ -1,19 +1,20 @@
-using Serilog;
 using ECommerce.Api.Extensions;
 using ECommerce.Api.Middleware;
 using ECommerce.Api.Middleware.ExceptionHandlers;
 using ECommerce.Application;
 using ECommerce.Application.Features.Authentication.Login;
 using ECommerce.Application.Features.Authentication.Protected;
-using ECommerce.Application.Features.Authentication.VerifyTwoFactorLogin;
+using ECommerce.Application.Features.Authentication.TwoFactorLogin;
 using ECommerce.Application.Features.CheckTwoFactorStatus;
+using ECommerce.Application.Features.ForgottenPassword;
+using ECommerce.Application.Features.Product;
 using ECommerce.Application.Features.RefreshToken;
 using ECommerce.Application.Features.Registration;
 using ECommerce.Application.Features.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
-using ECommerce.Application.Features.ForgottenPassword;
-using ECommerce.Application.Features.Product;
+using Microsoft.AspNetCore.HttpOverrides;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -23,7 +24,7 @@ Log.Information(">>> PROGRAM STARTED");
 
 try
 {
-    WebApplicationBuilder builder = WebApplication.CreateBuilder(args); 
+    var builder = WebApplication.CreateBuilder(args); 
 
     builder.AddAppSettings();
     builder.AddApplicationLogging();
@@ -42,8 +43,16 @@ try
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddApiRateLimiting();
 
-    WebApplication app = builder.Build();
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
 
+    var app = builder.Build();
+
+    app.UseForwardedHeaders();
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseAuthentication();
@@ -60,7 +69,7 @@ try
 
     app.MapLoginEndpoints();
     app.MapTwoFactorStatusEndpoints();
-    app.MapVerifyTwoFactorLoginEndpoints();
+    app.MapTwoFactorLoginEndpoints();
     app.MapTwoFactorEnrolmentEndpoints();
     app.MapRegistrationEndpoints();
     app.MapRefreshTokenEndPoints();

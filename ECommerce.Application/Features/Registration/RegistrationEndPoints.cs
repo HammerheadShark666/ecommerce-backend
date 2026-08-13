@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Constants;
+using ECommerce.Application.Extensions;
 using ECommerce.Application.Features.Registration.BeginRegistration;
 using ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
 using ECommerce.Application.Features.Registration.VerifyRegistration;
@@ -21,21 +22,21 @@ public static class RegistrationEndpoints
         group.MapPost("", async ([FromBody] BeginRegistrationRequest request, IMediator mediator) =>
         {
             var result = await mediator.Send(new BeginRegistrationCommand(request.Email, request.Password, request.ConfirmPassword,
-                                                                          request.LastName, request.FirstName, request.PhoneNumber));
-            return Results.Ok(result);
-        }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
-
-        group.MapPost("/verify-email", async ([FromBody] VerifyRegistrationRequest request, IMediator mediator) =>
-        {
-            var result = await mediator.Send(new VerifyRegistrationCommand(request.Email, request.Code));
-            return Results.Ok(result);
+                                                                          request.LastName, request.FirstName, request.PhoneNumber));  
+            return result.ToHttpResult();
         }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
 
         group.MapPost("/request-verify-email", async ([FromBody] RequestVerifyRegistrationEmailRequest request, IMediator mediator) =>
         {
             var result = await mediator.Send(new RequestVerifyRegistrationEmailCommand(request.Email));
-            return Results.Ok(result);
+            return result.ToHttpResult();
         }).RequireRateLimiting(RateLimiterPolicyConstants.Register);
+
+        group.MapPost("/verify-email", async ([FromBody] VerifyRegistrationRequest request, IMediator mediator) =>
+        {
+            var result = await mediator.Send(new VerifyRegistrationCommand(request.Email, request.Code));
+            return result.ToHttpResult();
+        }).RequireRateLimiting(RateLimiterPolicyConstants.Register);        
 
         return endpoints;
     }

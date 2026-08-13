@@ -3,24 +3,15 @@ using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
 using ECommerce.Domain.Entities.Authentication;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace ECommerce.Application.Features.Authentication.Login;
-
-public record LoginCommand(string Email, string Password) : ICommand<LoginResponse>;
-
-public record LoginResponse(
-    bool RequiresTwoFactor,
-    string? PendingToken,
-    string? Token,
-    string? RefreshToken,
-    Guid? PendingTokenId
-);
-
+ 
 internal class LoginCommandHandler(IECommerceDbContext dbContext,
                                    IPasswordHasher passwordHasher,
                                    IHmacsha256Hasher hmacsha256Hasher,
@@ -32,46 +23,68 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
 {
     private static readonly TimeSpan PendingTokenTtl = TimeSpan.FromMinutes(5);
 
-    public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        LoginResponse loginResponse;
-        var normaliseEmail = request.Email.Trim().ToUpperInvariant();
+        var email = request.Email.Trim().ToUpperInvariant();
 
-        var user = await GetUserAsync(normaliseEmail, cancellationToken);
+        var user = await GetUserAsync(email, cancellationToken);
+        var authenticationResult = AuthenticateUser(user, request.Password);
 
-        ValidatePassword(user, request.Password);
+        if (authenticationResult.IsFailed)
+        {
+            return Result.Fail<LoginResponse>(authenticationResult.Errors);
+        }
+
+        user = authenticationResult.Value;
 
         if (user.IsTwoFactorEnabled)
         {
             await CloseExistingPendingTokens(user.Id, cancellationToken);
-            (var pendingTokenId, string token) = await GenerateTwoFactorPendingTokenAsync(user.Id);
-            loginResponse = new LoginResponse(true, token, null, null, pendingTokenId);
+
+            var (pendingTokenId, token) =
+                await GenerateTwoFactorPendingTokenAsync(user.Id);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Result.Ok(
+                new LoginResponse(
+                    RequiresTwoFactor: true,
+                    PendingToken: token,
+                    Token: null,
+                    RefreshToken: null,
+                    PendingTokenId: pendingTokenId));
         }
-        else
-        {
-            var refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
-            var jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
-            loginResponse = new LoginResponse(false, null, jwtToken, refreshToken, null);
-        }
+
+        var refreshToken = await GenerateRefreshTokenAsync(user, cancellationToken);
+        var jwtToken = await jwtGenerator.GenerateTokenAsync(user, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return loginResponse;
+        return Result.Ok(
+            new LoginResponse(
+                RequiresTwoFactor: false,
+                PendingToken: null,
+                Token: jwtToken,
+                RefreshToken: refreshToken,
+                PendingTokenId: null));
     }
 
-    private void ValidatePassword(User? user, string password)
+    private Result<User> AuthenticateUser(User? user, string password)
     {
-        var hash = user?.PasswordHash ?? AuthenticationConstants.DummyPasswordHash;
+        var hash = user?.PasswordHash
+            ?? AuthenticationConstants.DummyPasswordHash;
 
         var validPassword = passwordHasher.Verify(password, hash);
+
         if (!validPassword || user is null)
         {
-            throw new UnauthorizedAccessException();
+            return Result.Fail<User>(
+                new InvalidCredentialsError());
         }
 
-        return;
+        return Result.Ok(user);
     }
-
+     
     private async Task<(Guid, string)> GenerateTwoFactorPendingTokenAsync(Guid userId)
     {
         var pendingToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
@@ -117,10 +130,9 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
     private string GetHashedRefreshToken(string refreshToken) =>
         hmacsha256Hasher.HashToken(refreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
-    private async Task<User> GetUserAsync(string email, CancellationToken cancellationToken) =>
-          await dbContext.Users
-                   .AsNoTracking()
-                   .FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-          ?? throw new UnauthorizedAccessException();
+    private Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>
+                        dbContext.Users
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken); 
 }
           

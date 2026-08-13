@@ -59,7 +59,7 @@ public class CheckTwoFactorStatusTest : IAsyncLifetime
         var response = await _client.GetAsync($"/2fa/status?email={notFoundEmail}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);       
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);       
     }
 
     public Task InitializeAsync() => _fixture.ResetDatabaseAsync();

@@ -1,41 +1,38 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
 using ECommerce.Domain.Entities.User;
-using MediatR;
+using FluentResults; 
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.RefreshToken;
 
-public record RefreshTokenCommand(string RefreshToken) : IRequest<RefreshTokenResponse>;
-
-public record RefreshTokenResponse(string Token, string RefreshToken);
-
-public record RefreshTokenOnlyResponse(string? Token);
-
-public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext, 
+internal sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext, 
                                                IHmacsha256Hasher hmacsha256Hasher,
                                                IJwtGenerator jwtGenerator,
                                                TimeProvider timeProvider,
                                                IJwtSettings jwtSettings,
                                                IHashSettings hashSettings,
-                                               IRefreshTokenGenerator refreshTokenGenerator) : IRequestHandler<RefreshTokenCommand, RefreshTokenResponse>
+                                               IRefreshTokenGenerator refreshTokenGenerator) : ICommandHandler<RefreshTokenCommand, RefreshTokenResponse>
 {
-    public async Task<RefreshTokenResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RefreshTokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         var hashedRefreshToken = hmacsha256Hasher.HashToken(request.RefreshToken, AuthenticationConstants.HashTypeTokenRefresh, hashSettings.Secret);
 
         var refreshToken = await GetRefreshTokenRecord(hashedRefreshToken, cancellationToken);
-
-        var user = refreshToken.User
-            ?? throw new UnauthorizedAccessException();
-
-        (var accessToken, var newRefreshToken) = await GetNewTokensAsync(user, cancellationToken);
+        if(refreshToken is null || refreshToken.User is null)
+        {
+            return Result.Fail<RefreshTokenResponse>(new RefreshTokenNotFoundError());
+        }
+          
+        (var accessToken, var newRefreshToken) = await GetNewTokensAsync(refreshToken.User, cancellationToken);
 
         await UpdateRefreshTokenTable(refreshToken, newRefreshToken, cancellationToken);
 
-        return new RefreshTokenResponse(accessToken, newRefreshToken);
+        return Result.Ok(new RefreshTokenResponse(newRefreshToken)); //accessToken,
     }
 
     private async Task UpdateRefreshTokenTable(Domain.Entities.Authentication.RefreshToken refreshToken, string newRefreshToken, CancellationToken cancellationToken)
@@ -80,16 +77,13 @@ public sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
         return (accessToken, newRefreshToken);
     }
 
-    private async Task<Domain.Entities.Authentication.RefreshToken> GetRefreshTokenRecord(string hashedRefreshToken, 
-                                                                         CancellationToken cancellationToken)
-    {
-        var refreshToken = await dbContext.RefreshTokens
-                                    .Include(x => x.User)
-                                    .SingleOrDefaultAsync(
-                                        x => x.Token == hashedRefreshToken &&
-                                                x.RevokedAt == null &&
-                                                x.ExpiresAt > timeProvider.GetUtcNow().UtcDateTime,
-                                            cancellationToken) ?? throw new UnauthorizedAccessException();         
-        return refreshToken;
-    }     
+    private async Task<Domain.Entities.Authentication.RefreshToken?> GetRefreshTokenRecord(string hashedRefreshToken,
+                                                                         CancellationToken cancellationToken) => 
+                    await dbContext.RefreshTokens
+                        .Include(x => x.User)
+                        .SingleOrDefaultAsync(
+                            x => x.Token == hashedRefreshToken &&
+                                    x.RevokedAt == null &&
+                                    x.ExpiresAt > timeProvider.GetUtcNow().UtcDateTime,
+                                cancellationToken);
 }

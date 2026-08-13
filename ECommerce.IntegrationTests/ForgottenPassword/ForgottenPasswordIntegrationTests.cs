@@ -48,8 +48,16 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
         }
 
         // Act
-        var resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
-
+        var request = new HttpRequestMessage(
+                                HttpMethod.Post,
+                                "/forgotten-password")
+        {
+            Content = JsonContent.Create(new { Email = email })
+        };
+ 
+        request = TestHelpers.SetForwardedHeader(request);
+        var resp = await client.SendAsync(request);
+         
         // Assert
         resp.EnsureSuccessStatusCode();
 
@@ -65,10 +73,17 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
         var client = appFactory.CreateClient();
 
         var email = "unknownuser@example.com";
-
-        // Ensure no user exists with this email
-        // Act
-        var resp = await client.PostAsJsonAsync("/forgotten-password", new { Email = email });
+         
+        // Act        
+        var request = new HttpRequestMessage(
+                               HttpMethod.Post,
+                               "/forgotten-password")
+        {
+            Content = JsonContent.Create(new { Email = email })
+        };
+ 
+        request = TestHelpers.SetForwardedHeader(request);
+        var resp = await client.SendAsync(request);
 
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -78,6 +93,6 @@ public class ForgottenPasswordIntegrationTests(SqlServerFixture fixture) : IAsyn
 
         problem.Should().NotBeNull();
         problem!.Status.Should().Be(401);
-        problem.Title.Should().Be("Unauthorised");
-    }
+        problem.Title.Should().Be("Unauthorized");
+    } 
 }

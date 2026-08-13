@@ -27,5 +27,14 @@ public static class TestHelpers
         {
             return null;
         }
-    }  
+    }
+
+    public static HttpRequestMessage SetForwardedHeader(HttpRequestMessage request)
+    {
+        request.Headers.TryAddWithoutValidation(
+            "X-Forwarded-For",
+            "192.168.1.100");
+
+        return request;
+    }
 }

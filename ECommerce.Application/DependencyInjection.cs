@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.Extensions;
+﻿using ECommerce.Application.Common.Behaviours;
+using ECommerce.Application.Extensions;
 using ECommerce.Application.MediatR;
 using FluentValidation;
 using MediatR;
@@ -11,14 +12,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(
         this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(AssemblyMarker).Assembly));
-
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>)); 
-        services.AddValidatorsFromAssembly(typeof(AssemblyMarker).Assembly); 
-
+    { 
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AssemblyMarker).Assembly));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Common.Behaviours.ValidationBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(UntypedErrorGuardBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
+        services.AddValidatorsFromAssembly(typeof(AssemblyMarker).Assembly);
+ 
         services.AddApplicationSettings(configuration);
 
         return services;

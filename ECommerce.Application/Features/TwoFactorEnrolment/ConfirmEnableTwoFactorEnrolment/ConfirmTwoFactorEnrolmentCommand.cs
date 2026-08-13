@@ -1,0 +1,9 @@
+﻿using ECommerce.Application.Abstractions.Messaging;
+
+namespace ECommerce.Application.Features.TwoFactorEnrolment.ConfirmEnableTwoFactorEnrolment;
+
+public record ConfirmTwoFactorEnrolmentRequest(string email, string Code);
+
+public record ConfirmTwoFactorEnrolmentCommand(string Email, string Code) : ICommand<ConfirmTwoFactorEnrolmentResponse>;
+
+public record ConfirmTwoFactorEnrolmentResponse(string Message);

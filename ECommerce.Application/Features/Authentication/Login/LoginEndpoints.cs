@@ -19,31 +19,35 @@ public static class LoginEndpoints
         group.MapPost("/login", async ([FromBody] LoginRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         {
             var result = await mediator.Send(new LoginCommand(request.Email, request.Password));
+            if (result.IsFailed)
+            {
+                return result.ToHttpResult();
+            } 
 
-            if(result.RequiresTwoFactor)
+            if (result.Value.RequiresTwoFactor)
             {
                 return Results.Ok(new
                 {
                     RequiresTwoFactor = true,
-                    result.PendingToken,
-                    result.PendingTokenId
-                });
-            } 
-            else
-            {
-                if (result.RefreshToken is not null)
-                { 
-                    response.SetRefreshToken(result.RefreshToken, jwtSettings.RefreshTokenExpiryDays);
-                }
-
-                return Results.Ok(new
-                {
-                    RequiresTwoFactor = false,
-                    result.Token
+                    result.Value.PendingToken,
+                    result.Value.PendingTokenId
                 });
             }
-        }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
 
+            if (result.Value.RefreshToken is not null)
+            {
+                response.SetRefreshToken(
+                    result.Value.RefreshToken,
+                    jwtSettings.RefreshTokenExpiryDays);
+            } 
+
+            return Results.Ok(new
+            {
+                RequiresTwoFactor = false,
+                result.Value.Token
+            }); 
+
+        }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
  
         return endpoints;
     }

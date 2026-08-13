@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using ECommerce.Application.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -15,8 +16,8 @@ public static class TwoFactorStatusEndpoints
 
         group.MapGet("/status", async (string email, IMediator mediator) =>
         {
-            var result = await mediator.Send(new GetTwoFactorStatusQuery(email));
-            return Results.Ok(result);
+            var result = await mediator.Send(new GetTwoFactorStatusQuery(email)); 
+            return result.ToHttpResult();  
         });
 
         return endpoints;

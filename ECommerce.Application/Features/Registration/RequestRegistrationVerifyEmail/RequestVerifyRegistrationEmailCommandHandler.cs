@@ -1,32 +1,34 @@
 ﻿using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Messaging;
-using ECommerce.Application.Exceptions;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Features.Registration.Events;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
 
-public record RequestVerifyRegistrationEmailCommand(string Email) : ICommand<RequestVerifyRegistrationEmailResponse>;
-
-public record RequestVerifyRegistrationEmailResponse(
-    string Message = "Send verify registration email initiated successfully."
-);
-
 internal class RequestVerifyRegistrationEmailCommandHandler(IECommerceDbContext dbContext,
                                                IMessagePublisher _publisher) : ICommandHandler<RequestVerifyRegistrationEmailCommand, RequestVerifyRegistrationEmailResponse>
 {
-    public async Task<RequestVerifyRegistrationEmailResponse> Handle(RequestVerifyRegistrationEmailCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RequestVerifyRegistrationEmailResponse>> Handle(RequestVerifyRegistrationEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await GetUser(request.Email, cancellationToken);
+        var user = await GetUserAsync(request.Email, cancellationToken);
+        if (user is null)
+        {
+            return Result.Fail<RequestVerifyRegistrationEmailResponse>(new InvalidCredentialsError());
+        }
+
+        if (user.IsEmailVerified == true)
+        {
+            return Result.Fail<RequestVerifyRegistrationEmailResponse>(new ConflictError("This registration has already been verified."));
+        }
 
         await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
 
-        return new RequestVerifyRegistrationEmailResponse();
+        return Result.Ok(new RequestVerifyRegistrationEmailResponse());
     }
 
-    private async Task<User> GetUser(string email, CancellationToken cancellationToken) =>
-                                await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email
-                                                                          && u.IsEmailVerified == false, cancellationToken)
-                                     ?? throw new RegistrationEmailAlreadyVerifiedException();
+    private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>
+                                await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 }

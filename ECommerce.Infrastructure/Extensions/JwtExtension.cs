@@ -47,7 +47,7 @@ public static class JwtExtension
                             await http.Response.WriteAsJsonAsync(new ProblemDetails
                             {
                                 Status = StatusCodes.Status401Unauthorized,
-                                Title = "Unauthorized",
+                                Title = "Unauthorised",
                                 Detail = context.ErrorDescription
                                     ?? context.Error
                                     ?? "Authentication failed"

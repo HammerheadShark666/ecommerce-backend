@@ -3,7 +3,6 @@ using Azure.Messaging.ServiceBus;
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Email;
-using ECommerce.Application.Constants;
 using ECommerce.BackgroundFunctions.Messaging;
 using ECommerce.Domain.Entities.PasswordReset;
 using ECommerce.Infrastructure.Library.Constants;

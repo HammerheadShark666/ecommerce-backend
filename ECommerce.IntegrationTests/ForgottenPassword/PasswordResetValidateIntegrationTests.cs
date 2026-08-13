@@ -31,7 +31,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
         var email = "pwdreset@example.com";
         var plainOtpSecret = "FAKESECRET"; // matches FakeOneTimePasswordGenerator
-        var token = "reset-token-1";
+        var token = "X+qXaioKNxX6O/ceDCs9+5TjWU9ARJ7FE0iX4kGtwrk=";
         var newPassword = "NewPass!1";
         var code = "123456"; // FakeOneTimePasswordGenerator returns this
 
@@ -85,8 +85,16 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         }
 
         // Act
-        var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = code });
-
+        var request = new HttpRequestMessage(
+                               HttpMethod.Post,
+                               "/forgotten-password/reset/validate")
+        {
+            Content = JsonContent.Create(new { Token = token, Email = email, NewPassword = newPassword, Code = code })
+        }; 
+       
+        request = TestHelpers.SetForwardedHeader(request);
+        var resp = await client.SendAsync(request);
+         
         // Assert
         resp.EnsureSuccessStatusCode();
 
@@ -119,7 +127,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
         var email = "pwdreset2@example.com";
         var plainOtpSecret = "FAKESECRET";
-        var token = "reset-token-2";
+        var token = "X+qXaioKNxX6O/ceDCs9+5TjWU9ARJ7FE0iX4kGtwrk=";
         var newPassword = "NewPass!1";
         var invalidCode = "000000";
 
@@ -172,8 +180,16 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         }
 
         // Act
-        var resp = await client.PostAsJsonAsync("/forgotten-password/reset/validate", new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode });
-
+        var request = new HttpRequestMessage(
+                               HttpMethod.Post,
+                               "/forgotten-password/reset/validate")
+        {
+            Content = JsonContent.Create(new { Token = token, Email = email, NewPassword = newPassword, Code = invalidCode })
+        }; 
+       
+        request = TestHelpers.SetForwardedHeader(request);
+        var resp = await client.SendAsync(request);
+         
         // Assert
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
 

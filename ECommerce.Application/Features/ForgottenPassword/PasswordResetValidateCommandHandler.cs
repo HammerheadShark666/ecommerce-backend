@@ -2,19 +2,16 @@
 using ECommerce.Application.Abstractions.Authentication;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Abstractions.Messaging;
+using ECommerce.Application.Common.Errors;
 using ECommerce.Application.Constants;
-using ECommerce.Application.Exceptions;
 using ECommerce.Application.Features.ForgottenPassword.Events;
 using ECommerce.Domain.Entities.PasswordReset;
 using ECommerce.Domain.Entities.User;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Application.Features.ForgottenPassword;
- 
-public record PasswordResetValidateCommand(string Token, string Email, string NewPassword, string Code, string IpAddress) : ICommand<PasswordResetValidateResponse>;
-
-public record PasswordResetValidateResponse(string Message);
-
+  
 internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext,
                                                    IAesEncryptionHelper aesEncryptionHelper,
                                                    IEncryptionSettings encryptionSettings,   
@@ -24,62 +21,49 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
                                                    TimeProvider timeProvider,
                                                    IOneTimePasswordGenerator oneTimePasswordGenerator,
                                                    IMessagePublisher _publisher) : ICommandHandler<PasswordResetValidateCommand, PasswordResetValidateResponse>
-{
-    private static readonly TimeSpan PendingTokenTtl = TimeSpan.FromMinutes(5);
-
-    public async Task<PasswordResetValidateResponse> Handle(PasswordResetValidateCommand request, CancellationToken cancellationToken)
-    {
-        //Validate token
+{      
+    public async Task<Result<PasswordResetValidateResponse>> Handle(PasswordResetValidateCommand request, CancellationToken cancellationToken)
+    {      
         var passwordResetToken = await GetPasswordResetTokenAsync(request.Token, cancellationToken);
-
-        //Validate code
-        (var user, var otpSecret) = await GetUserAndSecretAsync(request.Email, cancellationToken);
-        var codeIsValid = await ValidateCodeAsync(otpSecret, request.Code);
-
-        if (!codeIsValid)
+        if (passwordResetToken is null)
         {
-            throw new UnauthorizedAccessException();
+            return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
+        } 
+
+        var user = await GetUserAsync(request.Email, cancellationToken);
+        if (user is null || user.OneTimePasswordSecret is null)
+        {
+            return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
         }
 
+        var isValidCode = await IsValidateCodeAsync(user.OneTimePasswordSecret, request.Code);
+        if(!isValidCode)
+        {
+            return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
+        }
+         
         await UpdateRecordsAsync(user, passwordResetToken, request.NewPassword, request.IpAddress, cancellationToken);
         await _publisher.PublishAsync(new PasswordResetCompleted(user.Id, user.FirstName, user.Email, timeProvider.GetUtcNow().UtcDateTime), cancellationToken); 
 
-        return new PasswordResetValidateResponse("Password successfully changed.");
+        return Result.Ok(new PasswordResetValidateResponse("Password successfully changed."));
     }
 
-    private async Task<bool> ValidateCodeAsync(string otpSecret, string code)
+    private async Task<bool> IsValidateCodeAsync(string otpSecret, string code)
     {
         var decryptedOneTimePasswordSecret = aesEncryptionHelper.Decrypt(otpSecret, encryptionSettings.OneTimePasswordKey);
 
-        var valid = oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);
-        if (!valid)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        return true;
+        return oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);         
     }
 
-    private async Task<(User user, string otpSecret)> GetUserAndSecretAsync(string email, CancellationToken cancellationToken)
-    {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken)
-            ?? throw new NotFoundException(nameof(User), email); 
+    private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) => 
+                        await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);    
 
-        if (user.OneTimePasswordSecret is null)
-        {
-            throw new TwoFactorEnrolmentNotStartedException();
-        }  
-
-        return (user, user.OneTimePasswordSecret);
-    }
-
-    private async Task<PasswordResetToken> GetPasswordResetTokenAsync(string token, CancellationToken cancellationToken)
+    private async Task<PasswordResetToken?> GetPasswordResetTokenAsync(string token, CancellationToken cancellationToken)
     {
         var hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
 
         return await dbContext.PasswordResetTokens
-                                .FirstOrDefaultAsync(t => t.TokenHash == hashedPasswordResetToken, cancellationToken) 
-                                ?? throw new UnauthorizedAccessException();
+                                .FirstOrDefaultAsync(t => t.TokenHash == hashedPasswordResetToken, cancellationToken);     
     }
 
     private async Task UpdateRecordsAsync(User user, PasswordResetToken passwordResetToken, string newPassword, string ipAddress, CancellationToken cancellationToken)
