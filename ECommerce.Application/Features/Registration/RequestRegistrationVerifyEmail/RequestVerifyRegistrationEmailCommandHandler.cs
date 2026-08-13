@@ -19,13 +19,15 @@ internal class RequestVerifyRegistrationEmailCommandHandler(IECommerceDbContext 
             return Result.Fail<RequestVerifyRegistrationEmailResponse>(new InvalidCredentialsError());
         }
 
-        if (user.IsEmailVerified == true)
+        if (user.IsEmailVerified == false)
         {
-            return Result.Fail<RequestVerifyRegistrationEmailResponse>(new ConflictError("This registration has already been verified."));
+            await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
         }
-
-        await _publisher.PublishAsync(new VerifyRegistrationEmail(user.Id, user.Email, user.FirstName), cancellationToken);
-
+        else
+        {
+            return Result.Ok(new RequestVerifyRegistrationEmailResponse("Registration has already been verified."));
+        }
+        
         return Result.Ok(new RequestVerifyRegistrationEmailResponse());
     }
 
