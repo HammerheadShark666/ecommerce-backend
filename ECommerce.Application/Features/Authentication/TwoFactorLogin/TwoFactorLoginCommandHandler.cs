@@ -108,7 +108,7 @@ internal class TwoFactorLoginCommandHandler(IECommerceDbContext dbContext,
         var incomingHashedToken =
             hmacsha256Hasher.HashToken(
                 pendingToken,
-                "pending",
+                AuthenticationConstants.HashTypeTokenPending,
                 hashSettings.Secret);
 
         var incomingHashBytes =

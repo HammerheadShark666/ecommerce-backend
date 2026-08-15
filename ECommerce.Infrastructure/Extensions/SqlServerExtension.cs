@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Abstractions;
+using ECommerce.Infrastructure.Library.Constants;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.Infrastructure.Persistence.Intercepters;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public static class SqlServerExtension
         services.AddDbContext<ECommerceDbContext>((sp, options) =>
         {
             options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"));
+                configuration.GetConnectionString(Constants.DatabaseConnectionStringName));
 
             options.AddInterceptors(
                 sp.GetRequiredService<AuditableEntityInterceptor>());

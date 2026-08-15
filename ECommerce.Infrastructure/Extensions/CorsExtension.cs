@@ -1,12 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ECommerce.Infrastructure.Configurations;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace ECommerce.Infrastructure.Extensions;
 
 internal static class CorsExtension
 {
-    public static void BuildCorsPolicy(this IServiceCollection services) => services.AddCors(options => options.AddPolicy("WoldsHrFrontendPolicy", policy => policy.WithOrigins(
-                                                                                             "http://localhost:3000",
-                                                                                             "http://localhost:3001"
+    public static void BuildCorsPolicy(this IServiceCollection services, IOptions<UrlOptions> urlOptions) => services.AddCors(options => options.AddPolicy("ECommerceFrontendPolicy", policy => policy.WithOrigins(
+                                                                                             urlOptions.Value.FrontEnd
                                                                                          )
                                                                                          .AllowAnyHeader()
                                                                                          .AllowAnyMethod()

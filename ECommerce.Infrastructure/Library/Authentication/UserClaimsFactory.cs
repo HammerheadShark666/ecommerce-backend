@@ -15,6 +15,6 @@ public class UserClaimsFactory(ECommerceDbContext dbContext) : IUserClaimsFactor
            .Select(ur => ur.Role.Name)
            .ToListAsync(cancellationToken);
 
-        return roleNames.Select(name => new Claim(ClaimTypes.Role, name)).ToList();
+        return [.. roleNames.Select(name => new Claim(ClaimTypes.Role, name))];
     }
 }

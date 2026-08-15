@@ -32,7 +32,7 @@ internal sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
 
         await UpdateRefreshTokenTable(refreshToken, newRefreshToken, cancellationToken);
 
-        return Result.Ok(new RefreshTokenResponse(newRefreshToken)); //accessToken,
+        return Result.Ok(new RefreshTokenResponse(newRefreshToken));
     }
 
     private async Task UpdateRefreshTokenTable(Domain.Entities.Authentication.RefreshToken refreshToken, string newRefreshToken, CancellationToken cancellationToken)

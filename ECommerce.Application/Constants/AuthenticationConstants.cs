@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace ECommerce.Application.Constants;
+﻿namespace ECommerce.Application.Constants;
 
 public static class AuthenticationConstants
 { 

@@ -34,7 +34,7 @@ public sealed class EmailTemplateService(IOptions<UrlOptions> options) : IEmailT
     private string PopulateValues(string template, Dictionary<string, string> values)
     {        
         values.Add("Year", DateTime.Now.Year.ToString());
-        values.Add("BaseUrl", options.Value.BaseUrl);    
+        values.Add("FrontEndUrl", options.Value.FrontEnd);    
 
         foreach (KeyValuePair<string, string> value in values)
         {
