@@ -18,7 +18,7 @@ public class OneTimePasswordGenerator : IOneTimePasswordGenerator
         return totp.ComputeTotp();
     }
 
-    public int GetRemainingSeconds(string base32Secret)
+    public static int GetRemainingSeconds(string base32Secret)
     {
         var oneTimePassword = new Totp(Base32Encoding.ToBytes(base32Secret), step: OneTimePasswordConstants.StepSeconds);
         return oneTimePassword.RemainingSeconds();

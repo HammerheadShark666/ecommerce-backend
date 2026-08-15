@@ -7,5 +7,5 @@ public sealed class UrlOptions
     public const string Section = "Url";
 
     [Required]
-    public required string BaseUrl { get; init; }
+    public required string FrontEnd { get; init; }
 }

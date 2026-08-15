@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ECommerce.Infrastructure.Library.Constants;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
@@ -23,7 +24,7 @@ public class ApplicationDbContextFactory
             .Build();
 
         var connectionString =
-            configuration.GetConnectionString("DefaultConnection");
+            configuration.GetConnectionString(Constants.DatabaseConnectionStringName);
 
         var optionsBuilder =
             new DbContextOptionsBuilder<ECommerceDbContext>();

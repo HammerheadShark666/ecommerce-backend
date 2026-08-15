@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ECommerce.Application.Configuration;
 using ECommerce.Application.Abstractions.Configuration;
+using ECommerce.Application.Constants;
 
 
 namespace ECommerce.Application.Extensions;
@@ -13,9 +14,9 @@ public static class ApplicationSettings
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSetting<JwtSettings, IJwtSettings>(configuration, "Jwt");
-        services.AddSetting<HashSettings, IHashSettings>(configuration, "Hash");
-        services.AddSetting<EncryptionSettings, IEncryptionSettings>(configuration, "Encryption");
+        services.AddSetting<JwtSettings, IJwtSettings>(configuration, SettingsConstants.JwtSectionName);
+        services.AddSetting<HashSettings, IHashSettings>(configuration, SettingsConstants.HashSectionName);
+        services.AddSetting<EncryptionSettings, IEncryptionSettings>(configuration, SettingsConstants.EncryptionSectionName);
 
         return services;
     }
