@@ -146,7 +146,7 @@ public class LoginIntegrationTest : IAsyncLifetime
         // Assert
         dto.Should().NotBeNull();
         dto!.RequiresTwoFactor.Should().BeFalse();
-        dto.Token.Should().NotBeNullOrWhiteSpace();
+        dto.JwtToken.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -261,7 +261,7 @@ public class LoginIntegrationTest : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     private record VerifyResponseDto(string? Token); //bool Success,, string Message
-    private record LoginResponseDto(bool RequiresTwoFactor, string? PendingToken, string? Token, Guid? PendingTokenId);  
+    private record LoginResponseDto(bool RequiresTwoFactor, string? PendingToken, string? JwtToken, Guid? PendingTokenId);  
     
     private Task<HttpResponseMessage> PostLoginRawAsync(string email, string password)
         => _client.PostAsJsonAsync("/login", new { Email = email, Password = password });
