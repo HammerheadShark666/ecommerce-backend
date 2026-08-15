@@ -50,7 +50,7 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
                 new LoginResponse(
                     RequiresTwoFactor: true,
                     PendingToken: token,
-                    Token: null,
+                    JwtToken: null,
                     RefreshToken: null,
                     PendingTokenId: pendingTokenId));
         }
@@ -64,7 +64,7 @@ internal class LoginCommandHandler(IECommerceDbContext dbContext,
             new LoginResponse(
                 RequiresTwoFactor: false,
                 PendingToken: null,
-                Token: jwtToken,
+                JwtToken: jwtToken,
                 RefreshToken: refreshToken,
                 PendingTokenId: null));
     }

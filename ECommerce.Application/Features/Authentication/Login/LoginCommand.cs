@@ -9,7 +9,7 @@ public record LoginCommand(string Email, string Password) : ICommand<LoginRespon
 public record LoginResponse(
     bool RequiresTwoFactor,
     string? PendingToken,
-    string? Token,
+    string? JwtToken,
     string? RefreshToken,
     Guid? PendingTokenId
 );
