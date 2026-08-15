@@ -28,11 +28,11 @@ internal sealed class RefreshTokenCommandHandler(IECommerceDbContext dbContext,
             return Result.Fail<RefreshTokenResponse>(new RefreshTokenNotFoundError());
         }
           
-        (var accessToken, var newRefreshToken) = await GetNewTokensAsync(refreshToken.User, cancellationToken);
+        (var jwtToken, var newRefreshToken) = await GetNewTokensAsync(refreshToken.User, cancellationToken);
 
         await UpdateRefreshTokenTable(refreshToken, newRefreshToken, cancellationToken);
 
-        return Result.Ok(new RefreshTokenResponse(newRefreshToken));
+        return Result.Ok(new RefreshTokenResponse(newRefreshToken, jwtToken));
     }
 
     private async Task UpdateRefreshTokenTable(Domain.Entities.Authentication.RefreshToken refreshToken, string newRefreshToken, CancellationToken cancellationToken)
