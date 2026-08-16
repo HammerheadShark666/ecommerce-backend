@@ -63,19 +63,19 @@ public static class ProductEndpoints
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status301MovedPermanently);
 
-        //group.MapPost("", async (AddProductCommand command, IMediator mediator) =>
-        //{
-        //    var id = await mediator.Send(command);
-        //    var slug = "";
-        //    return Results.Created($"/{{id:guid}}/{{slug}}", new { id, slug });
-        //})
-        //.WithName("AddProduct")
-        //.WithTags("Products")
-        //.Produces<ProductResponse>(StatusCodes.Status200OK)
-        //.Produces(StatusCodes.Status400BadRequest)
-        //.Produces<object>(StatusCodes.Status201Created)
-        //.ProducesValidationProblem()
-        //.RequireAuthorization(PolicyNamesConstants.CanManageProducts); 
+        group.MapPost("", async (AddProductCommand command, IMediator mediator) =>
+        {
+            var id = await mediator.Send(command);
+            var slug = "";
+            return Results.Created($"/{{id:guid}}/{{slug}}", new { id, slug });
+        })
+        .WithName("AddProduct")
+        .WithTags("Products")
+        .Produces<ProductResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status400BadRequest)
+        .Produces<object>(StatusCodes.Status201Created)
+        .ProducesValidationProblem()
+        .RequireAuthorization(PolicyNamesConstants.CanManageProducts);
 
         return endpoints;
     }
