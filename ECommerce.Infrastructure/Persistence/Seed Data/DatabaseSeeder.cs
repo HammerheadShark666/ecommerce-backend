@@ -146,16 +146,14 @@ public static class DatabaseSeeder
         }
 
         dbContext.Roles.Add(new Domain.Entities.User.Role()
-        {
-            Id = 2,
+        { 
             Name = "Admin",
             Description = "Administrator role with full access to the system",
             CreatedAt = DateTime.UtcNow,
         });
 
         dbContext.Roles.Add(new Domain.Entities.User.Role()
-        {
-            Id = 4,
+        { 
             Name = "Customer",
             Description = "Customer with access to commercial side of the system",
             CreatedAt = DateTime.UtcNow,
@@ -186,7 +184,7 @@ public static class DatabaseSeeder
 
         var products = new List<Product>(1000);
 
-        foreach (CategorySeed categorySeed in Catalogue)
+        foreach (var categorySeed in Catalogue)
         {
             var category = new Category
             {
