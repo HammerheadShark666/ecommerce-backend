@@ -146,9 +146,16 @@ public static class DatabaseSeeder
         }
 
         dbContext.Roles.Add(new Domain.Entities.User.Role()
+        {
+            Name = "MasterAdmin",
+            Description = "Master Administrator role with full access to the system",
+            CreatedAt = DateTime.UtcNow,
+        });
+
+        dbContext.Roles.Add(new Domain.Entities.User.Role()
         { 
             Name = "Admin",
-            Description = "Administrator role with full access to the system",
+            Description = "Administrator role with access to most of the system",
             CreatedAt = DateTime.UtcNow,
         });
 
@@ -158,11 +165,6 @@ public static class DatabaseSeeder
             Description = "Customer with access to commercial side of the system",
             CreatedAt = DateTime.UtcNow,
         });
-
-        if (await dbContext.Products.AnyAsync(cancellationToken))
-        {
-            return; // Already seeded — safe to call on every startup
-        }
 
         var now = DateTime.UtcNow;
         var random = new Random(12345); // fixed seed => reproducible demo data across environments
@@ -201,7 +203,7 @@ public static class DatabaseSeeder
 
             var categoryBrands = categorySeed.Brands.Select(b => brandsByName[b]).ToArray();
 
-            foreach (ProductType type in categorySeed.Types)
+            foreach (var type in categorySeed.Types)
             {
                 foreach (string variant in categorySeed.Variants)
                 {
@@ -235,8 +237,8 @@ public static class DatabaseSeeder
             }
         }
 
-        await dbContext.Products.AddRangeAsync(products, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.Products.AddRangeAsync(products, cancellationToken); 
+        await dbContext.SaveChangesAsync(cancellationToken); 
     }
 
     private static string Slugify(string value) =>

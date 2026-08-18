@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using ECommerce.Application.Features.CheckTwoFactorStatus;
+using ECommerce.Application.Features.Security.CheckTwoFactorStatus;
 using ECommerce.IntegrationTests.Library;
 using ECommerce.IntegrationTests.Library.Intefaces;
 using FluentAssertions;
