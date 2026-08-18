@@ -1,7 +1,6 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Common.Errors;
-using ECommerce.Application.Exceptions;
 using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;

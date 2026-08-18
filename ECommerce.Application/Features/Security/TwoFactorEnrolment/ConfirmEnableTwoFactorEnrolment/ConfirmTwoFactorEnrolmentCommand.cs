@@ -2,7 +2,7 @@
 
 namespace ECommerce.Application.Features.Security.TwoFactorEnrolment.ConfirmEnableTwoFactorEnrolment;
 
-public record ConfirmTwoFactorEnrolmentRequest(string email, string Code);
+public record ConfirmTwoFactorEnrolmentRequest(string Email, string Code);
 
 public record ConfirmTwoFactorEnrolmentCommand(string Email, string Code) : ICommand<ConfirmTwoFactorEnrolmentResponse>;
 

@@ -25,7 +25,7 @@ public static class TwoFactorEnrolmentEndpoints
 
         group.MapPost("/confirm", async ([FromBody] ConfirmTwoFactorEnrolmentRequest request, IMediator mediator) =>
         {
-            var result = await mediator.Send(new ConfirmTwoFactorEnrolmentCommand(request.email, request.Code));
+            var result = await mediator.Send(new ConfirmTwoFactorEnrolmentCommand(request.Email, request.Code));
             return result.ToHttpResult();
         });
 
