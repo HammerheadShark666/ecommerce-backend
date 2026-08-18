@@ -3,4 +3,5 @@
 public static class AuthenticationConstants
 {
     public const string RoleAdmin = "Admin";
+    public const string RoleMasterAdmin = "MasterAdmin";
 }

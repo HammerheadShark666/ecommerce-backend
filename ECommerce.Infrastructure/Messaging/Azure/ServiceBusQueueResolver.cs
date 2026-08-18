@@ -1,5 +1,5 @@
-﻿using ECommerce.Application.Features.ForgottenPassword.Events;
-using ECommerce.Application.Features.Registration.Events;
+﻿using ECommerce.Application.Features.Security.ForgottenPassword.Events;
+using ECommerce.Application.Features.Security.Registration.Events;
 using ECommerce.Infrastructure.Messaging.Azure.Interface;
 using Microsoft.Extensions.Options;
 

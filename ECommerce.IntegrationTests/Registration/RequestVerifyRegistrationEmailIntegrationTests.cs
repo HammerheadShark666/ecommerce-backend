@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using ECommerce.Application.Features.Registration.RequestRegistrationVerifyEmail;
+using ECommerce.Application.Features.Security.Registration.RequestRegistrationVerifyEmail;
 using ECommerce.Domain.Entities.User;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;

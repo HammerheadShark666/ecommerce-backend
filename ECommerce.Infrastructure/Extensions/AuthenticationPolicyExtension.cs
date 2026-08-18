@@ -9,9 +9,7 @@ public static class AuthenticationPolicyExtension
     public static AuthorizationBuilder AddAuthenticationPolicy(this IServiceCollection services) =>
         services.AddAuthorizationBuilder()
             .AddPolicy(PolicyNamesConstants.CanManageProducts, policy =>
-                policy.RequireRole(AuthenticationConstants.RoleAdmin))
-            .AddPolicy(PolicyNamesConstants.CanManageOrders, policy =>
-                policy.RequireRole(AuthenticationConstants.RoleAdmin))
+                policy.RequireRole(AuthenticationConstants.RoleAdmin))           
             .AddPolicy(PolicyNamesConstants.CanManageUsers, policy =>
-                policy.RequireRole(AuthenticationConstants.RoleAdmin));
+                policy.RequireRole(AuthenticationConstants.RoleMasterAdmin));
 }

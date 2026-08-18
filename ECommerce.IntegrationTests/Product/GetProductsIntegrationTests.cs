@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using ECommerce.Application.Constants;
-using ECommerce.Application.Features.Product.GetProducts;
+using ECommerce.Application.Features.Commercial.Product.GetProducts;
 using ECommerce.Domain.Entities.Product;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;
