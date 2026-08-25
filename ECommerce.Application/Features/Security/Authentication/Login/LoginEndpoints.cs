@@ -16,13 +16,14 @@ public static class LoginEndpoints
         var group = endpoints.MapGroup("")
                              .WithTags("Login");
 
+
         group.MapPost("/login", async ([FromBody] LoginRequest request, IMediator mediator, HttpResponse response, IJwtSettings jwtSettings) =>
         {
             var result = await mediator.Send(new LoginCommand(request.Email, request.Password));
             if (result.IsFailed)
             {
                 return result.ToHttpResult();
-            } 
+            }
 
             if (result.Value.RequiresTwoFactor)
             {
@@ -39,13 +40,13 @@ public static class LoginEndpoints
                 response.SetRefreshToken(
                     result.Value.RefreshToken,
                     jwtSettings.RefreshTokenExpiryDays);
-            } 
+            }
 
             return Results.Ok(new
             {
                 RequiresTwoFactor = false,
                 result.Value.JwtToken
-            }); 
+            });
 
         }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
  

@@ -29,6 +29,8 @@ public static class UserRoleEndpoints
         .ProducesValidationProblem()
         .RequireAuthorization(PolicyNamesConstants.CanManageUsers);
 
+        //add 2fa to this command endpoint
+
         return endpoints;
     }
 }
