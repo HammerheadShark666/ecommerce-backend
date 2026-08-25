@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Constants;
-using ECommerce.Application.Features.Commercial.Product.AddProduct;
 using ECommerce.Application.Features.Commercial.Product.GetProduct;
 using MediatR;
 using Microsoft.AspNetCore.Builder;

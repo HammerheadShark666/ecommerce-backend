@@ -13,6 +13,7 @@ using ECommerce.Application.Features.Security.Registration;
 using ECommerce.Application.Features.Security.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
@@ -53,7 +54,7 @@ try
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseRouting();
-    app.UseCors("ECommerceFrontendPolicy");
+    app.UseCors(PolicyNamesConstants.CorsPolicyECommerceFrontendPolicy);
     app.UseAuthentication();
     app.UseRateLimiter();
     app.UseAuthorization();

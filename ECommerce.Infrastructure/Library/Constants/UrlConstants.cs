@@ -1,6 +1,4 @@
-﻿using Microsoft.Identity.Client;
-
-namespace ECommerce.Infrastructure.Library.Constants;
+﻿namespace ECommerce.Infrastructure.Library.Constants;
 
 public static class UrlConstants
 {
