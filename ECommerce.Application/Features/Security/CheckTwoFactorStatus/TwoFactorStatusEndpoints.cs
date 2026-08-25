@@ -1,4 +1,5 @@
 ﻿using ECommerce.Application.Extensions;
+using ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByPasswordResetToken;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,12 @@ public static class TwoFactorStatusEndpoints
         {
             var result = await mediator.Send(new GetTwoFactorStatusQuery(email)); 
             return result.ToHttpResult();  
+        });
+
+        group.MapGet("/status/token", async (string token, IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetTwoFactorStatusByTokenQuery(token));
+            return result.ToHttpResult();
         });
 
         return endpoints;
