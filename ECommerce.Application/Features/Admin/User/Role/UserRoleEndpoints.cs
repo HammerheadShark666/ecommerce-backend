@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Constants;
-using ECommerce.Application.Features.Commercial.Product.AddProduct;
 using ECommerce.Application.Features.Commercial.Product.GetProduct;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +27,8 @@ public static class UserRoleEndpoints
         .Produces<object>(StatusCodes.Status201Created)
         .ProducesValidationProblem()
         .RequireAuthorization(PolicyNamesConstants.CanManageUsers);
+
+        //add 2fa to this command endpoint
 
         return endpoints;
     }

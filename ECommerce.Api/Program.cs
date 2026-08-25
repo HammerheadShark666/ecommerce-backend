@@ -13,6 +13,7 @@ using ECommerce.Application.Features.Security.Registration;
 using ECommerce.Application.Features.Security.TwoFactorEnrolment;
 using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Extensions;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
 
@@ -24,7 +25,7 @@ Log.Information(">>> PROGRAM STARTED");
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args); 
+    var builder = WebApplication.CreateBuilder(args);
 
     builder.AddAppSettings();
     builder.AddApplicationLogging();
@@ -52,6 +53,8 @@ try
     app.UseForwardedHeaders();
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
+    app.UseRouting();
+    app.UseCors(PolicyNamesConstants.ECommerceFrontendCorsPolicy);
     app.UseAuthentication();
     app.UseRateLimiter();
     app.UseAuthorization();
@@ -80,7 +83,7 @@ try
 
     Log.Information("RUN EXITED");
 
-} 
+}
 catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "Application terminated unexpectedly");

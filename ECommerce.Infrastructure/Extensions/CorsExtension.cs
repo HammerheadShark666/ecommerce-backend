@@ -1,15 +1,15 @@
 ﻿using ECommerce.Infrastructure.Configurations;
+using ECommerce.Infrastructure.Library.Constants;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace ECommerce.Infrastructure.Extensions;
 
 internal static class CorsExtension
 {
-    public static void BuildCorsPolicy(this IServiceCollection services, IOptions<UrlOptions> urlOptions) => services.AddCors(options => options.AddPolicy("ECommerceFrontendPolicy", policy => policy.WithOrigins(
-                                                                                             urlOptions.Value.FrontEnd
-                                                                                         )
-                                                                                         .AllowAnyHeader()
-                                                                                         .AllowAnyMethod()
-                                                                                         .AllowCredentials()));
+    public static IServiceCollection BuildCorsPolicy(this IServiceCollection services, UrlOptions urlOptions) => 
+                            services.AddCors(options => options.AddPolicy(PolicyNamesConstants.ECommerceFrontendCorsPolicy, policy => policy
+                                        .WithOrigins(urlOptions.FrontEnd, UrlConstants.LocalBaseUrl)
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod()
+                                        .AllowCredentials()));
 }

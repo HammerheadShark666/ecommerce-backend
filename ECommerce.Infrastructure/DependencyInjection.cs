@@ -10,22 +10,28 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtOptions = configuration
-          .GetSection(JwtOptions.Section)
-          .Get<JwtOptions>()
-          ?? throw new InvalidOperationException("Jwt configuration section is missing");
-         
         services.AddSqlServer(configuration);
         services.AddInterfaceClasses();
         services.AddJwtAuthentication();
         services.AddAuthenticationPolicy();
-        services.AddJwt(jwtOptions);
-        services.AddCors();
+        services.AddJwt(GetJwtOptions(configuration));
+        services.BuildCorsPolicy(GetUrlOptions(configuration));
         services.AddMessaging(configuration); 
         services.AddAzureCredentials();
 
-        services.AddAuthorization(options => options.AddPolicy("RequireAdmin", p => p.RequireRole(AuthenticationConstants.RoleAdmin)));
+        services.AddAuthorizationBuilder()
+            .AddPolicy(PolicyNamesConstants.RequireAdmin, p => p.RequireRole(AuthenticationConstants.RoleAdmin));
 
         return services;
     }
+
+    private static UrlOptions GetUrlOptions(IConfiguration configuration) => configuration
+          .GetSection(UrlOptions.Section)
+          .Get<UrlOptions>()
+          ?? throw new InvalidOperationException("Url configuration section is missing");
+
+    private static JwtOptions GetJwtOptions(IConfiguration configuration) => configuration
+          .GetSection(JwtOptions.Section)
+          .Get<JwtOptions>()
+          ?? throw new InvalidOperationException("Jwt configuration section is missing");
 }

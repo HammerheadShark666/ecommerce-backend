@@ -14,3 +14,6 @@ internal class AddUserRoleCommandHandler(IECommerceDbContext dbContext) : IComma
                             .AsNoTracking()
                             .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 }
+
+ 
+//business rule to check for last master admin
