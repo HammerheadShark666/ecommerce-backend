@@ -22,7 +22,7 @@ internal class ForgottenPasswordCommandHandler(IECommerceDbContext dbContext,
       
         await _publisher.PublishAsync(new PasswordResetRequested(user.Id, user.FirstName, user.Email), cancellationToken); 
       
-        return Result.Ok(new ForgottenPasswordResponse("If an account exists for that email, a reset link has been sent."));
+        return Result.Ok(new ForgottenPasswordResponse("If an account exists for that email, a reset link will be sent."));
     } 
    
     private Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>
