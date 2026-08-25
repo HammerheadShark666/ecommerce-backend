@@ -54,7 +54,7 @@ try
     app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseExceptionHandler();
     app.UseRouting();
-    app.UseCors(PolicyNamesConstants.CorsPolicyECommerceFrontendPolicy);
+    app.UseCors(PolicyNamesConstants.ECommerceFrontendCorsPolicy);
     app.UseAuthentication();
     app.UseRateLimiter();
     app.UseAuthorization();

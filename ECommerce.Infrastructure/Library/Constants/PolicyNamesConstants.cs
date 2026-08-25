@@ -6,5 +6,7 @@ public static class PolicyNamesConstants
     public const string CanManageOrders = nameof(CanManageOrders);
     public const string CanManageUsers = nameof(CanManageUsers);
 
-    public const string CorsPolicyECommerceFrontendPolicy = nameof(CorsPolicyECommerceFrontendPolicy);
+    public const string ECommerceFrontendCorsPolicy = nameof(ECommerceFrontendCorsPolicy);
+
+    public const string RequireAdmin = nameof(RequireAdmin);
 }

@@ -20,7 +20,7 @@ public static class DependencyInjection
         services.AddAzureCredentials();
 
         services.AddAuthorizationBuilder()
-            .AddPolicy("RequireAdmin", p => p.RequireRole(AuthenticationConstants.RoleAdmin));
+            .AddPolicy(PolicyNamesConstants.RequireAdmin, p => p.RequireRole(AuthenticationConstants.RoleAdmin));
 
         return services;
     }
