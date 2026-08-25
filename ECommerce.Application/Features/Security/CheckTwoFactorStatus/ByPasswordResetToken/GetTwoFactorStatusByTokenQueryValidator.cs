@@ -1,11 +1,10 @@
-﻿using ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByPasswordResetToken;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus;
+namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByPasswordResetToken;
  
-public class GetTwoFactorStatusByTokenValidator : AbstractValidator<GetTwoFactorStatusByTokenQuery>
+public class GetTwoFactorStatusByTokenQueryValidator : AbstractValidator<GetTwoFactorStatusByTokenQuery>
 {
-    public GetTwoFactorStatusByTokenValidator() => RuleFor(x => x.Token)
+    public GetTwoFactorStatusByTokenQueryValidator() => RuleFor(x => x.Token)
             .NotEmpty()
             .MaximumLength(100)
             .Must(BeValidBase64)

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using ECommerce.Application.Features.Security.CheckTwoFactorStatus;
+using ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByEmail;
 using ECommerce.IntegrationTests.Library;
 using ECommerce.IntegrationTests.Library.Intefaces;
 using FluentAssertions;
@@ -36,14 +36,14 @@ public class CheckTwoFactorStatusTest : IAsyncLifetime
         }
 
         // Act
-        var response = await _client.GetAsync($"/2fa/status?email={email}"); 
+        var response = await _client.GetAsync($"/2fa/status/email?email={email}"); 
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result =
             await response.Content
-                .ReadFromJsonAsync<GetTwoFactorStatusResponse>();
+                .ReadFromJsonAsync<GetTwoFactorStatusByEmailQueryResponse>();
 
         result.Should().NotBeNull();
         result!.IsEnabled.Should().BeTrue();
@@ -56,7 +56,7 @@ public class CheckTwoFactorStatusTest : IAsyncLifetime
         var notFoundEmail = "does-not-exist@example.com";
 
         // Act
-        var response = await _client.GetAsync($"/2fa/status?email={notFoundEmail}");
+        var response = await _client.GetAsync($"/2fa/status/email?email={notFoundEmail}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);       
