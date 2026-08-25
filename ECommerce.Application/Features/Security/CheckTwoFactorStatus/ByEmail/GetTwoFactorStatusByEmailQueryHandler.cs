@@ -5,21 +5,21 @@ using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus;
+namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByEmail;
  
-internal class GetTwoFactorStatusQueryHandler(IECommerceDbContext dbContext) : IQueryHandler<GetTwoFactorStatusQuery, GetTwoFactorStatusResponse>
+internal class GetTwoFactorStatusByEmailQueryHandler(IECommerceDbContext dbContext) : IQueryHandler<GetTwoFactorStatusByEmailQuery, GetTwoFactorStatusByEmailQueryResponse>
 { 
-    public async Task<Result<GetTwoFactorStatusResponse>> Handle(GetTwoFactorStatusQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetTwoFactorStatusByEmailQueryResponse>> Handle(GetTwoFactorStatusByEmailQuery request, CancellationToken cancellationToken)
     {
         var normaliseEmail = request.Email.Trim().ToUpperInvariant(); 
 
         var user = await GetUserAsync(normaliseEmail, cancellationToken);
         if (user is null)
         {
-            return Result.Fail<GetTwoFactorStatusResponse>(new InvalidCredentialsError());
+            return Result.Fail<GetTwoFactorStatusByEmailQueryResponse>(new InvalidCredentialsError());
         }
 
-        return Result.Ok(new GetTwoFactorStatusResponse(user.IsTwoFactorEnabled)); 
+        return Result.Ok(new GetTwoFactorStatusByEmailQueryResponse(user.IsTwoFactorEnabled)); 
     }
 
     private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) =>

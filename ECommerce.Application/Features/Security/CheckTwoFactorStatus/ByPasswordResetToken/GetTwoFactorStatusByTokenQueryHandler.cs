@@ -1,12 +1,11 @@
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Messaging;
 using ECommerce.Application.Common.Errors;
-using ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByPasswordResetToken;
 using ECommerce.Domain.Entities.User;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus;
+namespace ECommerce.Application.Features.Security.CheckTwoFactorStatus.ByPasswordResetToken;
  
 internal class GetTwoFactorStatusByTokenQueryHandler(IECommerceDbContext dbContext) : IQueryHandler<GetTwoFactorStatusByTokenQuery, GetTwoFactorStatusByTokenResponse>
 { 
