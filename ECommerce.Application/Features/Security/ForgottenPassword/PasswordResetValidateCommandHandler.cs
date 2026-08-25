@@ -30,11 +30,13 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
             return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
         } 
 
-        var user = await GetUserAsync(request.Email, cancellationToken);
+        var user = await GetUserAsync(passwordResetToken.UserId, cancellationToken);
         if (user is null || user.OneTimePasswordSecret is null)
         {
             return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
         }
+
+        //check for 2fa
 
         var isValidCode = await IsValidateCodeAsync(user.OneTimePasswordSecret, request.Code);
         if(!isValidCode)
@@ -55,8 +57,8 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
         return oneTimePasswordGenerator.VerifyCode(decryptedOneTimePasswordSecret, code);         
     }
 
-    private async Task<User?> GetUserAsync(string email, CancellationToken cancellationToken) => 
-                        await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);    
+    private async Task<User?> GetUserAsync(Guid userId, CancellationToken cancellationToken) => 
+                        await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);    
 
     private async Task<PasswordResetToken?> GetPasswordResetTokenAsync(string token, CancellationToken cancellationToken)
     {
