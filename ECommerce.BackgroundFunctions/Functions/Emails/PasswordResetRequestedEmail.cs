@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using System.Security.Cryptography;
 using Azure.Messaging.ServiceBus;
 using ECommerce.Application.Abstractions;
@@ -34,8 +35,8 @@ public class PasswordResetRequestedEmail(IECommerceDbContext dbContext,
             ?? throw new InvalidOperationException("Unable to deserialize PasswordResetRequestMessage from Service Bus message.");
 
             var payload = envelope.Payload;
-
-            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+         
+            var token = Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(32));
             var hashedPasswordResetToken = hmacsha256Hasher.HashToken(token, Application.Constants.AuthenticationConstants.HashTypeTokenPasswordReset, hashSettings.Secret);
              
             await MarkExistingTokensAsUsedAsync(cancellationToken);

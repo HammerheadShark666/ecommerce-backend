@@ -34,15 +34,23 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
         if (user is null || user.OneTimePasswordSecret is null)
         {
             return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
-        }
+        }         
 
-        //check for 2fa
-
-        var isValidCode = await IsValidateCodeAsync(user.OneTimePasswordSecret, request.Code);
-        if(!isValidCode)
+        if (user.IsTwoFactorEnabled)
         {
-            return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
-        }
+            if (string.IsNullOrWhiteSpace(request.Code))
+            {
+                return Result.Fail(
+                    new ValidationError("2FA Code", "Code is required when two-factor authentication is enabled.")
+                );
+            }
+
+            var isValidCode = await IsValidateCodeAsync(user.OneTimePasswordSecret, request.Code);
+            if (!isValidCode)
+            {
+                return Result.Fail<PasswordResetValidateResponse>(new InvalidCredentialsError());
+            }
+        }                
          
         await UpdateRecordsAsync(user, passwordResetToken, request.NewPassword, request.IpAddress, cancellationToken);
         await _publisher.PublishAsync(new PasswordResetCompleted(user.Id, user.FirstName, user.Email, timeProvider.GetUtcNow().UtcDateTime), cancellationToken); 
