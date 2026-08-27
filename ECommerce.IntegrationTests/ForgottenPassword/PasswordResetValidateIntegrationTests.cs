@@ -31,7 +31,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
         var email = "pwdreset@example.com";
         var plainOtpSecret = "FAKESECRET"; // matches FakeOneTimePasswordGenerator
-        var token = "X+qXaioKNxX6O/ceDCs9+5TjWU9ARJ7FE0iX4kGtwrk=";
+        var token = "RjCavhqAKRUgHGSuJtIWivLh8fqylU2baYk6wM3All4";
         var newPassword = "NewPass!1";
         var code = "123456"; // FakeOneTimePasswordGenerator returns this
 
@@ -127,7 +127,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
 
         var email = "pwdreset2@example.com";
         var plainOtpSecret = "FAKESECRET";
-        var token = "X+qXaioKNxX6O/ceDCs9+5TjWU9ARJ7FE0iX4kGtwrk=";
+        var token = "RjCavhqAKRUgHGSuJtIWivLh8fqylU2baYk6wM3All4";
         var newPassword = "NewPass!1";
         var invalidCode = "000000";
 
@@ -157,7 +157,8 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
                 Phone = "000",
                 Status = "Active",
                 IsEmailVerified = true,
-                OneTimePasswordSecret = encryptedSecret
+                OneTimePasswordSecret = encryptedSecret,
+                IsTwoFactorEnabled = true
             };
 
             db.Users.Add(user);
