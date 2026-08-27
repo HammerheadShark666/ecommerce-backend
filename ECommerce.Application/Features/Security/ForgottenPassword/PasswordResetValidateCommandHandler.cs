@@ -38,10 +38,10 @@ internal class PasswordResetValidateCommandHandler(IECommerceDbContext dbContext
 
         if (user.IsTwoFactorEnabled)
         {
-            if (string.IsNullOrWhiteSpace(request.Code))
+            if (string.IsNullOrWhiteSpace(request.Code) || request.Code.Length != 6)
             {
                 return Result.Fail(
-                    new ValidationError("2FA Code", "Code is required when two-factor authentication is enabled.")
+                    new ValidationError("Code", "6 digit verification code is required.")
                 );
             }
 
