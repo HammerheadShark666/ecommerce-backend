@@ -30,7 +30,7 @@ public static class TwoFactorLoginEndpoints
             return Results.Ok(new
             {
                 RequiresTwoFactor = false,
-                result.Value.Token
+                result.Value.JwtToken
             });
 
         }).RequireRateLimiting(RateLimiterPolicyConstants.Login);
