@@ -64,7 +64,7 @@ public class LoginIntegrationTest : IAsyncLifetime
         //Act
         var loginDto = await LoginAsync(email, password);
         var verifyDto = await Verify2FaAsync(email, loginDto.PendingToken!, oneTimePasswordCode, loginDto.PendingTokenId); 
-        var protectedResp = await CallProtectedEndpointAsync(verifyDto.Token!);
+        var protectedResp = await CallProtectedEndpointAsync(verifyDto.JwtToken!);
 
         //Assert
         protectedResp.EnsureSuccessStatusCode();
@@ -260,7 +260,7 @@ public class LoginIntegrationTest : IAsyncLifetime
     public Task InitializeAsync() => _fixture.ResetDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
-    private record VerifyResponseDto(string? Token); //bool Success,, string Message
+    private record VerifyResponseDto(string? JwtToken);
     private record LoginResponseDto(bool RequiresTwoFactor, string? PendingToken, string? JwtToken, Guid? PendingTokenId);  
     
     private Task<HttpResponseMessage> PostLoginRawAsync(string email, string password)
@@ -286,13 +286,13 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private async Task<User> SeedTwoFactorUserAsync(IServiceScope scope, string email, string password, string oneTimePasswordSecret)
     {
-        IDatabaseHelper db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
+        var db = scope.ServiceProvider.GetRequiredService<IDatabaseHelper>();
         return await db.SeedUserAsync(_fixture, email, password, isTwoFactor: true, oneTimePasswordSecret: oneTimePasswordSecret);
     }
 
     private async Task<LoginResponseDto> LoginAsync(string email, string password)
     {
-        LoginResponseDto? dto = await PostLoginAndParseAsync(email, password);
+        var dto = await PostLoginAndParseAsync(email, password);
         dto.Should().NotBeNull();
         dto!.RequiresTwoFactor.Should().BeTrue();
         dto.PendingToken.Should().NotBeNullOrWhiteSpace();
@@ -304,9 +304,9 @@ public class LoginIntegrationTest : IAsyncLifetime
         var resp = await _client.PostAsJsonAsync("/login/2fa/verify", new { Email = email, PendingToken = pendingToken, Code = totpCode, PendingTokenId = pendingTokenId });
         resp.EnsureSuccessStatusCode();
 
-        VerifyResponseDto? dto = await resp.Content.ReadFromJsonAsync<VerifyResponseDto>();
+        var dto = await resp.Content.ReadFromJsonAsync<VerifyResponseDto>();
         dto.Should().NotBeNull();
-        dto.Token.Should().NotBeNullOrWhiteSpace();
+        dto.JwtToken.Should().NotBeNullOrWhiteSpace();
         return dto!;
     }
 
@@ -322,7 +322,7 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private static string PadBase64(string base64)
     {
-        int pad = 4 - base64.Length % 4;
+        var pad = 4 - base64.Length % 4;
         if (pad == 4)
         {
             pad = 0;
@@ -334,9 +334,9 @@ public class LoginIntegrationTest : IAsyncLifetime
 
     private static string CreateTamperedJwtToken(string token)
     {
-        string[] parts = token.Split('.');
-        string payload = parts[1];
-        byte[] bytes = System.Convert.FromBase64String(PadBase64(payload));
+        var parts = token.Split('.');
+        var payload = parts[1];
+        var bytes = System.Convert.FromBase64String(PadBase64(payload));
         bytes[0] ^= 0x01; // flip a bit
         parts[1] = System.Convert.ToBase64String(bytes).TrimEnd('=');
         return string.Join('.', parts);

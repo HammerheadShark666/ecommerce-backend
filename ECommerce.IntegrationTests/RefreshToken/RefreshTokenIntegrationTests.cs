@@ -30,18 +30,12 @@ public class RefreshTokenIntegrationTests(SqlServerFixture fixture) : IAsyncLife
         resp.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
     }
 
-internal sealed class CookieDelegatingHandler : System.Net.Http.DelegatingHandler
+internal sealed class CookieDelegatingHandler(System.Net.CookieContainer cookieContainer, Uri baseUri) : System.Net.Http.DelegatingHandler
 {
-    private readonly System.Net.CookieContainer _cookieContainer;
-    private readonly Uri _baseUri;
+    private readonly System.Net.CookieContainer _cookieContainer = cookieContainer;
+    private readonly Uri _baseUri = baseUri;
 
-    public CookieDelegatingHandler(System.Net.CookieContainer cookieContainer, Uri baseUri)
-    {
-        _cookieContainer = cookieContainer;
-        _baseUri = baseUri;
-    }
-
-    protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, CancellationToken cancellationToken)
     {
         // Attach cookies for the request
         var cookieHeader = _cookieContainer.GetCookieHeader(_baseUri);
