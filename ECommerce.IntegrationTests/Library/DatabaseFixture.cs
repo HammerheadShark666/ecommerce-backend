@@ -94,7 +94,7 @@ public sealed class SqlServerFixture : IAsyncLifetime
         await db.SaveChangesAsync();
 
         // Ensure seeded users still exist (in case upstream cleanup removed them)
-        foreach (Guid id in _seededUserIds)
+        foreach (var id in _seededUserIds)
         {
             if (!await db.Users.AnyAsync(u => u.Id == id))
             {

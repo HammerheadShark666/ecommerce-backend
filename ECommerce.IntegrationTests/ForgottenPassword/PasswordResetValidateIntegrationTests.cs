@@ -129,8 +129,7 @@ public class PasswordResetValidateIntegrationTests(SqlServerFixture fixture) : I
         var email = "pwdreset@example.com";
         var plainOtpSecret = "FAKESECRET"; // matches FakeOneTimePasswordGenerator
         var token = "RjCavhqAKRUgHGSuJtIWivLh8fqylU2baYk6wM3All4";
-        var newPassword = "NewPass!1";
-        //var code = "123456"; // FakeOneTimePasswordGenerator returns this
+        var newPassword = "NewPass!1";        
 
         Guid userId;
 

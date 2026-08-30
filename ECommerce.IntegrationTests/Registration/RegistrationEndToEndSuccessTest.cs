@@ -2,7 +2,6 @@ using System.Net.Http.Json;
 using ECommerce.Application.Abstractions;
 using ECommerce.Application.Abstractions.Configuration;
 using ECommerce.Application.Constants;
-using ECommerce.Domain.Entities.User;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;
 using FluentAssertions;

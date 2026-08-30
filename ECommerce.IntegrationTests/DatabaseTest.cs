@@ -1,5 +1,4 @@
-﻿using ECommerce.Domain.Entities.User;
-using ECommerce.Infrastructure.Persistence;
+﻿using ECommerce.Infrastructure.Persistence;
 using ECommerce.IntegrationTests.Library;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +18,8 @@ public class DatabaseTest(SqlServerFixture fixture)
 
     public async Task GetUser_Should_Return_Seeded_Data()
     {
+        const string email = "alice";
+
         // Arrange
         var options = new DbContextOptionsBuilder<ECommerceDbContext>()
             .UseSqlServer(_fixture.ConnectionString)
@@ -26,10 +27,10 @@ public class DatabaseTest(SqlServerFixture fixture)
 
         await using var context = new ECommerceDbContext(options);
 
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == "alice");
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
                         
         user.Should().NotBeNull();
-        user.Email.Should().Be("alice");
+        user.Email.Should().Be(email);
          
         user = await context.Users.FirstOrDefaultAsync(u => u.Email == "john");
 
